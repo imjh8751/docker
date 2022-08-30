@@ -1,0 +1,11 @@
+version: '3.1'
+services:
+  oracle11g:
+    image: jaspeen/oracle-xe-11g
+    container_name: oracle11g
+    restart: always
+    volumes:
+      - /srv/oracle/data:/u01/app/oracle
+    ports:
+      - 1525:1521
+#    user: "${USER_ID}:${GROUP_ID}"

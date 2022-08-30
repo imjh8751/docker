@@ -1,0 +1,15 @@
+version: '3'
+services:
+  db:
+    image: linuxserver/mariadb:latest
+    restart: always
+    volumes:
+      - "./db/data:/var/lib/mysql"
+      - "./db/dump:/disk"
+      - "./db/initdb.d:/docker-entrypoint-initdb.d"
+    environment:
+      TZ: Asia/Seoul
+      MYSQL_ROOT_PASSWORD: mariadb
+      MYSQL_DATABASE: mariadb
+    ports:
+      - "33306:3306"

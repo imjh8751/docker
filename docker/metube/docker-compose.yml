@@ -1,0 +1,10 @@
+version: '3'
+services:
+    metube:
+     image: alexta69/metube
+     container_name: metube
+     restart: unless-stopped
+     volumes:
+       - ./data:/downloads
+     ports:
+       - 28081:8081

@@ -1,0 +1,17 @@
+version: "2.1"
+services:
+  dokuwiki:
+    image: lscr.io/linuxserver/dokuwiki
+    container_name: dokuwiki
+    environment:
+      - PUID=1000
+      - PGID=1000
+        #      - TZ=Europe/London
+      - TZ=Asia/Seoul
+        #- FILE__PASSWORD=/run/secrets/mysecretpassword
+    volumes:
+      - ./path/to/appdata/config:/config
+    ports:
+      - 28080:80
+      - 28443:443 #optional
+    restart: unless-stopped

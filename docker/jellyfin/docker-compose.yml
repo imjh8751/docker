@@ -1,0 +1,24 @@
+version: "2.1"
+services:
+  jellyfin:
+    image: ghcr.io/linuxserver/jellyfin
+    container_name: jellyfin
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Seoul
+      #- JELLYFIN_PublishedServerUrl=192.168.0.5 #optional
+    volumes:
+      - ./path/to/library:/config
+      - ./path/to/tvseries:/tvshows
+      - /home/pi/download:/movies
+      - /home/pi/download2:/movies2
+      - /home/pi/download3:/movies3
+        #- /APP/hdd2/data/downloads/complete:/movies2
+      - ./path/to/movies:/music
+    ports:
+      - 8096:8096
+      #- 8920:8920 #optional
+      #- 7359:7359/udp #optional
+      #- 1900:1900/udp #optional
+    restart: unless-stopped

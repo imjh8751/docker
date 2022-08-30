@@ -1,0 +1,38 @@
+version: "3"
+services:
+  app:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: npm
+    #    restart: always
+    ports:
+      - '48080:80'
+      - '40443:443'
+      - '48081:81'
+    environment:
+      # These are the settings to access your db
+      DB_MYSQL_HOST: "db"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "npm"
+      DB_MYSQL_NAME: "npm"
+      # If you would rather use Sqlite uncomment this
+      # and remove all DB_MYSQL_* lines above
+      # DB_SQLITE_FILE: "/data/database.sqlite"
+      # Uncomment this if IPv6 is not enabled on your host
+      # DISABLE_IPV6: 'true'
+    volumes:
+      - ./letsencrypt:/etc/letsencrypt
+      - ./data:/data
+    depends_on:
+      - db
+  db:
+    image: jc21/mariadb-aria:latest
+    container_name: npm_db
+    #    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 'npm'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: 'npm'
+    volumes:
+      - ./data/mysql:/var/lib/mysql

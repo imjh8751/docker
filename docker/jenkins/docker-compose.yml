@@ -1,0 +1,19 @@
+version: '3.1'
+services:
+  jenkins:
+    image: jenkins/jenkins:latest 
+    container_name: jenkins
+    restart: always
+    volumes:
+      - ./jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 38080:8080
+      - 50000:50000
+    expose:
+      - 38080
+      - 35000
+      - 50000
+    environment:
+        TZ: "Asia/Seoul"
+#    user: "${USER_ID}:${GROUP_ID}"

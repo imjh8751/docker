@@ -1,0 +1,15 @@
+version: "2.1"
+services:
+  librespeed:
+    image: lscr.io/linuxserver/librespeed
+    container_name: librespeed
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Seoul
+      - PASSWORD=admin
+    volumes:
+      - /data/librespeed/config:/config
+    ports:
+      - 8080:80
+    restart: unless-stopped

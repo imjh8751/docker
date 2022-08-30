@@ -1,0 +1,20 @@
+version: '3.3'
+services:
+    gitlab-ce-arm64v8:
+        ports:
+            - '18080:80'
+            - '18822:22'
+            - '18443:443'
+        volumes:
+            - '/var/run/docker.sock:/tmp/docker.sock:ro'
+            - './config:/etc/gitlab'
+            - './logs:/var/log/gitlab'
+            - './data:/var/opt/gitlab'
+        restart: 'unless-stopped'
+        logging:
+            options:
+                max-size: 1g
+        container_name: 'gitlab'
+        environment:
+            - 'GITLAB_OMNIBUS_CONFIG=nginx[''redirect_http_to_https''] = true;'
+        image: 'yrzr/gitlab-ce-arm64v8:latest'

@@ -1,0 +1,23 @@
+version: "2.1"
+services:
+  transmission:
+    image: ghcr.io/linuxserver/transmission
+    container_name: transmission
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Seoul
+      - TRANSMISSION_WEB_HOME=/transmission-web-control/
+      - USER=admin #optional
+      - PASS=admin #optional
+      #- WHITELIST=iplist #optional
+      #- HOST_WHITELIST=dnsnane list #optional
+    volumes:
+      - ./data/transmission/config:/config
+      - ./data/transmission/downloads:/downloads
+      - ./data/transmission/watch:/watch
+    ports:
+      - 59091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    restart: unless-stopped

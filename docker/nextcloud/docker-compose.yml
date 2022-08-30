@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+  web:
+    image: linuxserver/nextcloud:latest
+    container_name: nextcloud
+    restart: always
+    volumes:
+      - ./config:/config
+      - ./data:/data
+    environment:
+      TZ: Asia/Seoul
+      PUID: 1000
+      PGID: 1000
+    ports:
+      - 30443:443
