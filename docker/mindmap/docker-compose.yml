@@ -1,0 +1,7 @@
+version: '3.3'
+services:
+    mindmaps:
+        ports:
+            - '{원하는포트}:80'
+        restart: unless-stopped
+        image: m4yur/mindmaps
