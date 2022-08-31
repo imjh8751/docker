@@ -1,0 +1,13 @@
+version: "3"
+services:
+  datascience-notebook:
+      image: jupyter/datascience-notebook
+      volumes:
+        - ./docker_repository/jupyter:/home/jovyan/work
+        #- ~/docker/jupyter:/home/jovyan/work
+      ports:
+        - 28888:8888
+      container_name:   jupyter-container
+#      user: "${USER_ID}:${GROUP_ID}"
+#docker exec -it jupyter-container bash
+#jupyter notebook list

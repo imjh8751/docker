@@ -1,0 +1,16 @@
+version: "3.7"
+services:
+  heimdall:
+    image: linuxserver/heimdall
+    container_name: heimdall
+    volumes:
+      #마운트 작업 로컬 <-> 도커 컨테이너
+      - "./heimdall:/config"
+    environment:
+      - PGID=1000
+      - PUID=1000
+    ports:
+      #포트포워딩 할 포트 설정
+      - "48080:80"
+      - "48443:443"
+        #restart: always

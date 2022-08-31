@@ -1,0 +1,34 @@
+version: '3.1'
+
+services:
+
+  wordpress:
+    container_name: wordpress-web
+    image: wordpress
+    restart: always
+    ports:
+      - 28080:80
+      - 28443:443
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress_user
+      WORDPRESS_DB_PASSWORD: Jhyuklim1!
+      WORDPRESS_DB_NAME: wordpress_db
+    volumes:
+      - ./wordpress:/var/www/html
+#    user: "${USER_ID}:${GROUP_ID}"
+
+  db:
+    container_name: wordpress-db
+    image: mysql
+    restart: always
+    ports:
+      - 23306:3306
+    environment:
+      MYSQL_DATABASE: wordpress_db
+      MYSQL_USER: wordpress_user
+      MYSQL_PASSWORD: Jhyuklim1!
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - ./db:/var/lib/mysql
+#    user: "${USER_ID}:${GROUP_ID}"

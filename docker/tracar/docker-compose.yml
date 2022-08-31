@@ -1,0 +1,13 @@
+version: '3.3'
+services:
+    traccar:
+        restart: always
+        container_name: traccar
+        ports:
+            - '80:8082'
+            - '5000-5150:5000-5150'
+            - '5000-5150:5000-5150/udp'
+        volumes:
+            - '/var/docker/traccar/logs:/opt/traccar/logs:rw'
+            - '/var/docker/traccar/traccar.xml:/opt/traccar/conf/traccar.xml:ro'
+        image: 'traccar/traccar:latest'

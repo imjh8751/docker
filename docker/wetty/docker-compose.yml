@@ -1,0 +1,13 @@
+version: '3'
+services:
+    app:
+        image: svenihoney/wetty:latest
+        container_name: wetty
+        network_mode: bridge
+        ports:
+            - "7778:7778"
+        restart: unless-stopped
+        environment:
+            - WETTY_PORT=7778         # 원격으로 접속할 포트번호, 이포트로 역방향프록시 설정 하면됨    
+            - REMOTE_SSH_PORT=7777    #나스 ssh 포트번호
+            - REMOTE_SSH_SERVER=192.168.1.6 #본인 nas ip

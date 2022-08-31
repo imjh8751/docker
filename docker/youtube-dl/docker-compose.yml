@@ -1,0 +1,16 @@
+version: "3.7"
+services:
+  youtubedl:
+    image: modenaf360/youtube-dl-nas
+    container_name: youtubedl
+    volumes:
+      #마운트 작업 로컬 <-> 도커 컨테이너
+      - "./data:/downfolder"
+    environment:
+      - MY_ID=modenaf360
+      - MY_PW=1234
+      - TZ:Asia/Seoul
+    ports:
+      #포트포워딩 할 포트 설정
+      - "28080:8080"
+    #restart: always
