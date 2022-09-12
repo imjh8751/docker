@@ -1,0 +1,14 @@
+version: '3.3'
+services:
+    phpmyadmin:
+        container_name: phpmyadmin
+        environment:
+            - PMA_ARBITRARY=1
+            #- PMA_HOST=dbhost
+        ports:
+            - '8080:80'
+        image: phpmyadmin
+        #links:
+        #    - 'mysql_db_server:db'
+        #volumes:
+        #    - '/some/local/directory/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php'
