@@ -6,3 +6,5 @@ services:
         ports:
             - '11222:22'
         image: ismaleiva90/weblogic12
+
+#weblogic / welcome1
