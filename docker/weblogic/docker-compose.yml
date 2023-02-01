@@ -1,0 +1,8 @@
+version: '3.3'
+services:
+    weblogic12:
+        container_name: weblogic
+        restart: unless-stop
+        ports:
+            - '11222:22'
+        image: ismaleiva90/weblogic12
