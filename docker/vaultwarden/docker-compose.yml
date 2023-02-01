@@ -7,3 +7,5 @@ services:
         ports:
             - '80:80'
         image: 'vaultwarden/server:latest'
+
+#https://github.com/dani-garcia/vaultwarden
