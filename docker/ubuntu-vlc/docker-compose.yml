@@ -1,0 +1,11 @@
+version: '3.3'
+services:
+    ubuntu-desktop-lxde-vnc:
+        container_name: ubuntu-vlc
+        restart: unless-stop
+        environment:
+            - VNC_PASSWORD=1234
+        ports:
+            - '10780:80'
+            - '10722:22'
+        image: dorowu/ubuntu-desktop-lxde-vnc
