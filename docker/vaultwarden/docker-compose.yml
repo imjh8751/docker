@@ -1,0 +1,9 @@
+version: '3.3'
+services:
+    server:
+        container_name: vaultwarden
+        volumes:
+            - '/vw-data/:/data/'
+        ports:
+            - '80:80'
+        image: 'vaultwarden/server:latest'
