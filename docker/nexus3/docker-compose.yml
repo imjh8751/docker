@@ -6,11 +6,11 @@ services:
             - '25000:5000'
             - '28081:8081'
         volumes:
-            - '/var/run/docker.sock:/tmp/docker.sock:ro'
-            - './nexus-data:/nexus-data'
+            - /var/run/docker.sock:/tmp/docker.sock:ro
+            - ./nexus-data:/nexus-data
         restart: unless-stopped
         logging:
             options:
                 max-size: 1g
         container_name: nexus
-        image: klo2k/nexus3
+        image: sonatype/nexus3
