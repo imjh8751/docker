@@ -1,0 +1,9 @@
+version: '3.3'
+services:
+    docker-registry-frontend:
+        container_name: registry-gui
+        restart: unless-stop
+        environment:
+            - ENV_DOCKER_REGISTRY_HOST=192.168.88.128
+            - ENV_DOCKER_REGISTRY_PORT=5000
+        image: 'konradkleine/docker-registry-frontend:v2'
