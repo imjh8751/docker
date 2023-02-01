@@ -1,0 +1,10 @@
+version: '3.3'
+services:
+    ubuntu:
+        container_name: centos
+        privileged: true
+        ports:
+            - '101022:22'
+            - '10280:8080'
+        restart: unless-stop
+        image: ubuntu
