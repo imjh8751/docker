@@ -1,0 +1,41 @@
+version: "2.1"
+services:
+  snipe-it:
+    image: lscr.io/linuxserver/snipe-it:latest
+    container_name: snipe-it
+    environment:
+      - PUID=1026
+      - PGID=100
+      - APP_URL=http://192.168.1.6:7171
+      - NGINX_APP_URL=192.168.1.6:7171
+      - MYSQL_PORT_3306_TCP_ADDR=snipe-mysql
+      - MYSQL_PORT_3306_TCP_PORT=3306
+      - MYSQL_DATABASE=snipeit
+      - MYSQL_USER=snipeit
+      - MYSQL_PASSWORD=snipeit
+      - TZ=Asia/Seoul
+    volumes:
+      - ./snipe:/config
+    ports:
+      - 7171:80
+    depends_on:
+      - snipe-mysql    
+    restart: unless-stopped
+
+    
+  snipe-mysql:
+    image: mysql:5.6
+    container_name: snipe-mysql
+    environment:
+      - PUID=1026
+      - PGID=100
+      - MYSQL_ROOT_PASSWORD=snipeit
+      - TZ=Asia/Seoul
+      - MYSQL_DATABASE=snipeit #optional
+      - MYSQL_USER=snipeit #optional
+      - MYSQL_PASSWORD=snipeit #optional
+    volumes:
+      - ./db:/var/lib/mysql
+    ports:
+      - 3306:3306
+    restart: unless-stopped  
