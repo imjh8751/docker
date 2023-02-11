@@ -7,6 +7,8 @@ services:
         #- ~/docker/jupyter:/home/jovyan/work
       ports:
         - 28888:8888
+      environment:
+        - GRANT_SUDO=yes
       container_name:   jupyter-container
 #      user: "${USER_ID}:${GROUP_ID}"
 #docker exec -it jupyter-container bash
