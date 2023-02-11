@@ -13,3 +13,6 @@ services:
 #      user: "${USER_ID}:${GROUP_ID}"
 #docker exec -it jupyter-container bash
 #jupyter notebook list
+
+# root 계정으로 서비스 올리고 싶을 경
+#docker run --name jupyter-container -e GRANT_SUDO=yes --user root -p 28888:8888 -d -it jupyter/datascience-notebook
