@@ -1,0 +1,9 @@
+version: '3.3'
+services:
+    confluence-server:
+        volumes:
+            - './data/confluence:/var/atlassian/application-data/confluence'
+        container_name: confluence
+        ports:
+            - '8090:8090'
+        image: atlassian/confluence-server
