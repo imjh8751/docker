@@ -1,0 +1,10 @@
+version: '3.3'
+services:
+  swagger-ui:
+    ports:
+        - '9010:8080'
+    volumes:
+        - './swagger-spec:/usr/share/nginx/html/spec'
+          #    restart: unless-stop
+    container_name: swagger-ui
+    image: swaggerapi/swagger-ui
