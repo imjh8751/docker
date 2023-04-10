@@ -13,6 +13,7 @@ services:
             options:
                 max-size: 1g
         container_name: nexus
-        image: sonatype/nexus3
+        image: sonatype/nexus3 #for arm64
+        #image: sonatype/nexus3 #for amd64
 
 #chown -R 200 ./nexus-data
