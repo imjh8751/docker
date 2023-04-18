@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  sonarqube:
+    image: sonarqube
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./sonarqube_data:/opt/sonarqube/data
+      - ./sonarqube_extensions:/opt/sonarqube/extensions
+      - ./sonarqube_logs:/opt/sonarqube/logs
+      - ./sonarqube_temp:/opt/sonarqube/temp
+    environment:
+      - SONARQUBE_JDBC_URL=jdbc:h2:tcp://sonarqube_db:9092/sonar
+      - SONARQUBE_JDBC_USERNAME=sonar
+      - SONARQUBE_JDBC_PASSWORD=sonar
+      - SONARQUBE_WEB_CONTEXT=/sonar
+    depends_on:
+      - sonarqube_db
+
+  sonarqube_db:
+    image: postgres
+    volumes:
+      - ./sonarqube_db_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+      - POSTGRES_DB=sonarqube
