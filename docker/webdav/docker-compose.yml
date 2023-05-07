@@ -1,0 +1,12 @@
+version: '3.3'
+services:
+  webdav:
+    ports:
+        - '80:80'
+    volumes:
+        - '/path/to/webdav:/var/www'
+    environment:
+        - USERNAME=user
+        - PASSWORD=password
+    container_name: webdav
+    image: bytemark/webdav
