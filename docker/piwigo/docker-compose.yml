@@ -1,21 +1,19 @@
-version: '3.8'
+version: '2.1'
 services:
   piwigo:
-    image: piwigo
+    image: lscr.io/linuxserver/piwigo:latest
     restart: always
     ports:
       - "8080:80"
     volumes:
-      - ./piwigo:/var/www/html/galleries
+      - ./appdata/config:/config
+      - ./appdata/gallery:/gallery
     environment:
-      - PUID=<user_id>
-      - PGID=<group_id>
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Seoul
     depends_on:
       - db
-    links:
-      - db:mysql
-    networks:
-      - adminer_default
   db:
     image: mysql
     restart: always
@@ -23,12 +21,6 @@ services:
       - MYSQL_DATABASE=piwigo
       - MYSQL_USER=piwigo
       - MYSQL_PASSWORD=piwigo
-      - MYSQL_ROOT_PASSWORD=mysql
+      - MYSQL_ROOT_PASSWORD=piwigo
     volumes:
       - ./db:/var/lib/mysql
-    networks:
-      - adminer_default
-
-networks:
-  adminer_default:
-    external: true
