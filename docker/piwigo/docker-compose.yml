@@ -1,0 +1,34 @@
+version: '3.8'
+services:
+  piwigo:
+    image: piwigo
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./piwigo:/var/www/html/galleries
+    environment:
+      - PUID=<user_id>
+      - PGID=<group_id>
+    depends_on:
+      - db
+    links:
+      - db:mysql
+    networks:
+      - adminer_default
+  db:
+    image: mysql
+    restart: always
+    environment:
+      - MYSQL_DATABASE=piwigo
+      - MYSQL_USER=piwigo
+      - MYSQL_PASSWORD=piwigo
+      - MYSQL_ROOT_PASSWORD=mysql
+    volumes:
+      - ./db:/var/lib/mysql
+    networks:
+      - adminer_default
+
+networks:
+  adminer_default:
+    external: true
