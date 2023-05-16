@@ -6,6 +6,7 @@ services:
     restart: unless-stopped
     environment:
       - EDIT_MODE_PASSWORD=1q2w3e4r5t^Y
+      - DISABLE_EDIT_MODE=TRUE
     volumes:
       - ./homarr/configs:/app/data/configs
       - ./homarr/icons:/app/public/icons
