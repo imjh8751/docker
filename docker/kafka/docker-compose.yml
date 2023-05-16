@@ -29,3 +29,5 @@ services:
     volumes:
       - ./data:/var/lib/zookeeper/data
       - ./datalog:/var/lib/zookeeper/datalog
+
+# chown -R 1000:1000 data datalog
