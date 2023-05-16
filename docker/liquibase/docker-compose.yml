@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  liquibase:
+    image: liquibase/liquibase:latest
+    container_name: liquibase
+    volumes:
+      - ./changelog:/liquibase/changelog
+      - ./liquibase.properties:/liquibase/liquibase.properties
+    environment:
+      - LIQUIBASE_CHANGELOG=/liquibase/changelog/changelog.xml
+      - LIQUIBASE_URL=jdbc:postgresql://postgres:5432/mydatabase
+      - LIQUIBASE_USERNAME=postgres
+      - LIQUIBASE_PASSWORD=your_password
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=your_password
+      - POSTGRES_DB=mydatabase
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
