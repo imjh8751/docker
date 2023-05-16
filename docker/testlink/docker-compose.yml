@@ -1,0 +1,26 @@
+version: '3'
+services:
+  testlink:
+    image: testlink:latest
+    container_name: testlink
+    restart: always
+    ports:
+      - '80:80'
+    environment:
+      - MYSQL_ROOT_PASSWORD=myrootpassword
+      - MYSQL_DATABASE=testlink
+      - MYSQL_USER=testlinkuser
+      - MYSQL_PASSWORD=testlinkpassword
+    volumes:
+      - ./testlink_data:/var/www/html
+  db:
+    image: mysql:5.7
+    container_name: testlink_db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=myrootpassword
+      - MYSQL_DATABASE=testlink
+      - MYSQL_USER=testlinkuser
+      - MYSQL_PASSWORD=testlinkpassword
+    volumes:
+      - ./mysql_data:/var/lib/mysql
