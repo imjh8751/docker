@@ -1,0 +1,26 @@
+version: '3'
+services:
+  bugzilla:
+    image: bugzilla:latest
+    container_name: bugzilla
+    restart: always
+    ports:
+      - '80:80'
+    environment:
+      - MYSQL_ROOT_PASSWORD=myrootpassword
+      - MYSQL_DATABASE=bugzilla
+      - MYSQL_USER=bugzillauser
+      - MYSQL_PASSWORD=bugzillapassword
+    volumes:
+      - ./bugzilla_data:/var/www/html
+  db:
+    image: mysql:5.7
+    container_name: bugzilla_db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=myrootpassword
+      - MYSQL_DATABASE=bugzilla
+      - MYSQL_USER=bugzillauser
+      - MYSQL_PASSWORD=bugzillapassword
+    volumes:
+      - ./mysql_data:/var/lib/mysql
