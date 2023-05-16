@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+  flyway:
+    image: flyway/flyway:latest
+    container_name: flyway
+    volumes:
+      - ./sql:/flyway/sql
+    environment:
+      - FLYWAY_URL=jdbc:postgresql://postgres:5432/mydatabase
+      - FLYWAY_USER=postgres
+      - FLYWAY_PASSWORD=your_password
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=your_password
+      - POSTGRES_DB=mydatabase
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
