@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  superset:
+    image: amancevice/superset
+    container_name: superset
+    restart: always
+    environment:
+      - SUPERSET_LOAD_EXAMPLES=yes
+      - SUPERSET_USERNAME=admin
+      - SUPERSET_PASSWORD=admin
+      - SUPERSET_FIRST_NAME=Admin
+      - SUPERSET_LAST_NAME=User
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./superset:/home/superset
+    networks:
+      - superset_network
+
+networks:
+  superset_network:
+    driver: bridge
