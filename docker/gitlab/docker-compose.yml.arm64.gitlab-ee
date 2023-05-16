@@ -1,0 +1,17 @@
+version: '3'
+services:
+  gitlab:
+    image: registry.gitlab.com/gitlab-org/build/cng/gitlab-ee-ce:latest-arm64
+    container_name: gitlab
+    restart: always
+    hostname: gitlab.example.com
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://gitlab.example.com'
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./gitlab/config:/etc/gitlab
+      - ./gitlab/logs:/var/log/gitlab
+      - ./gitlab/data:/var/opt/gitlab
