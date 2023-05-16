@@ -1,0 +1,14 @@
+version: '3.3'
+services:
+  webdav:
+    restart: always
+    container_name: webdav
+    ports:
+        - '7000:8080'
+    environment:
+        - WEBDAV_USERNAME=myuser
+        - WEBDAV_PASSWORD=mypassword
+        - UID=$UID
+    volumes:
+        - '$PWD:/media'
+    image: ionelmc/webdav
