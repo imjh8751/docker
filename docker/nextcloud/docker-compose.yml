@@ -1,15 +1,28 @@
-version: '3.7'
+version: '3'
 services:
-  web:
-    image: linuxserver/nextcloud:latest
+  nextcloud:
+    image: nextcloud:latest
     container_name: nextcloud
     restart: always
-    volumes:
-      - ./config:/config
-      - ./data:/data
-    environment:
-      TZ: Asia/Seoul
-      PUID: 1000
-      PGID: 1000
     ports:
-      - 30443:443
+      - '8080:80'
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextclouduser
+      - MYSQL_PASSWORD=nextcloudpassword
+    volumes:
+      - ./nextcloud_data:/var/www/html
+    depends_on:
+      - db
+  db:
+    image: mysql:5.7
+    container_name: nextcloud_db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=myrootpassword
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextclouduser
+      - MYSQL_PASSWORD=nextcloudpassword
+    volumes:
+      - ./mysql_data:/var/lib/mysql
