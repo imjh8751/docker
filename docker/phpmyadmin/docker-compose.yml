@@ -1,24 +1,15 @@
-version: '2'
+version: '3'
 
 services:
   phpmyadmin:
     container_name: phpmyadmin
-    image: phpmyadmin/phpmyadmin
-    restart: unless-stopped
-    networks:
-     - UDN_Database
+    image: phpmyadmin
+    restart: always
     ports:
-     - 10240:80
+     - 8180:80
     volumes:
      - ./phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config/config.user.inc.php
     environment:
-     - PMA_HOSTS=mysql
-     - PMA_PORTS=33061
-
-networks:
-  UDN_Database:
-    external:
-      name: UDN_Database
-  UDN_Service:
-    external:
-      name: UDN_Service
+     - PMA_HOSTS=127.0.0.1
+     - PMA_PORTS=3306
+     - MYSQL_ROOT_PASSWORD=mysql
