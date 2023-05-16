@@ -1,0 +1,58 @@
+version: '3'
+services:
+  server:
+    image: redash/redash:latest
+    container_name: redash_server
+    restart: always
+    env_file: .env
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - '5000:5000'
+  scheduler:
+    image: redash/redash:latest
+    container_name: redash_scheduler
+    restart: always
+    env_file: .env
+    command: scheduler
+    depends_on:
+      - postgres
+      - redis
+  worker:
+    image: redash/redash:latest
+    container_name: redash_worker
+    restart: always
+    env_file: .env
+    command: worker
+    depends_on:
+      - postgres
+      - redis
+  postgres:
+    image: postgres:13-alpine
+    container_name: redash_postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=redash
+      - POSTGRES_PASSWORD=redashpassword
+      - POSTGRES_DB=redash
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+  redis:
+    image: redis:6-alpine
+    container_name: redash_redis
+    restart: always
+    volumes:
+      - ./redis-data:/data
+  nginx:
+    image: nginx:1.21
+    container_name: redash_nginx
+    restart: always
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx-config:/etc/nginx/conf.d
+      - ./nginx-ssl:/etc/nginx/ssl
+      - ./client/dist:/app/client/dist
+    depends_on:
+      - server
