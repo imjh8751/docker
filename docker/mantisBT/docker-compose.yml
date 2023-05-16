@@ -1,0 +1,26 @@
+version: '3'
+services:
+  mantisbt:
+    image: mantisbt/mantisbt:latest
+    container_name: mantisbt
+    restart: always
+    ports:
+      - '80:80'
+    environment:
+      - MYSQL_ROOT_PASSWORD=myrootpassword
+      - MYSQL_DATABASE=mantisbt
+      - MYSQL_USER=mantisbtuser
+      - MYSQL_PASSWORD=mantisbtpassword
+    volumes:
+      - ./mantisbt_data:/var/www/html
+  db:
+    image: mysql:5.7
+    container_name: mantisbt_db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=myrootpassword
+      - MYSQL_DATABASE=mantisbt
+      - MYSQL_USER=mantisbtuser
+      - MYSQL_PASSWORD=mantisbtpassword
+    volumes:
+      - ./mysql_data:/var/lib/mysql
