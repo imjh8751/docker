@@ -2,11 +2,8 @@ version: '3.3'
 services:
   webdav:
     ports:
-        - '80:80'
+        - '8880:80'
     volumes:
-        - './webdav:/var/www'
-    environment:
-        - USERNAME=user
-        - PASSWORD=password
+        - './webdav:/webdav'
     container_name: webdav
     image: photoprism/webdav
