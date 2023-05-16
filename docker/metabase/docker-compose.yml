@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+  metabase:
+    image: metabase/metabase
+    container_name: metabase
+    restart: always
+    environment:
+      - MB_DB_TYPE=mysql
+      - MB_DB_DBNAME=metabase
+      - MB_DB_PORT=3306
+      - MB_DB_USER=metabase
+      - MB_DB_PASS=metabase
+      - MB_DB_HOST=192.168.0.1
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./metabase-data:/metabase-data
+    networks:
+      - metabase_network
+
+networks:
+  metabase_network:
+    driver: bridge
