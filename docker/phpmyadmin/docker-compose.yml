@@ -7,8 +7,6 @@ services:
     restart: always
     ports:
      - 8180:80
-    volumes:
-     - ./phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config/config.user.inc.php
     environment:
      - PMA_HOSTS=127.0.0.1
      - PMA_PORTS=3306
