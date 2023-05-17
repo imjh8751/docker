@@ -13,7 +13,7 @@ services:
       database__connection__host: 127.0.0.1
       database__connection__port: 3306
       database__connection__user: root
-      database__connection__password: example
+      database__connection__password: mysql
       database__connection__database: ghost
       # this url value is just an example, and is likely wrong for your environment!
       url: http://127.0.0.1:8080
