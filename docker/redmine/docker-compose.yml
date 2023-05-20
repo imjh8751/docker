@@ -13,7 +13,7 @@ services:
       - REDMINE_DB_PORT=3306
       - REDMINE_DB_PASSWORD=root
       - REDMINE_DB_PASSWORD=mysql
-      - REDMINE_DB_DATABASE=redmin
+      - REDMINE_DB_DATABASE=redmine
     depends_on:
       - db
   db:
