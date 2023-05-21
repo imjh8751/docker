@@ -1,6 +1,7 @@
 version: '3.3'
 services:
     gitlab-ce-arm64v8:
+        hostname: 'gitlab.itapi.org'
         ports:
             - '18080:80'
             - '18822:22'
