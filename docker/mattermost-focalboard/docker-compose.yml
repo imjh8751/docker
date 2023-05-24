@@ -1,0 +1,8 @@
+services:
+  focalboard:
+    image: mattermost/focalboard
+    container_name: "focalboard"
+    ports:
+      - "8087:8000"
+    volumes:
+      - /data/focalboard/data:/var/lib/focalboard
