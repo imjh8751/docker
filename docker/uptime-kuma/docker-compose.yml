@@ -8,3 +8,6 @@ services:
         - './uptime-kuma:/app/data'
     container_name: uptime-kuma
     image: 'louislam/uptime-kuma:1'
+
+# for reverse-proxy setting
+# https://github.com/louislam/uptime-kuma/wiki/Reverse-Proxy
