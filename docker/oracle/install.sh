@@ -1,10 +1,6 @@
 git clone https://github.com/oracle/docker-images.git
 
-cd docker-images
-cd OracleDatabase
-cd SingleInstance
-cd dockerfiles
-cd 19.3.0
+cd docker-images/OracleDatabase/SingleInstance/dockerfiles/19.3.0
 
 # https://www.oracle.com/database/technologies/oracle-database-software-downloads.html
 # wget https://download.oracle.com/otn/linux/oracle19c/190000/LINUX.X64_193000_db_home.zip
