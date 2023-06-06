@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  ora19c:
+    container_name: ora19c
+      env_file:
+        - ora19env
+      image: oracle/database:19.3.0-ee
+      ports:
+        - 1521:1521
+        - 5500:5500
+      volumes:
+         - ./oradata/ora19_data:/opt/oracle/oradata
+      privileged: true
