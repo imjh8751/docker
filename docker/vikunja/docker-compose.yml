@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  api:
+    image: vikunja/api
+    environment:
+      VIKUNJA_DATABASE_HOST: 192.168.0.163:3306
+      VIKUNJA_DATABASE_PASSWORD: mysql
+      VIKUNJA_DATABASE_TYPE: mysql
+      VIKUNJA_DATABASE_USER: root
+      VIKUNJA_DATABASE_DATABASE: vikunja
+      VIKUNJA_SERVICE_JWTSECRET: ce23d1aezoosah2bao3ieZohkae5aicah
+      VIKUNJA_SERVICE_FRONTENDURL: http://vikunja.itapi.org/
+    ports:
+      - 3456:3456
+    volumes:
+      - ./files:/app/vikunja/files
+    restart: unless-stopped
+  frontend:
+    image: vikunja/frontend
+    ports:
+      - 18380:80
+    environment:
+      VIKUNJA_API_URL: http://vikunja.itapi.org/api/v1
+    restart: unless-stopped
