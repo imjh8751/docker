@@ -1,0 +1,9 @@
+version: '3.9'
+services:
+  hoppscotch:
+    image: 'hoppscotch/hoppscotch:latest'
+    ports:
+        - '3000:3000'
+    container_name: hoppscotch
+
+# https://hub.docker.com/r/hoppscotch/hoppscotch
