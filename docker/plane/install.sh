@@ -1,5 +1,6 @@
 #Docker Compose Setup
 #Clone the repository
+# https://docs.plane.so/self-hosting
 git clone https://github.com/makeplane/plane
 cd plane
 chmod +x setup.sh
