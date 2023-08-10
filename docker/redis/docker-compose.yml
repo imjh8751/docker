@@ -1,10 +1,23 @@
-version: '3'
+version: "3.0"
 services:
   redis:
-    image: redis:latest
-    container_name: redis
-    ports:
-      - 6379:6379
+    image: redis:6.2-alpine
     volumes:
-      - ./data:/data
+      - ./redis:/log
+    container_name: redis
     restart: always
+    ports:
+    - 6379:6379
+    command: redis-server  --save "" --appendonly no --databases 1 --maxmemory 4G --maxmemory-policy allkeys-lru
+
+  redis-stat:
+    image: insready/redis-stat:latest
+    container_name: redis-stat
+    restart: always
+    ports:
+    - 8080:63790
+    links:
+      - redis:redis
+    command: --server redis
+    depends_on:
+      - redis
