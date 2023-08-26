@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+    websphere-traditional:
+        image: 'websphere-traditional:latest'
+        ports:
+            - '9443:9443'
+            - '9043:9043'
+        environment:
+            - SERVER_NAME=server1
+            - NODE_NAME=DefaultNode01
+            - PROFILE_NAME=AppSrv01
+            - UPDATE_HOSTNAME=true
+        hostname: devwas
+        container_name: websphere
