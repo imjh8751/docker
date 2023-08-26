@@ -1,7 +1,7 @@
 version: '3.9'
 services:
     websphere-traditional:
-        image: 'websphere-traditional:latest'
+        image: 'ibmcom/websphere-traditional:latest'
         ports:
             - '9443:9443'
             - '9043:9043'
@@ -10,5 +10,7 @@ services:
             - NODE_NAME=DefaultNode01
             - PROFILE_NAME=AppSrv01
             - UPDATE_HOSTNAME=true
+        volumes:
+            - './PASSWORD:/tmp/PASSWORD'
         hostname: devwas
         container_name: websphere
