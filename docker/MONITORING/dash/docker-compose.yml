@@ -8,7 +8,6 @@ services:
     ports:
       - '80:3001'
     volumes:
-      - /:/mnt/host:ro
-      services:
+      - '/:/mnt/host:ro'
     environment:
       DASHDOT_ENABLE_CPU_TEMPS: 'true'
