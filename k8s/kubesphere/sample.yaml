@@ -1,0 +1,41 @@
+apiVersion: kubekey.kubesphere.io/v1alpha2
+kind: Cluster
+metadata:
+  name: sample
+spec:
+  hosts: 
+  ##You should complete the ssh information of the hosts
+  - {name: m-k8s, address: 192.168.0.20, internalAddress: 192.168.0.20, privateKeyPath: "~/.ssh/id_rsa"}
+  - {name: n1-k8s, address: 192.168.0.21, internalAddress: 192.168.0.21, privateKeyPath: "~/.ssh/id_rsa"}
+  - {name: n2-k8s, address: 192.168.0.22, internalAddress: 192.168.0.22, privateKeyPath: "~/.ssh/id_rsa"}
+  - {name: n3-k8s, address: 192.168.0.23, internalAddress: 192.168.0.23, privateKeyPath: "~/.ssh/id_rsa"}
+  roleGroups:
+    etcd:
+    - m-k8s
+    master:
+    - m-k8s
+    worker:
+    - n1-k8s
+    - n2-k8s
+    - n3-k8s
+  controlPlaneEndpoint:
+    ##Internal loadbalancer for apiservers
+    #internalLoadbalancer: haproxy
+
+    ##If the external loadbalancer was used, 'address' should be set to loadbalancer's ip.
+    domain: lb.kubesphere.local
+    address: ""
+    port: 6443
+  kubernetes:
+    version: v1.23.10
+    clusterName: cluster.local
+    proxyMode: ipvs
+    masqueradeAll: false
+    maxPods: 110
+    nodeCidrMaskSize: 24
+  network:
+    plugin: calico
+    kubePodsCIDR: 10.233.64.0/18
+    kubeServiceCIDR: 10.233.0.0/18
+  registry:
+    privateRegistry: ""
