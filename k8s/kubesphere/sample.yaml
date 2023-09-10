@@ -12,7 +12,7 @@ spec:
   roleGroups:
     etcd:
     - m-k8s
-    master:
+    control-plane:
     - m-k8s
     worker:
     - n1-k8s
