@@ -33,3 +33,4 @@ services:
             - MARIADB_RANDOM_ROOT_PASSWORD=true 
         volumes: 
             - ./db:/var/lib/mysql
+#admin@example.com / password
