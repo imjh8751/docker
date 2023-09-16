@@ -1,0 +1,18 @@
+  influxdb:
+    image: bitnami/influxdb:latest
+    container_name: influxdb
+    ports:
+      - 8086:8086
+      - 8085:8088
+    environment:
+      - INFLUXDB_ADMIN_USER_PASSWORD=admin
+      - INFLUXDB_ADMIN_USER_TOKEN=admintoken123
+      - INFLUXDB_USER=admin
+      - INFLUXDB_USER_PASSWORD=admin
+      - INFLUXDB_HTTP_AUTH_ENABLED=false
+      - INFLUXDB_DB=influx_db
+    volumes:
+      - influxdb_data:/bitnami/influxdb
+ 
+ volumes:
+ 	 influxdb_data:
