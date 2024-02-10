@@ -1,0 +1,69 @@
+# compose 파일 버전
+version: "3"
+services: 
+  # 서비스명 
+  # Redis Cluster 설정
+  redis-cluster:
+    # 사용할 이미지
+    image: redis:latest
+    # 컨테이너명 설정
+    container_name: redis-cluster
+    # 접근 포트 설정 (컨테이너 외부:컨테이너 내부)
+    ports:
+      - "6001:6001"
+      - "6002:6002"
+      - "6003:6003"
+    # 환경 변수 설정
+    volumes:
+      - ./config/redis/redis-cluster.conf:/usr/local/etc/redis.conf
+    # 명령어 설정  
+    command: redis-server /usr/local/etc/redis.conf
+  
+  # Redis Node1 설정  
+  redis-node1:
+    network_mode: "service:redis-cluster"
+    image: redis:latest
+    container_name: redis-node1
+    volumes:
+      - ./redis-node1.conf:/usr/local/etc/redis.conf
+    command: redis-server /usr/local/etc/redis.conf
+  
+  # Redis Node1 설정    
+  redis-node2:
+    network_mode: "service:redis-cluster"
+    image: redis:latest
+    container_name: redis-node2
+    volumes:
+      - ./redis-node2.conf:/usr/local/etc/redis.conf
+    command: redis-server /usr/local/etc/redis.conf
+
+  # Redis Node1 설정  
+  redis-node3:
+    network_mode: "service:redis-cluster"
+    image: redis:latest
+    container_name: redis-node3
+    volumes:
+      - ./redis-node3.conf:/usr/local/etc/redis.conf
+    command: redis-server /usr/local/etc/redis.conf
+
+  # Redis Cluster Entry 설정  
+  redis-cluster-entry:
+    network_mode: "service:redis-cluster"
+    image: redis:latest
+    container_name: redis-cluster-entry
+    command: redis-cli --cluster create 127.0.0.1:6001 127.0.0.1:6002 127.0.0.1:6003 --cluster-yes
+    depends_on:
+      - redis-cluster
+      - redis-node1
+      - redis-node2
+      - redis-node3
+
+  # P3X Redis UI 설정
+  registry:
+    image: patrikx3/p3x-redis-ui:latest
+    restart: always
+    container_name: p3x-redis-ui
+    ports:
+      - "7843:7843"
+    volumes:
+      - ./settings:/settings
