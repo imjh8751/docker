@@ -67,3 +67,17 @@ services:
       - "7843:7843"
     volumes:
       - ./settings:/settings
+
+  redis-stat:
+    image: insready/redis-stat:latest
+    container_name: redis-stat
+    restart: always
+    ports:
+      - 8080:63790
+    links:
+      - redis-cluster:redis-cluster
+    command: --server redis-cluster:6001 redis-cluster:6002 redis-cluster:6003
+    depends_on:
+      - redis-node1
+      - redis-node2
+      - redis-node3
