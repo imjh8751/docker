@@ -111,7 +111,19 @@ services:
     network_mode: "service:redis-cluster"
     image: redis:latest
     container_name: redis-cluster-entry
-    command: redis-cli --cluster create 127.0.0.1:6001 127.0.0.1:6002 127.0.0.1:6003 127.0.0.1:6004 127.0.0.1:6005 127.0.0.1:6006 127.0.0.1:6007 127.0.0.1:6008 127.0.0.1:6009 --cluster-yes
+    #command: redis-cli --cluster create 127.0.0.1:6001 127.0.0.1:6002 127.0.0.1:6003 127.0.0.1:6004 127.0.0.1:6005 127.0.0.1:6006 127.0.0.1:6007 127.0.0.1:6008 127.0.0.1:6009 --cluster-yes
+    #command: redis-cli --cluster create 127.0.0.1:6001 127.0.0.1:6002 127.0.0.1:6003 --cluster-yes
+    command: 
+      - /bin/sh
+      - -c
+      - |
+        redis-cli -a master --cluster create 127.0.0.1:6001 127.0.0.1:6002 127.0.0.1:6003 --cluster-yes
+        redis-cli -a master --cluster add-node 127.0.0.1:6004 127.0.0.1:6001 --cluster-slave
+        redis-cli -a master --cluster add-node 127.0.0.1:6007 127.0.0.1:6001 --cluster-slave
+        redis-cli -a master --cluster add-node 127.0.0.1:6005 127.0.0.1:6002 --cluster-slave
+        redis-cli -a master --cluster add-node 127.0.0.1:6008 127.0.0.1:6002 --cluster-slave
+        redis-cli -a master --cluster add-node 127.0.0.1:6006 127.0.0.1:6003 --cluster-slave
+        redis-cli -a master --cluster add-node 127.0.0.1:6009 127.0.0.1:6003 --cluster-slave
     depends_on:
       - redis-cluster
       - redis-node1
@@ -125,14 +137,14 @@ services:
       - redis-node9
 
   # P3X Redis UI 설정
-  registry:
-    image: patrikx3/p3x-redis-ui:latest
-    restart: always
-    container_name: p3x-redis-ui
-    ports:
-      - "7843:7843"
-    volumes:
-      - ./settings:/settings
+  #registry:
+  #  image: patrikx3/p3x-redis-ui:latest
+  #  restart: always
+  #  container_name: p3x-redis-ui
+  #  ports:
+  #    - "7843:7843"
+  #  volumes:
+  #    - ./settings:/settings
 
   redis-stat:
     image: insready/redis-stat:latest
