@@ -142,14 +142,6 @@ services:
       - 8080:63790
     links:
       - redis-cluster:redis-cluster
-    command: --server redis-cluster:6001 redis-cluster:6002 redis-cluster:6003 redis-cluster:6004 redis-cluster:6005 redis-cluster:6006 redis-cluster:6007 redis-cluster:6008 redis-cluster:6009
+    command: -a master --server redis-cluster:6001 redis-cluster:6002 redis-cluster:6003 redis-cluster:6004 redis-cluster:6005 redis-cluster:6006 redis-cluster:6007 redis-cluster:6008 redis-cluster:6009
     depends_on:
-      - redis-node1
-      - redis-node2
-      - redis-node3
-      - redis-node4
-      - redis-node5
-      - redis-node6
-      - redis-node7
-      - redis-node8
-      - redis-node9
+      - redis-cluster
