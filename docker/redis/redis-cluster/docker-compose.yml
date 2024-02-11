@@ -16,6 +16,9 @@ services:
       - "6004:6004"
       - "6005:6005"
       - "6006:6006"
+      - "6007:6007"
+      - "6008:6008"
+      - "6009:6009"
     # 환경 변수 설정
     volumes:
       - ./config/redis/redis-cluster.conf:/usr/local/etc/redis.conf
@@ -75,13 +78,40 @@ services:
     volumes:
       - ./redis-node6.conf:/usr/local/etc/redis.conf
     command: redis-server /usr/local/etc/redis.conf
+  
+  # Redis Node7 설정  
+  redis-node7:
+    network_mode: "service:redis-cluster"
+    image: redis:latest
+    container_name: redis-node7
+    volumes:
+      - ./redis-node7.conf:/usr/local/etc/redis.conf
+    command: redis-server /usr/local/etc/redis.conf
+  
+  # Redis Node8 설정    
+  redis-node8:
+    network_mode: "service:redis-cluster"
+    image: redis:latest
+    container_name: redis-node8
+    volumes:
+      - ./redis-node8.conf:/usr/local/etc/redis.conf
+    command: redis-server /usr/local/etc/redis.conf
+
+  # Redis Node9 설정  
+  redis-node9:
+    network_mode: "service:redis-cluster"
+    image: redis:latest
+    container_name: redis-node9
+    volumes:
+      - ./redis-node9.conf:/usr/local/etc/redis.conf
+    command: redis-server /usr/local/etc/redis.conf
 
   # Redis Cluster Entry 설정  
   redis-cluster-entry:
     network_mode: "service:redis-cluster"
     image: redis:latest
     container_name: redis-cluster-entry
-    command: redis-cli --cluster create 127.0.0.1:6001 127.0.0.1:6002 127.0.0.1:6003 127.0.0.1:6004 127.0.0.1:6005 127.0.0.1:6006 --cluster-yes
+    command: redis-cli --cluster create 127.0.0.1:6001 127.0.0.1:6002 127.0.0.1:6003 127.0.0.1:6004 127.0.0.1:6005 127.0.0.1:6006 127.0.0.1:6007 127.0.0.1:6008 127.0.0.1:6009 --cluster-yes
     depends_on:
       - redis-cluster
       - redis-node1
@@ -90,6 +120,9 @@ services:
       - redis-node4
       - redis-node5
       - redis-node6
+      - redis-node7
+      - redis-node8
+      - redis-node9
 
   # P3X Redis UI 설정
   registry:
@@ -109,7 +142,7 @@ services:
       - 8080:63790
     links:
       - redis-cluster:redis-cluster
-    command: --server redis-cluster:6001 redis-cluster:6002 redis-cluster:6003 redis-cluster:6004 redis-cluster:6005 redis-cluster:6006
+    command: --server redis-cluster:6001 redis-cluster:6002 redis-cluster:6003 redis-cluster:6004 redis-cluster:6005 redis-cluster:6006 redis-cluster:6007 redis-cluster:6008 redis-cluster:6009
     depends_on:
       - redis-node1
       - redis-node2
@@ -117,3 +150,6 @@ services:
       - redis-node4
       - redis-node5
       - redis-node6
+      - redis-node7
+      - redis-node8
+      - redis-node9
