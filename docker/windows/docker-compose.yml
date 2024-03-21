@@ -14,13 +14,17 @@ services:
     stop_grace_period: 2m
     restart: on-failure
     environment:
+      #VERSION: "win11"
       VERSION: "win10"
+      #VERSION: "2022"
       RAM_SIZE: "12G"
       CPU_CORES: "6"
       DISK_SIZE: "150G"
       #VERSION: "https://example.com/win.iso"
     volumes:
-      - ./win:/storage
+      #- ./win11:/storage
+      - ./win10:/storage
+      #- ./server2022:/storage
     #networks:
     #  vlan:
     #    ipv
