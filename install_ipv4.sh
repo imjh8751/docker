@@ -1,19 +1,23 @@
-# vim /etc/netplan/01-network-manager-all.yaml
+#!/bin/bash
 
-=======================================================
+# netplan 설정 파일을 업데이트합니다.
+cat <<EOF > /etc/netplan/01-network-manager-all.yaml
 network:
   version: 2
   renderer: networkd
   ethernets:
-    ens18:  # 여기서 ens33은 실제 사용 중인 인터페이스 이름입니다. 본인 시스템에 맞게 변경하세요.
-      addresses: # 변경 후 IP 주소:
+    ens18:  # 인터페이스 이름은 시스템에 맞게 변경하세요.
+      addresses:
         - 192.168.0.90/24
       routes:
-        - to: 0.0.0.0/0  # 모든 트래픽에 대한 기본 경로
-          via: 192.168.0.1  # 게이트웨이 IP 주소
+        - to: 0.0.0.0/0
+          via: 192.168.0.1
       nameservers:
         addresses: [192.168.0.1, 8.8.8.8, 8.8.4.4]
-=======================================================
+EOF
 
-# sudo netplan apply
-# ip address show
+# 변경사항을 적용합니다.
+sudo netplan apply
+
+# IP 주소를 확인합니다.
+ip address show
