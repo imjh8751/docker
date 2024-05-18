@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# backup
+sudo cp -p /etc/netplan/01-network-manager-all.yaml /etc/netplan/01-network-manager-all.yaml.org
+
 # netplan 설정 파일을 업데이트합니다.
 cat <<EOF > /etc/netplan/01-network-manager-all.yaml
 network:
@@ -15,6 +18,9 @@ network:
       nameservers:
         addresses: [192.168.0.1, 8.8.8.8, 8.8.4.4]
 EOF
+
+# 권한변경
+sudo chmod 600 /etc/netplan/01-network-manager-all.yaml
 
 # 변경사항을 적용합니다.
 sudo netplan apply
