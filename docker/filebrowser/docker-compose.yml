@@ -7,6 +7,6 @@ services:
     volumes:
       - ./config/filebrowser.json:/.filebrowser.json
       - ./config/database.db:/database.db
-      - ~/:/srv
+      - /:/srv
     ports:
       - 28082:80
