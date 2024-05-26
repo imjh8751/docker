@@ -19,10 +19,14 @@ services:
       - 3306:3306
     environment: 
       - MYSQL_DATABASE=mysql
-      - MYSQL_USER=mysql
-      - MYSQL_PASSWORD=mysql
-      - MYSQL_ROOT_PASSWORD=myssql
+      #- MYSQL_USER=mysql
+      #- MYSQL_PASSWORD=mysql
+      - MYSQL_ROOT_PASSWORD=mysql
       - TZ=Asia/Seoul
+    command: 
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    #user: "${USER_ID}:${GROUP_ID}"
   postgres:
     image: postgres:latest
     container_name: postgres
