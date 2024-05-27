@@ -1,0 +1,10 @@
+version: '3.9'
+services:
+  omnidb:
+    image: 'omnidbteam/omnidb:latest'
+    container_name: omnidb
+    restart: always
+    ports:
+      - '8000:8000'
+    volumes:
+      - './data:/home/omnidb/.omnidb/omnidb-server'
