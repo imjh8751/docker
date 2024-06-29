@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 도커 실행 권한 부여
-chmod 750 /root/docker/docker/*.sh
+chmod 750 /root/docker/*.sh
 
 # /etc/systemd/system/mount-docker.service 파일 생성
 cat <<EOF > /etc/systemd/system/mount-docker.service
@@ -11,7 +11,7 @@ After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/root/docker/docker/docker-mount.sh
+ExecStart=/root/docker/mount-docker.sh
 RemainAfterExit=true
 
 [Install]
@@ -24,4 +24,4 @@ sudo systemctl enable mount-docker.service
 sudo systemctl start mount-docker.service
 
 # 도커 실행
-bash /root/docker/docker/mount-docker.sh
+bash /root/docker/mount-docker.sh
