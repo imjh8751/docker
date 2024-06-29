@@ -19,9 +19,9 @@ WantedBy=multi-user.target
 EOF
 
 # systemctl daemon-reload, enable, start 추가 작성
-sudo systemctl daemon-reload
-sudo systemctl enable mount-docker.service
-sudo systemctl start mount-docker.service
+systemctl daemon-reload
+systemctl enable mount-docker.service
+systemctl start mount-docker.service
 
 # 도커 실행
 bash /root/docker/mount-docker.sh
