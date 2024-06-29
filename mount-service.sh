@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 도커 실행 권한 부여
-chmod 750 /root/docker/docker/mount-docker.sh
+chmod 750 /root/docker/docker/*.sh
 
 # /etc/systemd/system/mount-docker.service 파일 생성
 cat <<EOF > /etc/systemd/system/mount-docker.service
