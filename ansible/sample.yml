@@ -4,6 +4,6 @@
   tasks:
   - name: Check OS Version
     register: result
-    shell: cat /etc/redhat-release
+    shell: cat /etc/keepalived/keepalived.conf
   - debug:
       msg: "{{ result.stdout }}"
