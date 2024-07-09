@@ -4,9 +4,6 @@
   tasks:
   - name: Check OS Version
     register: result
-    shell: cat /etc/keepalived/keepalived.conf
-  - name: update APT
-    register: result
-    shell: apt update
+    shell: pwd && uname -a
   - debug:
       msg: "{{ result.stdout }}"
