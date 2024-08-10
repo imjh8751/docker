@@ -8,6 +8,7 @@ services:
     ports:
      - 8180:80
     environment:
-     - PMA_HOSTS=127.0.0.1
-     - PMA_PORTS=3306
-     - MYSQL_ROOT_PASSWORD=mysql
+     - PMA_ARBITRARY=1
+     #- PMA_HOSTS=127.0.0.1
+     #- PMA_PORTS=3306
+     #- MYSQL_ROOT_PASSWORD=mysql
