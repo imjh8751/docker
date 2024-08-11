@@ -1,0 +1,11 @@
+version: '3.9'
+services:
+  mssql:
+    image: 'mcr.microsoft.com/mssql/server:2022-latest'
+    hostname: mssql_2022
+    container_name: mssql_2022
+    ports:
+      - '1433:1433'
+    environment:
+      - SA_PASSWORD=admin@1q2w3e4r5t^Y
+      - ACCEPT_EULA=Y
