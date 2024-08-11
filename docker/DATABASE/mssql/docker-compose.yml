@@ -14,3 +14,5 @@ services:
       - /APP/mssql/data:/var/opt/mssql/data
       - /APP/mssql/log:/var/opt/mssql/log
       - /APP/mssql/secrets:/var/opt/mssql/secrets
+
+# chown -R 10001:10001 /APP/mysql/*
