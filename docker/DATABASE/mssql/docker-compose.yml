@@ -9,6 +9,7 @@ services:
     environment:
       - SA_PASSWORD=admin@1q2w3e4r5t^Y
       - ACCEPT_EULA=Y
+      - TZ=Asia/Seoul
     volumes:
       - /APP/mssql/data:/var/opt/mssql/data
       - /APP/mssql/log:/var/opt/mssql/log
