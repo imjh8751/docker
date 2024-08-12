@@ -1,0 +1,54 @@
+version: '3'
+services:
+  minio1:
+    image: minio/minio:latest
+    command: server http://minio{1...4}:9000/data --console-address ":9001"
+    container_name: minio1
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: miniopass
+    restart: always
+    ports:
+      - "9101:9000"
+      - "9001:9001"  # 웹콘솔은 minio1에서 운영
+    volumes:
+      - ./minio1:/data
+  minio2:
+    image: minio/minio:latest
+    command: server http://minio{1...4}:9000/data --console-address ":9001"
+    container_name: minio2
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: miniopass
+    restart: always
+    ports:
+      - "9102:9000"
+    volumes:
+      - ./minio2:/data
+  minio3:
+    image: minio/minio:latest
+    command: server http://minio{1...4}:9000/data --console-address ":9001"
+    container_name: minio3
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: miniopass
+    restart: always
+    ports:
+      - "9103:9000"
+    volumes:
+      - ./minio3:/data
+  minio4:
+    image: minio/minio:latest
+    command: server http://minio{1...4}:9000/data --console-address ":9001"
+    container_name: minio4
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: miniopass
+    restart: always
+    ports:
+      - "9104:9000"
+    volumes:
+      - ./minio4:/data
+
+# MinIO의 경우 다수의 서버에 분산해서 운영할 수 있는 분산 모드를 지원한다.
+# 이레이저 코드 모드가 단일 서버에 다수의 디스크로 운영하는 방법이라면, 분산 모드는 다수 서버로 운영할 수 있는 방법이다.
