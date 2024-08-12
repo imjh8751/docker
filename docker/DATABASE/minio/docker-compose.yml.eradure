@@ -1,0 +1,22 @@
+version: '3'
+services:
+  minio:
+    image: minio/minio:latest
+    command: server /data1 /data2 /data3 /data4 --console-address ":9001"
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: admin
+    restart: always
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ./data1:/data1
+      - ./data2:/data2
+      - ./data3:/data3
+      - ./data4:/data4
+
+#MinIO에서는 손상 된 데이터를 복구할 수 있는 이레이저 코드 (Erasure Code) 모드를 제공한다.
+#일반적으로 서버에서는 데이터의 손상을 복구하기 위해 RAID를 사용한다.
+#4개의 디스크에 RAID 5의 경우 1개는 복구를 위한 정보를 저장하는 용도로 사용하기 때문에 실제 사용 가능한 디스크는 3개이다.
