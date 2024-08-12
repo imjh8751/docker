@@ -1,0 +1,16 @@
+version: '3'
+services:
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    container_name: minio    # 필요한 경우 수정
+    environment:
+      MINIO_ROOT_USER: admin    # 필요한 경우 수정
+      MINIO_ROOT_PASSWORD: admin    # 필요한 경우 수정
+    restart: always
+    shm_size: '1gb'  # default는 64MB
+    ports:
+      - "9000:9000"    # minio 서비스 포트
+      - "9001:9001"    # minio 콘솔 포트
+    volumes:
+      - /APP/minio/data:/data  # 현재 경로 하위인 경우 ./data:/data
