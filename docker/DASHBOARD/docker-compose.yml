@@ -1,0 +1,10 @@
+version: '3.9'
+services:
+  bender:
+    image: jez500/bender
+    restart: always
+    volumes:
+      - '/volume1/docker/bender:/app/static'
+    ports:
+      - '8845:8080'
+    container_name: Bender
