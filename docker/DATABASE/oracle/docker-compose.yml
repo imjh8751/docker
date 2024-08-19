@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  database:
+    image: 'oracle/database:19.3.0-ee'
+    volumes:
+      - '/APP/oracle/db/files/:/opt/oracle/oradata'
+    environment:
+      - INIT_PGA_SIZE=1000
+      - INIT_SGA_SIZE=3000
+      - ORACLE_PWD=1q2w3e4r5t^Y
+      - ORACLE_PDB=orcl
+    ports:
+      - '5500:5500'
+      - '1521:1521'
+    container_name: oracle19c
