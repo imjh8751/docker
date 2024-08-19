@@ -1,0 +1,9 @@
+version: '3.9'
+services:
+  astro:
+    image: igorsheg/astro
+    volumes:
+      - '/APP/astro:/app/server/data'
+    ports:
+      - '8897:8088'
+    container_name: Astro
