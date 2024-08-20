@@ -4,7 +4,7 @@ services:
     image: 'dbeaver/cloudbeaver:latest'
     restart: always
     volumes:
-      - '/volume1/docker/cloudbeaver:/opt/cloudbeaver/workspace'
+      - '/APP/cloudbeaver/cloudbeaver:/opt/cloudbeaver/workspace'
     ports:
       - '5495:8978'
     container_name: cloudbeaver
