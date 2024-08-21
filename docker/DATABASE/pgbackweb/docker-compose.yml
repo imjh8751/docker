@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  pgbackweb:
+    image: eduardolat/pgbackweb:latest
+    container_name: PGBackWeb
+    healthcheck:
+      test: timeout 10s bash -c ':> /dev/tcp/127.0.0.1/8085' || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 90s
+    ports:
+      - 8085:8085
+    environment:
+      PBW_ENCRYPTION_KEY: ItapiItapiItapi13
+      PBW_POSTGRES_CONN_STRING: postgresql://pgbackwebuser:pgbackwebpass@pgbackweb-db:5432/pgbackweb?sslmode=disable
+    depends_on:
+      pgbackweb-db:
+        condition: service_healthy
+
+  pgbackweb-db:
+    image: postgres:16
+    hostname: pgbackweb-db
+    container_name: PGBackWeb-DB
+    environment:
+      POSTGRES_USER: pgbackwebuser
+      POSTGRES_DB: pgbackweb
+      POSTGRES_PASSWORD: pgbackwebpass
+    volumes:
+      - /APP/pgbackwebdb:/var/lib/postgresql/data:rw
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "pgbackweb", "-U", "pgbackwebuser"]
+      timeout: 45s
+      interval: 10s
+      retries: 10
