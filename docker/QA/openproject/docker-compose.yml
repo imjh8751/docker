@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+    image: 'openproject/openproject:14'
+    restart: always
+    environment:
+      - OPENPROJECT_EDITION=bim
+      - SECRET_KEY_BASE=MariushostingMariushostingMari13
+      - SERVER_HOSTNAME=openproject.itapi.org
+    ports:
+      - '5122:80'
+    volumes:
+      - '/APP/openproject/assets:/var/openproject/assets'
+      - '/APP/openproject/pgdata:/var/openproject/pgdata'
+    container_name: openproject
