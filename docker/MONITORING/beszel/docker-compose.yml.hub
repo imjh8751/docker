@@ -19,5 +19,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       PORT: 45876
-      KEY: '...'
+      KEY: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC8qeJcnlMIwiDaiuWVw2uYbqP7J2Kk3s7GzWdQOu+9LMOkrJVd65RgklUDoIuMGBEoMoTVSxGD10eKw4JR0nApUOd2RpAazi+EAh8F/H8zeGJExA9eR3LGltJhf0SAiwlrgx5T0UugjClB6DELafsBlJhU9q2IXXEgrOYd8HRv1NynO/WhGgukD5Ws5a1OpvBKtpBN2P0ZR1QCq9KvjLpeAZF3MttyNIlLE2gvV0kkGF/zq9uTxG49QiIMnXfkL+LmgeR9Syaa+aV9TlfUZknbGgiTUZWUdVZptwHUePSVpvYTLLfMg3kmn9N6zUq4LLHL2z1BnfcDT9bDkMa2KEMWQc4tKEMQPI+dkrT0cqSudwhpe9Ekf9QlzLGi5gxShIj5Up/Oznt6ts7+hJBcvW8KACiLG198hXhfkKeYO2JkLCab18YLVPiNDEDitKAgS2AmDT0na9PvSBBDAtsDRd/EEqIrSfji6541+v89rKPl3ettGjZz+ZFaZ7D01MYNkTU= root@dev-beszel
+'
       # FILESYSTEM: /dev/sda1 # set to the correct filesystem for disk I/O stats
