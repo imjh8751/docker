@@ -1,9 +1,15 @@
 version: '3.9'
 services:
   hoppscotch:
-    image: 'hoppscotch/hoppscotch:latest'
-    ports:
-        - '3000:3000'
+    image: hoppscotch/hoppscotch
     container_name: hoppscotch
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - '3170:3170'
+      - '3100:3100'
+      - '3000:3000'
+
 
 # https://hub.docker.com/r/hoppscotch/hoppscotch
