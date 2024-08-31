@@ -3,6 +3,7 @@ services:
   pgbackweb:
     image: eduardolat/pgbackweb:latest
     container_name: PGBackWeb
+    restart: always
     healthcheck:
       test: timeout 10s bash -c ':> /dev/tcp/127.0.0.1/8085' || exit 1
       interval: 10s
@@ -14,6 +15,8 @@ services:
     environment:
       PBW_ENCRYPTION_KEY: ItapiItapiItapi13
       PBW_POSTGRES_CONN_STRING: postgresql://pgbackwebuser:pgbackwebpass@pgbackweb-db:5432/pgbackweb?sslmode=disable
+    volumes:
+      - /APP/pgbackwebdb/backups:/backups:rw
     depends_on:
       pgbackweb-db:
         condition: service_healthy
@@ -22,6 +25,9 @@ services:
     image: postgres:16
     hostname: pgbackweb-db
     container_name: PGBackWeb-DB
+    restart: always
+    ports:
+      - 5432:5432
     environment:
       POSTGRES_USER: pgbackwebuser
       POSTGRES_DB: pgbackweb
