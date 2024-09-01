@@ -1,0 +1,16 @@
+services:
+  archivebox:
+    image: archivebox/archivebox:stable
+    container_name: ArchiveBox
+    hostname: archivebox
+    healthcheck:
+      test: curl -f http://localhost:8000/ || exit 1
+    command: server --quick-init 0.0.0.0:8000
+    ports:
+      - 8460:8000
+    environment:
+      - ALLOWED_HOSTS=*
+      - CSRF_TRUSTED_ORIGINS=https//archivebox.itapi.org
+      - MEDIA_MAX_SIZE=2000m
+      - PUID=1026
+      - PGID=100
