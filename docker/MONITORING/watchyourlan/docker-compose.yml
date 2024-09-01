@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  watchyourlan:
+    image: 'aceberg/watchyourlan:v2'
+    restart: always
+    volumes:
+      - '/APP/wyl:/data/WatchYourLAN'
+    environment:
+      - COLOR=dark
+      - THEME=grass
+      - IFACES=eth0
+      - PORT=8840
+      - HOST=192.168.0.18
+      - TZ=Asia/Seoul
+    container_name: WatchYourLAN
