@@ -1,0 +1,19 @@
+version: '3.9'
+services:
+  linuxserver:
+    command: 'Before you paste the code above in'
+    image: ghcr.io/linuxserver/wireshark
+    restart: always
+    volumes:
+      - '/APP/wireshark:/config'
+    environment:
+      - PASSWORD=mariushosting
+      - CUSTOM_USER=marius
+      - TZ=Europe/Bucharest
+      - PGID=100
+      - PUID=1026
+    ports:
+      - '3124:3000'
+    cap_add:
+      - NET_ADMIN
+    container_name: wireshark
