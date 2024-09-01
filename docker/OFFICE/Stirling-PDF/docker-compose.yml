@@ -1,0 +1,38 @@
+version: '3.9'
+services:
+  stirling-pdf:
+    container_name: Stirling-PDF
+    image: frooodle/s-pdf
+    mem_limit: 4g
+    cpu_shares: 1024
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: timeout 10s bash -c ':> /dev/tcp/127.0.0.1/8080' || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 90s
+    ports:
+      - 7890:8080
+    volumes:
+      - /APP/stirling/data:/usr/share/tessdata:rw # Required for extra OCR languages
+      - /APP/stirling/config:/configs:rw
+      - /APP/stirling/logs:/logs:rw
+    environment:
+     PUID: 1026
+     PGID: 100
+     DOCKER_ENABLE_SECURITY: true # or false
+     SECURITY_ENABLELOGIN: true #or false
+     SECURITY_INITIALLOGIN_USERNAME: admin
+     SECURITY_INITIALLOGIN_PASSWORD: 1q2w3e4r5t^Y   
+     INSTALL_BOOK_AND_ADVANCED_HTML_OPS: false #or true
+     SECURITY_CSRFDISABLED: true #or false
+     SYSTEM_DEFAULTLOCALE: ko_KR # or fr_FR or de_DE
+     UI_APPNAME: ITAPI PDF
+     UI_HOMEDESCRIPTION: ITAPI PDF Description
+     UI_APPNAMENAVBAR: ITAPI PDF
+     SYSTEM_MAXFILESIZE: 5000 # Set the maximum file size in MB
+     METRICS_ENABLED: true
+     SYSTEM_GOOGLEVISIBILITY: false # or true
+    restart: always
