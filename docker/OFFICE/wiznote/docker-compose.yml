@@ -1,0 +1,11 @@
+version: '3.9'
+services:
+  wizserver:
+    image: wiznote/wizserver
+    restart: always
+    volumes:
+      - '/APP/wiznote:/wiz/storage'
+    ports:
+      - '9269:9269/udp'
+      - '5641:80'
+    container_name: wiznote
