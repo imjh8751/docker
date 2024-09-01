@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16
+    container_name: Documize-DB
+    restart: always
+    hostname: documize-db
+    mem_limit: 1g
+    cpu_shares: 1024
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "documize", "-U", "documizeuser"]
+    ports:
+      - 5444:5432
+    environment:
+      POSTGRES_USER: documizeuser
+      POSTGRES_PASSWORD: documizepass
+      POSTGRES_DB: documize
+    volumes:
+       - /APP/documize/db:/var/lib/postgresql/data:rw
+
+  app:
+    image: debian:latest
+    container_name: Documize
+    restart: always
+    command: /bin/sh -c "apt-get -qq update && apt-get -qq install -y wget && wget https://community-downloads.s3.us-east-2.amazonaws.com/documize-community-plus-linux-amd64 && chmod 777 ./documize-community-plus-linux-amd64 && ./documize-community-plus-linux-amd64"
+    depends_on:
+      - db
+    ports:
+      - 5003:5003
+    environment:
+      DOCUMIZEPORT: 5003
+      DOCUMIZEDB: host=db port=5432 dbname=documize user=documizeuser password=documizepass sslmode=disable
+      DOCUMIZEDBTYPE: postgresql
+      DOCUMIZESALT: documize
+      DOCUMIZELOCATION: selfhost
