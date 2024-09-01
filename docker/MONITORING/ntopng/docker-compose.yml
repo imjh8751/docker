@@ -1,0 +1,14 @@
+services: 
+ ntopng:
+    hostname: ntopng
+    image: ntop/ntopng:stable
+    container_name: ntopng
+    mem_limit: 4g
+    cpu_shares: 768
+    security_opt:
+      - no-new-privileges:true
+    restart: always
+    volumes:
+      - /APP/ntopng:/var/lib/ntopng:rw
+    network_mode: host
+    command: --community
