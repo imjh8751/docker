@@ -1,0 +1,10 @@
+services:
+  nexterm:
+    ports:
+      - "6989:6989"
+    restart: always
+    volumes:
+      - /APP/nexterm:/app/data
+    image: germannewsmaker/nexterm:latest
+volumes:
+  nexterm:
