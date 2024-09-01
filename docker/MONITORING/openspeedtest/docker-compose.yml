@@ -1,0 +1,8 @@
+version: '3.9'
+services:
+  latest:
+    image: openspeedtest/latest
+    restart: always
+    ports:
+      - '8004:3000'
+    container_name: openspeedtest
