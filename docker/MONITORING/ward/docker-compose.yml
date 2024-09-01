@@ -1,0 +1,18 @@
+services:
+  ward:
+    container_name: Ward
+    image: antonyleons/ward
+    healthcheck:
+      test: curl -f http://localhost:4000/ || exit 1
+    mem_limit: 2g
+    cpu_shares: 768
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - 7895:4000
+    environment:
+     ARD_PORT: 7895
+     WARD_THEME: dark
+     WARD_NAME: admin
+    privileged: true
+    restart: always
