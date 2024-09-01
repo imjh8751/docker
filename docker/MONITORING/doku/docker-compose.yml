@@ -1,0 +1,11 @@
+version: '3.9'
+services:
+  doku:
+    image: amerkurev/doku
+    restart: always
+    volumes:
+      - '/:/hostroot:ro'
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+    ports:
+      - '9090:9090'
+    container_name: doku
