@@ -1,0 +1,14 @@
+services:
+  cronicle:
+    image: intelliops/cronicle:latest
+    container_name: cronicle
+    volumes:
+      - /opt/cronicle/data:/opt/cronicle/data:rw
+      - /opt/cronicle/logs:/opt/cronicle/logs:rw
+    environment:
+      - PUID=1001
+      - PGID=1001
+      - TZ=Asia/Seoul
+    ports:
+      - '3012:3012'
+    network_mode: "host"
