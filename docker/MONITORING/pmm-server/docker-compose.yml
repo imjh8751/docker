@@ -1,0 +1,20 @@
+services:
+  pmm-server:
+    command: /bin/true
+    image: percona/pmm-server
+    container_name: pmm-data
+    volumes:
+      - /var/lib/mysql
+      - /opt/consul-data
+      - /opt/prometheus/data
+  pmm-server:
+    image: 'percona/pmm-server'
+    restart: always
+    container_name: pmm-server
+    volumes:
+      - /APP/pmm-server/mysql:/var/lib/mysql
+      - /APP/pmm-server/consul-data:/opt/consul-data
+      - /APP/pmm-server/data:/opt/prometheus/data
+    ports:
+      - '443:443'
+      - '8080:80'
