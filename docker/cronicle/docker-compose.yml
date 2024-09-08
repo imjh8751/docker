@@ -15,3 +15,5 @@ services:
       - ./cronicle/plugins:/opt/cronicle/plugins
       - ./cronicle/workloads/app:/app
     restart: always
+
+# admin / admin
