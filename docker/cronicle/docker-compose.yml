@@ -1,14 +1,17 @@
 services:
   cronicle:
-    image: intelliops/cronicle:latest
+    image: bluet/cronicle-docker:latest
     container_name: cronicle
-    volumes:
-      - /opt/cronicle/data:/opt/cronicle/data:rw
-      - /opt/cronicle/logs:/opt/cronicle/logs:rw
+    hostname: cronicle
     environment:
-      - PUID=1001
-      - PGID=1001
       - TZ=Asia/Seoul
+      - CRONICLE_base_app_url=https://cronicle.itapi.org
     ports:
-      - '3012:3012'
-    network_mode: "host"
+      - 3012:3012
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./cronicle/data:/opt/cronicle/data
+      - ./cronicle/logs:/opt/cronicle/logs
+      - ./cronicle/plugins:/opt/cronicle/plugins
+      - ./cronicle/workloads/app:/app
+    restart: always
