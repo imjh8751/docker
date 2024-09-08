@@ -8,6 +8,7 @@ services:
     image: redis:latest
     # 컨테이너명 설정
     container_name: redis-cluster
+    restart: always
     # 접근 포트 설정 (컨테이너 외부:컨테이너 내부)
     ports:
       - "6001:6001"
@@ -30,6 +31,7 @@ services:
     network_mode: "service:redis-cluster"
     image: redis:latest
     container_name: redis-node1
+    restart: always
     volumes:
       - ./redis-node1.conf:/usr/local/etc/redis.conf
     command: redis-server /usr/local/etc/redis.conf
@@ -39,6 +41,7 @@ services:
     network_mode: "service:redis-cluster"
     image: redis:latest
     container_name: redis-node2
+    restart: always
     volumes:
       - ./redis-node2.conf:/usr/local/etc/redis.conf
     command: redis-server /usr/local/etc/redis.conf
@@ -48,6 +51,7 @@ services:
     network_mode: "service:redis-cluster"
     image: redis:latest
     container_name: redis-node3
+    restart: always
     volumes:
       - ./redis-node3.conf:/usr/local/etc/redis.conf
     command: redis-server /usr/local/etc/redis.conf
@@ -57,6 +61,7 @@ services:
     network_mode: "service:redis-cluster"
     image: redis:latest
     container_name: redis-node4
+    restart: always
     volumes:
       - ./redis-node4.conf:/usr/local/etc/redis.conf
     command: redis-server /usr/local/etc/redis.conf
@@ -66,6 +71,7 @@ services:
     network_mode: "service:redis-cluster"
     image: redis:latest
     container_name: redis-node5
+    restart: always
     volumes:
       - ./redis-node5.conf:/usr/local/etc/redis.conf
     command: redis-server /usr/local/etc/redis.conf
@@ -75,6 +81,7 @@ services:
     network_mode: "service:redis-cluster"
     image: redis:latest
     container_name: redis-node6
+    restart: always
     volumes:
       - ./redis-node6.conf:/usr/local/etc/redis.conf
     command: redis-server /usr/local/etc/redis.conf
@@ -84,6 +91,7 @@ services:
     network_mode: "service:redis-cluster"
     image: redis:latest
     container_name: redis-node7
+    restart: always
     volumes:
       - ./redis-node7.conf:/usr/local/etc/redis.conf
     command: redis-server /usr/local/etc/redis.conf
@@ -93,6 +101,7 @@ services:
     network_mode: "service:redis-cluster"
     image: redis:latest
     container_name: redis-node8
+    restart: always
     volumes:
       - ./redis-node8.conf:/usr/local/etc/redis.conf
     command: redis-server /usr/local/etc/redis.conf
@@ -102,6 +111,7 @@ services:
     network_mode: "service:redis-cluster"
     image: redis:latest
     container_name: redis-node9
+    restart: always
     volumes:
       - ./redis-node9.conf:/usr/local/etc/redis.conf
     command: redis-server /usr/local/etc/redis.conf
