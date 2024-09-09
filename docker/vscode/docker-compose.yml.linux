@@ -1,24 +1,20 @@
-version: "2.1"
 services:
-  code-server:
-    image: lscr.io/linuxserver/code-server:latest
-    container_name: code-server
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Asia/Seoul
-      - PASSWORD=admin #optional
-      - HASHED_PASSWORD= #optional
-      - SUDO_PASSWORD=admin #optional
-      - SUDO_PASSWORD_HASH= #optional
-      - PROXY_DOMAIN=code-vscode.itapi.org #optional
-      - DEFAULT_WORKSPACE=/config/workspace #optional
+  linuxserver:
+    image: ghcr.io/linuxserver/code-server:latest
+    restart: always
     volumes:
-      - ./path/to/appdata/config:/config
+      - '/APP/codeserver:/config'
+    environment:
+      - SUDO_PASSWORD=1q2w3e4r5t^Y
+      - PROXY_DOMAIN=vscode.itapi.org
+      - PASSWORD=1q2w3e4r5t^Y
+      - TZ=Asia/Seoul
+      - PGID=100
+      - PUID=1026
+      - DEFAULT_WORKSPACE=/config/workspace #optional
     ports:
-      - 8443:8443
-    restart: unless-stopped
-
+      - '8443:8443'
+    container_name: codeserver
 
 
 # for reverse proxy setting
