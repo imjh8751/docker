@@ -116,3 +116,21 @@ services:
       - redis-node-3
       - redis-node-4
       - redis-node-5
+
+  node-exporter:
+    container_name: node-exporter
+    image: prom/node-exporter
+    restart: always
+    ports:
+      - 9100:9100
+      
+  redis-exporter:
+    container_name: redis-exporter
+    image: oliver006/redis_exporter
+    restart: always
+    ports:
+      - 9121:9121
+    environment:
+      REDIS_ADDR: 192.168.0.154:6376
+      REDIS_USER: null
+      REDIS_PASSWORD: bitnami
