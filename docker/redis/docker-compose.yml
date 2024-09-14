@@ -6,11 +6,11 @@ services:
     ports:
       - 6371:6379
     volumes:
-      - /APP/redis/redis-bitnami/redis-cluster_data-0:/bitnami/redis/data
+      - /DOCKER_NAS1/redis_arm64/redis-bitnami/redis-cluster_data-0:/bitnami/redis/data
     environment:
-      - 'REDIS_PASSWORD=bitnami'
-      - 'REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5'
-
+      - ALLOW_EMPTY_PASSWORD=yes
+      #- REDIS_PASSWORD=bitnami
+      - REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5
   redis-node-1:
     image: docker.io/bitnami/redis-cluster:7.4
     container_name: redis-cluster-node-1
@@ -18,11 +18,11 @@ services:
     ports:
       - 6372:6379
     volumes:
-      - /APP/redis/redis-bitnami/redis-cluster_data-1:/bitnami/redis/data
+      - /DOCKER_NAS1/redis_arm64/redis-bitnami/redis-cluster_data-1:/bitnami/redis/data
     environment:
-      - 'REDIS_PASSWORD=bitnami'
-      - 'REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5'
-
+      - ALLOW_EMPTY_PASSWORD=yes
+      #- REDIS_PASSWORD=bitnami
+      - REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5
   redis-node-2:
     image: docker.io/bitnami/redis-cluster:7.4
     container_name: redis-cluster-node-2
@@ -30,11 +30,11 @@ services:
     ports:
       - 6373:6379
     volumes:
-      - /APP/redis/redis-bitnami/redis-cluster_data-2:/bitnami/redis/data
+      - /DOCKER_NAS1/redis_arm64/redis-bitnami/redis-cluster_data-2:/bitnami/redis/data
     environment:
-      - 'REDIS_PASSWORD=bitnami'
-      - 'REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5'
-
+      - ALLOW_EMPTY_PASSWORD=yes
+      #- REDIS_PASSWORD=bitnami
+      - REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5
   redis-node-3:
     image: docker.io/bitnami/redis-cluster:7.4
     container_name: redis-cluster-node-3
@@ -42,11 +42,11 @@ services:
     ports:
       - 6374:6379
     volumes:
-      - /APP/redis/redis-bitnami/redis-cluster_data-3:/bitnami/redis/data
+      - /DOCKER_NAS1/redis_arm64/redis-bitnami/redis-cluster_data-3:/bitnami/redis/data
     environment:
-      - 'REDIS_PASSWORD=bitnami'
-      - 'REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5'
-
+      - ALLOW_EMPTY_PASSWORD=yes
+      #- REDIS_PASSWORD=bitnami
+      - REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5
   redis-node-4:
     image: docker.io/bitnami/redis-cluster:7.4
     container_name: redis-cluster-node-4
@@ -54,19 +54,19 @@ services:
     ports:
       - 6375:6379
     volumes:
-      - /APP/redis/redis-bitnami/redis-cluster_data-4:/bitnami/redis/data
+      - /DOCKER_NAS1/redis_arm64/redis-bitnami/redis-cluster_data-4:/bitnami/redis/data
     environment:
-      - 'REDIS_PASSWORD=bitnami'
-      - 'REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5'
-
+      - ALLOW_EMPTY_PASSWORD=yes
+      #- REDIS_PASSWORD=bitnami
+      - REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5
   redis-node-5:
     image: docker.io/bitnami/redis-cluster:7.4
     container_name: redis-cluster-node-5
     restart: always
     ports:
-      - 6379:6379
+      - 6376:6379
     volumes:
-      - /APP/redis/redis-bitnami/redis-cluster_data-5:/bitnami/redis/data
+      - /DOCKER_NAS1/redis_arm64/redis-bitnami/redis-cluster_data-5:/bitnami/redis/data
     depends_on:
       - redis-node-0
       - redis-node-1
@@ -74,63 +74,9 @@ services:
       - redis-node-3
       - redis-node-4
     environment:
-      - 'REDIS_PASSWORD=bitnami'
-      - 'REDISCLI_AUTH=bitnami'
-      - 'REDIS_CLUSTER_REPLICAS=1'
-      - 'REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5'
-      - 'REDIS_CLUSTER_CREATOR=yes'
-
-
-  # P3X Redis UI 설정
-  registry:
-    image: patrikx3/p3x-redis-ui:latest
-    restart: always
-    container_name: p3x-redis-ui
-    ports:
-      - "7843:7843"
-    volumes:
-      - /APP/redis/settings:/settings
-
-  redis-stat:
-    image: insready/redis-stat:latest
-    container_name: redis-stat
-    restart: always
-    ports:
-      - 8080:63790
-    command: [
-        '--verbose', # 추가 정보 보기
-        '-a',
-        'bitnami',
-        '--server',
-        '192.168.0.154:6371',
-        '192.168.0.154:6372',
-        '192.168.0.154:6373',
-        '192.168.0.154:6374',
-        '192.168.0.154:6375',
-        '192.168.0.154:6379',
-      ]
-    depends_on:
-      - redis-node-0
-      - redis-node-1
-      - redis-node-2
-      - redis-node-3
-      - redis-node-4
-      - redis-node-5
-
-  node-exporter:
-    container_name: node-exporter
-    image: prom/node-exporter
-    restart: always
-    ports:
-      - 9100:9100
-      
-  redis-exporter:
-    container_name: redis-exporter
-    image: oliver006/redis_exporter
-    restart: always
-    ports:
-      - 9121:9121
-    environment:
-      REDIS_ADDR: 192.168.0.154:6376
-      REDIS_USER: null
-      REDIS_PASSWORD: bitnami
+      - ALLOW_EMPTY_PASSWORD=yes
+      #- REDIS_PASSWORD=bitnami
+      - REDISCLI_AUTH=bitnami
+      - REDIS_CLUSTER_REPLICAS=1
+      - REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5
+      - REDIS_CLUSTER_CREATOR=yes
