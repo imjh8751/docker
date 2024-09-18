@@ -7,6 +7,13 @@ const app = express();
 // json 형식의 요청 본문을 파싱할 수 있도록 미들웨어를 설정합니다.
 app.use(express.json());
 
+// GET 요청 처리
+app.get('/', (req, res) => {
+    const params = req.query;
+    console.log('GET 요청 파라미터:', params);
+    res.send(params);
+});
+
 // / 경로에 post 요청이 들어오면
 app.post('/', (req, res) => {
   // 요청 본문에 있는 json 데이터를 가져옵니다.
