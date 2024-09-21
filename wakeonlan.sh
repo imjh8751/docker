@@ -1,4 +1,5 @@
 #!/bin/bash
+# sudo apt install ethtool wakeonlan
 
 NUM=$1
 
