@@ -16,7 +16,9 @@ services:
     environment:
       #VERSION: "win11"
       VERSION: "win10"
+      #VERSION: "2025"
       #VERSION: "2022"
+      #VERSION: "2019"
       RAM_SIZE: "12G"
       CPU_CORES: "6"
       DISK_SIZE: "150G"
@@ -24,11 +26,6 @@ services:
     volumes:
       #- ./win11:/storage
       - ./win10:/storage
+      #- ./server2025:/storage
       #- ./server2022:/storage
-    networks:
-      vlan:
-        ipv4_address: 192.168.0.36
-
-networks:
-  vlan:
-    external: true
+      #- ./server2019:/storage
