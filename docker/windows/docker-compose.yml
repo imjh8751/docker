@@ -25,6 +25,10 @@ services:
       #- ./win11:/storage
       - ./win10:/storage
       #- ./server2022:/storage
-    #networks:
-    #  vlan:
-    #    ipv
+          networks:
+    vlan:
+      ipv4_address: 192.168.0.36
+
+networks:
+  vlan:
+    external: true
