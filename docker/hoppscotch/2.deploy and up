@@ -1,0 +1,6 @@
+# 1. DB migration 수행
+docker compose -f docker-compose.deploy.yml up
+docker compose -f docker-compose.deploy.yml down
+  
+# 2. 어플리케이션 실행
+docker compose up -d
