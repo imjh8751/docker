@@ -1,0 +1,12 @@
+services:
+  enterprise:
+    image: 'rundeckpro/enterprise:5.6.0'
+    restart: always
+    environment:
+      - RUNDECK_DATABASE_URL=
+      - RUNDECK_DATABASE_PASSWORD=
+      - RUNDECK_DATABASE_USERNAME=
+      - RUNDECK_DATABASE_DRIVER=org.mariadb.jdbc.Driver
+    volumes:
+      - '/APP/rundeck-pro/data:/home/rundeck/server/data'
+    container_name: rundeck
