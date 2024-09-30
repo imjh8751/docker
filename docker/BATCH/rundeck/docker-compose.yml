@@ -1,0 +1,10 @@
+version: '3.9'
+services:
+  rundeck:
+    image: 'rundeck/rundeck:5.6.0'
+    restart: always
+    volumes:
+      - '/APP/rundeck/data:/home/rundeck/server/data'
+    ports:
+      - '4440:4440'
+    container_name: rundeck
