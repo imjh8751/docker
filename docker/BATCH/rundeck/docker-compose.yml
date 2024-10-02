@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   rundeck:
     image: 'rundeck/rundeck:5.6.0'
@@ -7,4 +6,12 @@ services:
       - '/APP/rundeck/data:/home/rundeck/server/data'
     ports:
       - '4440:4440'
+    environment:
+      RUNDECK_GRAILS_URL: http://localhost:4440
+      RUNDECK_SERVER_ADDRESS: 0.0.0.0
+      RUNDECK_SERVER_CONTEXTPATH: /
+      RUNDECK_DATABASE_DRIVER: org.postgresql.Driver #org.mariadb.jdbc.Driver
+      RUNDECK_DATABASE_URL: jdbc:postgresql://itapi.org:15432/rundeck
+      RUNDECK_DATABASE_USERNAME: postgres
+      RUNDECK_DATABASE_PASSWORD: postgres
     container_name: rundeck
