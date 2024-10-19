@@ -1,0 +1,21 @@
+services:
+  planka:
+    image: lscr.io/linuxserver/planka:latest
+    container_name: planka
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Seoul
+      - BASE_URL=https://planka.example.com
+      - DATABASE_URL=postgresql://user:password@planka-db:5432/planka
+      - DEFAULT_ADMIN_EMAIL=admin@gmail.com
+      - DEFAULT_ADMIN_USERNAME=admin
+      - DEFAULT_ADMIN_PASSWORD=admin
+      - "DEFAULT_ADMIN_NAME=ITAPI"
+      - SECRET_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiaXRhcGkiLCJ1c2VybmFtZSI6ImpobGltIiwicm9sZSI6ImFkbWluIn0.cLbX9SzteJW9DFTxGlzAcmrPJh5dBNc5bKHHQR7U6jA
+      - TRUST_PROXY=0
+    volumes:
+      - /APP/planka/data:/config
+    ports:
+      - 1337:1337
+    restart: always
