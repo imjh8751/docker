@@ -7,7 +7,8 @@ wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-
 wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-install-linux-4.17.3.tar.gz
 
 # 압축 해제
-tar -xvf *.tar
+tar -xvf openshift-client-linux-4.17.3.tar.gz
+tar -xvf openshift-client-install-4.17.3.tar.gz
 
 # local 복사
 mv oc kubectl openshift-install /usr/local/bin
