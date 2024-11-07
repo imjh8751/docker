@@ -19,4 +19,4 @@ done
 echo "All commands executed successfully."
 
 # install bootstrap and master
-openshift-install --dir installation_directory wait-for bootstrap-complete --log-level=info
+openshift-install --dir /root/installation_directory wait-for bootstrap-complete --log-level=info
