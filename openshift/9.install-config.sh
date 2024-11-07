@@ -12,6 +12,7 @@ cd /root/installation_directory
 
 # 설정파일 생성
 CONFIG_FILE="/root/installation_directory/install-config.yaml"
+cat /dev/null > /root/installation_directory/install-config.yaml
 
 cat <<EOF >> $CONFIG_FILE
 apiversion: v1
