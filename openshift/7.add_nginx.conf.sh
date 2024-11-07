@@ -1,5 +1,6 @@
 #!/bin/bash
 
+yum -y install nginx
 NGINX_CONF="/etc/nginx/conf.d/default.conf"
 
 cat <<EOF >> $NGINX_CONF
