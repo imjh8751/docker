@@ -47,8 +47,8 @@ listen api-server-6443
   mode tcp
   server bootstrap bootstrap.ocp4.okd.io:6443 check inter 1s backup 
   server master01 master01.ocp4.okd.io:6443 check inter 1s
-  server master02 master02.ocp4.okd.io:6443 check inter 1s
-  server master03 master03.ocp4.okd.io:6443 check inter 1s
+  #server master02 master02.ocp4.okd.io:6443 check inter 1s
+  #server master03 master03.ocp4.okd.io:6443 check inter 1s
 
 listen machine-config-server-22623 
   bind *:22623
