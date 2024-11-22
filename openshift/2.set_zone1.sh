@@ -4,10 +4,10 @@
 ZONE_FILE="/var/named/okd.io.zone"
 
 # bastion(DNS+Bastion) 1개, master 1개, worker 2개, bootstrap 1개
-ZONE_FILE2="/var/named/okd.io.zone"
+ZONE_FILE2="/var/named/okd.io.min.zone"
 
 # bastion(DNS+Bastion) 1개, master 1개,bootstrap 1개 (SINGLE NODE용 - SNO)
-ZONE_FILE3="/var/named/okd.io.zone"
+ZONE_FILE3="/var/named/okd.io.sno.zone"
 
 cat <<EOF >> $ZONE_FILE
 \$TTL 60
