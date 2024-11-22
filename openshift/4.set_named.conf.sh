@@ -12,8 +12,9 @@ sed -i 's/listen-on port 53 {[^}]*};/listen-on port 53 { any; };/g' $NAMED_CONF
 sed -i 's/allow-query {[^}]*};/allow-query { any; };/g' $NAMED_CONF
 
 # forwarders 옵션 추가
-if ! grep -q "forwarders" $NAMED_CONF; then
-    sed -i '/options {/a \ \ \ \ forwarders { 8.8.8.8; };' $NAMED_CONF
-fi
+FORWARDERS="forwarders { 8.8.8.8; 168.126.63.1; };"
+
+# sed 명령어를 사용하여 recursion yes; 아래에 forwarders 추가
+sudo sed -i '/recursion yes;/a '"$FORWARDERS" "$NAMED_CONF"
 
 echo "Options have been updated in $NAMED_CONF"
