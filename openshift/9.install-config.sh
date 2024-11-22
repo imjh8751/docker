@@ -24,7 +24,7 @@ compute:
 controlPlane:
   hyperthreading: Enabled
   name: master
-  replicas: 3
+  replicas: 1
 metadata:
   name: ocp4
 networking:
