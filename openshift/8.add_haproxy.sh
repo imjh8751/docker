@@ -55,8 +55,8 @@ listen machine-config-server-22623
   mode tcp
   server bootstrap bootstrap.ocp4.okd.io:22623 check inter 1s backup 
   server master01 master01.ocp4.okd.io:22623 check inter 1s
-  server master02 master02.ocp4.okd.io:22623 check inter 1s
-  server master03 master03.ocp4.okd.io:22623 check inter 1s
+  #server master02 master02.ocp4.okd.io:22623 check inter 1s
+  #server master03 master03.ocp4.okd.io:22623 check inter 1s
 
 listen ingress-router-443 
   bind *:443
