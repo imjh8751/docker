@@ -6,7 +6,9 @@ cat <<EOF >> $ZONE_CONFIG_FILE
 
 zone "okd.io" IN {
         type master;
-        file "okd.io.zone";
+        #file "okd.io.zone";
+        file "okd.io.min.zone";
+        #file "okd.io.sno.zone";
         allow-update { none; };
 };
 
