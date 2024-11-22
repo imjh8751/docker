@@ -1,6 +1,7 @@
 #!/bin/bash
 
 RESOLV_CONF="/etc/resolv.conf"
+cat /dev/null > /etc/resolv.conf # 초기화
 
 cat <<EOF >> $RESOLV_CONF
 
