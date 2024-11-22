@@ -14,7 +14,9 @@ zone "okd.io" IN {
 
 zone "0.168.192.in-addr.arpa" IN {
         type master;
-        file "0.168.192.rev.zone";
+        #file "0.168.192.rev.zone";
+        file "0.168.192.rev.min.zone";
+        #file "0.168.192.rev.sno.zone";
         allow-update { none; };
 };
 EOF
