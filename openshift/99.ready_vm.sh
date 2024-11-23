@@ -38,7 +38,7 @@ MAC_MASTER1=46:69:a9:bc:0f:54
 ID_MASTER2=30003
 MAC_MASTER2=36:37:ad:87:85:63
 
-./scripts/create-vm.sh $ID_BOOTSTRAP okd-bootstrap $MAC_BOOTSTRAP
-./scripts/create-vm.sh $ID_MASTER0 okd-master-0 $MAC_MASTER0
-./scripts/create-vm.sh $ID_MASTER1 okd-master-1 $MAC_MASTER1
-./scripts/create-vm.sh $ID_MASTER2 okd-master-2 $MAC_MASTER2
+./99.create-vm.sh $ID_BOOTSTRAP bootstrap $MAC_BOOTSTRAP
+./99.create-vm.sh $ID_MASTER0 master0 $MAC_MASTER0
+#./99.create-vm.sh $ID_MASTER1 master1 $MAC_MASTER1
+#./99.create-vm.sh $ID_MASTER2 master2 $MAC_MASTER2
