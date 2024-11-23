@@ -5,9 +5,12 @@ if [[ -f "rhcos-live.iso" ]]; then
     rm rhcos-live.iso
 fi
 
-# coreos 파일 다운로드
-openshift-install coreos print-stream-json | grep '.iso[^.]' | grep x86_64
-wget -O rhcos-live.iso https://rhcos.mirror.openshift.com/art/storage/prod/streams/4.17-9.4/builds/417.94.202409120353-0/x86_64/rhcos-417.94.202409120353-0-live.x86_64.iso
+RHCOS_VER='4.17'
+# coreos 파일 다운로드 
+# https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/ 여기서 알맞는 iso 다운로드
+#openshift-install coreos print-stream-json | grep '.iso[^.]' | grep x86_64
+#wget -O rhcos-live.iso https://rhcos.mirror.openshift.com/art/storage/prod/streams/4.17-9.4/builds/417.94.202409120353-0/x86_64/rhcos-417.94.202409120353-0-live.x86_64.iso
+wget -O rhcos-live.iso https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/$RHCOS_VER/$RHCOS_VER.0/rhcos-$RHCOS_VER.0-x86_64-live.x86_64.iso
 
 # 2. Make VM Template
 # 변수 설정
