@@ -4,6 +4,7 @@
 OKD_GATEWAY=192.168.0.1
 OKD_DNS=192.168.0.69
 
+ID_BOOTSTRAP=30009
 MAC_BOOTSTRAP=72:3E:E6:0C:0B:B3
 IP_BOOTSTRAP=192.168.0.79
 
@@ -32,8 +33,12 @@ NET_TYPE=virtio
 BRIDGE=vmbr0
 
 # 현재 경로 저장
-PATH=http://192.168.0.69:8080
+PATH=$(pwd)
 BASE=29999
+
+#wget -O bootstrap.ign http://192.168.0.69:8080/bootstrap.ign
+#wget -O master.ign http://192.168.0.69:8080/master.ign
+#wget -O worker.ign http://192.168.0.69:8080/worker.ign
 
 # VM 생성 함수
 create_vm() {
@@ -49,21 +54,20 @@ create_vm() {
     /usr/sbin/qm set $ID --net0 $NET_TYPE,bridge=$BRIDGE,macaddr=$MACADDR
 
     # Ignition 파일 설정
-    if [ "$NAME" = "bootstrap" ]; then
+    if [[ "$NAME" == *"bootstrap"* ]]; then
         IGNITION=bootstrap
-    elif [ "$NAME" = "worker" ]; then
+    elif [[ "$NAME" == *"worker"* ]]; then
         IGNITION=worker
     else
         IGNITION=master
     fi
-
+    
     # Ignition 파일 경로를 VM 설정에 추가
     echo "args: -fw_cfg name=opt/com.coreos/config,file=$PATH/$IGNITION.ign" >> /etc/pve/qemu-server/$ID.conf
-    
-    # 네트워크 설정에 IP, GATEWAY, DNS 추가
-    echo "ip=$IPADDR::$OKD_GATEWAY:255.255.255.0::eth0:none" >> /etc/pve/qemu-server/$ID.conf
-    echo "nameserver=$OKD_DNS" >> /etc/pve/qemu-server/$ID.conf
 
+    # Cloud-Init 설정 추가
+    /usr/sbin/qm set $ID --ipconfig0 ip=$IPADDR/24,gw=$OKD_GATEWAY --nameserver $OKD_DNS
+    
     # VM 시작
     /usr/sbin/qm start $ID
     
@@ -72,9 +76,9 @@ create_vm() {
 }
 
 # VM 생성
-create_vm $ID_BOOTSTRAP "bootstrap" $MAC_BOOTSTRAP $IP_BOOTSTRAP
-#create_vm $ID_MASTER0 "master0" $MAC_MASTER0 $IP_MASTER0
-#create_vm $ID_MASTER1 "master1" $MAC_MASTER1 $IP_MASTER1
-#create_vm $ID_MASTER2 "master2" $MAC_MASTER2 $IP_MASTER2
-#create_vm $ID_WORKER1 "worker1" $MAC_WORKER1 $IP_WORKER1
-#create_vm $ID_WORKER2 "worker2" $MAC_WORKER2 $IP_WORKER2
+create_vm $ID_BOOTSTRAP "bootstrap.ocp4.okd.io" $MAC_BOOTSTRAP $IP_BOOTSTRAP
+create_vm $ID_MASTER1 "master01.ocp4.okd.io" $MAC_MASTER1 $IP_MASTER1
+#create_vm $ID_MASTER2 "master02.ocp4.okd.io" $MAC_MASTER2 $IP_MASTER2
+#create_vm $ID_MASTER3 "master03.ocp4.okd.io" $MAC_MASTER3 $IP_MASTER3
+create_vm $ID_WORKER1 "worker01.ocp4.okd.io" $MAC_WORKER1 $IP_WORKER1
+create_vm $ID_WORKER2 "worker02.ocp4.okd.io" $MAC_WORKER2 $IP_WORKER2
