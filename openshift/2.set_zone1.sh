@@ -25,6 +25,7 @@ ocp.ocp4         IN      A        192.168.0.69
 helper.ocp4      IN      A        192.168.0.69
 api.ocp4         IN      A        192.168.0.69
 api-int.ocp4     IN      A        192.168.0.69
+*.apps.ocp4      IN      A        192.168.0.69
 *.ocp4           IN      A        192.168.0.69
 
 bootstrap.ocp4   IN      A        192.168.0.70
@@ -53,6 +54,7 @@ ocp.ocp4         IN      A        192.168.0.69
 helper.ocp4      IN      A        192.168.0.69
 api.ocp4         IN      A        192.168.0.69
 api-int.ocp4     IN      A        192.168.0.69
+*.apps.ocp4      IN      A        192.168.0.69
 *.ocp4           IN      A        192.168.0.69
 
 bootstrap.ocp4   IN      A        192.168.0.70
@@ -79,6 +81,7 @@ ocp.ocp4         IN      A        192.168.0.69
 helper.ocp4      IN      A        192.168.0.69
 api.ocp4         IN      A        192.168.0.69
 api-int.ocp4     IN      A        192.168.0.69
+*.apps.ocp4      IN      A        192.168.0.69
 *.ocp4           IN      A        192.168.0.69
 
 bootstrap.ocp4   IN      A        192.168.0.70
