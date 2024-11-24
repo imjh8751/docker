@@ -36,9 +36,10 @@ BRIDGE=vmbr0
 PATH=$(pwd)
 BASE=29999
 
-#wget -O bootstrap.ign http://192.168.0.69:8080/bootstrap.ign
-#wget -O master.ign http://192.168.0.69:8080/master.ign
-#wget -O worker.ign http://192.168.0.69:8080/worker.ign
+# Ignition 설정 파일 다운로드
+/usr/local/bin/wget -O bootstrap.ign http://192.168.0.69:8080/bootstrap.ign
+/usr/local/bin/wget -O master.ign http://192.168.0.69:8080/master.ign
+/usr/local/bin/wget -O worker.ign http://192.168.0.69:8080/worker.ign
 
 # VM 생성 함수
 create_vm() {
