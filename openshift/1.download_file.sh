@@ -1,5 +1,5 @@
 # 필수 설치 프로그램
-yum install wget tar vim curl net-tools nc -y
+yum install wget tar vim curl net-tools nc httpd-tools -y
 
 # name server 설치
 yum install bind bind-utils -y
