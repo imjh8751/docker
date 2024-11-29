@@ -6,3 +6,9 @@ MASTER_URL='https://192.168.0.75:6443'
 
 # Master에 JOIN
 curl -sfL https://get.k3s.io | K3S_URL=$MASTER_URL K3S_TOKEN=$TOKEN sh -
+
+# worker node label 추가
+kubectl label node dev-k3s-worker01 node-role.kubernetes.io/worker=worker
+
+# label 확인 
+kubectl get nodes --show-labels
