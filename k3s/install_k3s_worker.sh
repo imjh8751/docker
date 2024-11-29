@@ -18,3 +18,6 @@ kubectl label node $HOSTNAME node-role.kubernetes.io/worker=worker
 
 # label 확인 
 kubectl get nodes --show-labels
+
+# node 확인 
+kubectl get nodes
