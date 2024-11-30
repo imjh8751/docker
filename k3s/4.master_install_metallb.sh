@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # MetalLB 최신 버전 가져오기
-latest_version=$(curl -s https://api.github.com/repos/metallb/metallb/releases/latest | grep 'tag_name' | cut -d '"' -f 4)
+#latest_version=$(curl -s https://api.github.com/repos/metallb/metallb/releases/latest | grep 'tag_name' | cut -d '"' -f 4)
+latest_version='v0.12.1'
 
 # MetalLB 네임스페이스 생성
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/$latest_version/manifests/namespace.yaml
