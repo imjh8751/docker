@@ -4,7 +4,7 @@
 kubectl create namespace argocd
 
 # istio 가 설치되어있다면 injection 추가
-kubectl label ns argocd istio-injection=enabled
+#kubectl label ns argocd istio-injection=enabled
 
 # Argo CD 설치 YAML 파일 다운로드
 curl -o install.yaml https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
