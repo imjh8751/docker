@@ -5,7 +5,7 @@
 #sudo apt-get update
 #sudo apt-get install -y curl
 
-TOKEN='K1076ac5a5f89d15ff22af99283eae6350cf17921a165e2579780bb1ac0dc2afd21::server:2f3aab1e75b91398b8da48e97a25c3a7'
+TOKEN='K1076ac5a5f89d15ff22af99283eae6350cf17921a165e2579780bb1ac0dc2afd21'
 
 # 환경 변수 설정
 export K3S_TOKEN=$TOKEN
