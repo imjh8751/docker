@@ -61,4 +61,4 @@ k get pods --all-namespaces
 ### 자5. 토큰 저장
 # 1. 토큰 저장
 cat /var/lib/rancher/k3s/server/node-token
-curl -v -u 'master:Admin2580!' -T /var/lib/rancher/k3s/server/node-token http://192.168.0.10:5005/WEBDAV/token.log
+curl -v -u 'master:Admin2580!' -T /var/lib/rancher/k3s/server/node-token http://192.168.0.10:5005/WEBDAV/recv/token.log
