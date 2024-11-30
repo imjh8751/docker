@@ -41,10 +41,10 @@ complete -o default -F __start_kubectl k
 ##############################################
 ### 4. 노드 및 파드 확인
 # 1. **노드 확인**
-kubectl get nodes
+k get nodes
 
 # 2. **파드 확인**
-kubectl get pods --all-namespaces
+k get pods --all-namespaces
 
 ##############################################
 ### 자5. 토큰 저장
