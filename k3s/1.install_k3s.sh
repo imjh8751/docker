@@ -4,8 +4,10 @@
 #sudo apt-get update
 #sudo apt-get install -y curl
 
+TOKEN='K1076ac5a5f89d15ff22af99283eae6350cf17921a165e2579780bb1ac0dc2afd21::server:2f3aab1e75b91398b8da48e97a25c3a7'
+
 # 2. **k3s 설치**
-curl -sfL https://get.k3s.io  | INSTALL_K3S_EXEC="--disable=traefik" sh -
+curl -sfL https://get.k3s.io  | INSTALL_K3S_EXEC="--disable=traefik" K3S_TOKEN=$TOKEN sh -
 
 # 3. **설치 확인**
 #sudo systemctl status k3s
