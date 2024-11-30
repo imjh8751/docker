@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# k3s master 삭제 시 
+#/usr/local/bin/k3s-uninstall.sh
+
 # k3s 에이전트 중지
 sudo systemctl stop k3s-agent
 
