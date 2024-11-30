@@ -48,5 +48,6 @@ kubectl get pods --all-namespaces
 
 ##############################################
 ### 자5. 토큰 저장
-# 1. 토큰 저장 
+# 1. 토큰 저장
+cat /var/lib/rancher/k3s/server/node-token
 # curl --upload-file /var/lib/rancher/k3s/server/node-token http://192.168.0.69:8080/token.log
