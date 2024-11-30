@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # 변수 초기화
-TOKEN='K1076ac5a5f89d15ff22af99283eae6350cf17921a165e2579780bb1ac0dc2afd21::server:2f3aab1e75b91398b8da48e97a25c3a7'
+# WebDAV 서버에서 token.log 파일을 읽어와 TOKEN 변수에 저장
+TOKEN=$(curl -u 'master:Admin2580!' -s http://192.168.0.10:5005/WEBDAV/recv/token.log)
 MASTER_URL='https://192.168.0.75:6443'
 HOSTNAME=$(hostname)
 
