@@ -13,12 +13,3 @@ echo "The MASTER_URL is : $MASTER_URL"
 
 # Master에 JOIN
 curl -sfL https://get.k3s.io | K3S_URL=$MASTER_URL K3S_TOKEN=$TOKEN sh -
-
-# worker node label 추가
-kubectl label node $HOSTNAME node-role.kubernetes.io/worker=worker
-
-# label 확인 
-kubectl get nodes --show-labels
-
-# node 확인 
-kubectl get nodes
