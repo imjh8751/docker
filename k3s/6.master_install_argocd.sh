@@ -10,13 +10,14 @@ kubectl label ns argocd istio-injection=enabled
 curl -o install.yaml https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 # --insecure 옵션 추가
-sed -i '/containers:/!b;n;/args:/!b;n;a\        - --insecure' install.yaml
+sed -i '/- \/usr\/local\/bin\/argocd-server/a\        - --insecure' install.yaml
+
+# 변경된 파일 내용 출력 (선택 사항)
+echo "변경된 install.yaml 파일 내용:"
+grep -A 3 '- \/usr\/local\/bin\/argocd-server' install.yaml
 
 # Argo CD 설치
 kubectl apply -f install.yaml
-
-
-
 
 #############################################################################################################
 # 참고용
