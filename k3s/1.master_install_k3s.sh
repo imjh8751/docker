@@ -39,15 +39,18 @@ kubectl version --client
 
 ##############################################
 # kubectl 자동 완성 활성화
-source <(kubectl completion bash)
+echo 'source <(kubectl completion bash)' >> ~/.bashrc
 
 # kubectl 단축 명령어 설정
-alias k='kubectl'
+echo 'alias k="kubectl"' >> ~/.bashrc
 
 # bash 자동 완성 설정
-complete -o default -F __start_kubectl k
+echo 'complete -o default -F __start_kubectl k' >> ~/.bashrc
 
-echo "kubectl 자동 완성과 alias가 설정되었습니다."
+# .bashrc 파일 다시 로드
+source ~/.bashrc
+
+echo "kubectl 자동 완성 및 단축 명령어 설정이 완료되었습니다."
 
 ##############################################
 ### 4. 노드 및 파드 확인
