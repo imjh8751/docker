@@ -17,13 +17,7 @@ spec:
                 name: argocd-server
                 port:
                   number: 80
-    - host: argocd.itapi.org
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: argocd-server
-                port:
-                  number: 443
+#  tls:
+#    - hosts:
+#        - argocd.itapi.org
+#      secretName: argocd-tls-secret
