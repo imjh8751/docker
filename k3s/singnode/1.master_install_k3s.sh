@@ -42,7 +42,8 @@ kubectl version --client
 source <(kubectl completion bash)
 
 # kubectl 단축 명령어 설정
-alias k='kubectl'
+echo 'alias k="kubectl"' >> ~/.bashrc
+source ~/.bashrc
 
 # bash 자동 완성 설정
 complete -o default -F __start_kubectl k
