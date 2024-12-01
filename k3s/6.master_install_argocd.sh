@@ -15,6 +15,9 @@ sed -i '/- \/usr\/local\/bin\/argocd-server/a\        - --insecure' install.yaml
 # Argo CD 설치
 kubectl apply -n argocd -f install.yaml
 
+# ArgoCD 초기 관리자 비밀번호 확인
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode
+
 #############################################################################################################
 # 참고용
 # 설치 
