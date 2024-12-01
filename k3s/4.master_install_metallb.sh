@@ -29,5 +29,5 @@ data:
     - name: default
       protocol: layer2
       addresses:
-      - 192.168.0.240-192.168.0.250 #IP 충돌되지 않게 대역대 유의
+      - 192.168.0.240-192.168.0.250
 EOF
