@@ -29,7 +29,7 @@ spec:
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: ingress-vs
+  name: argocd-vs
   namespace: istio-system
 spec:
   hosts:
@@ -42,6 +42,6 @@ spec:
         prefix: / # 모든 경로에 대해 매칭합니다.
     route:
     - destination:
-        host: argocd-server.argocd.svc.cluster.local # Argo CD 서버의 서비스 이름을 설정합니다.
+        host: argocd-server # Argo CD 서버의 서비스 이름을 설정합니다.
         port:
           number: 80
