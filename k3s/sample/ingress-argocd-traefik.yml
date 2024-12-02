@@ -3,9 +3,8 @@ kind: Ingress
 metadata:
   name: argocd-server-ingress
   namespace: argocd
-  annotations:
-    kubernetes.io/ingress.class: traefik
 spec:
+  ingressClassName: "traefik" # 여기서 ingressClassName 필드를 사용합니다.
   rules:
     - host: argocd.itapi.org
       http:
