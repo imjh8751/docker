@@ -1,0 +1,47 @@
+# Istio Ingress Gateway 설정
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: ingress-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway # Istio Ingress Gateway를 선택합니다.
+  servers:
+  - hosts:
+    - "*" # 접근할 도메인 정의
+    port:
+      number: 80
+      name: http
+      protocol: HTTP
+#  - hosts:
+#    - "*" # 접근할 도메인 정의
+#    port:
+#      number: 443
+#      name: https
+#      protocol: HTTPS
+#    tls:
+#      credentialName: istio-credential-ssl # 인증서가 등록된 secret 명
+#      mode: SIMPLE
+
+---
+# VirtualService 설정
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ingress-vs
+  namespace: istio-system
+spec:
+  hosts:
+  - "argocd.itapi.org" # Gateway와 동일한 도메인 이름을 사용합니다.
+  gateways:
+  - ingress-gateway
+  http:
+  - match:
+    - uri:
+        prefix: / # 모든 경로에 대해 매칭합니다.
+    route:
+    - destination:
+        host: argocd-server.argocd.svc.cluster.local # Argo CD 서버의 서비스 이름을 설정합니다.
+        port:
+          number: 80
