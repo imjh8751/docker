@@ -9,7 +9,7 @@ TOKEN='K1076ac5a5f89d15ff22af99283eae6350cf17921a165e2579780bb1ac0dc2afd21::serv
 
 # 환경 변수 설정
 export K3S_TOKEN=$TOKEN
-export INSTALL_K3S_EXEC="--disable=traefik"
+#export INSTALL_K3S_EXEC="--disable=traefik"
 
 # 2. k3s 설치
 curl -sfL https://get.k3s.io | sh -
