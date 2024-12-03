@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: kubernetesExternal
+  name: kubernetesex
   namespace: default
 spec:
   type: ExternalName
