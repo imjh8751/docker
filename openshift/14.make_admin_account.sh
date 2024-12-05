@@ -36,10 +36,7 @@ echo "HTPasswd를 이용한 OAuth가 적용되었습�
 # 사용자 이름
 USER="itapi"
 
-# 모든 프로젝트에 대해 admin 권한 부여
-for PROJECT in $(oc get projects -o jsonpath='{.items[*].metadata.name}'); do
-  oc adm policy add-role-to-user admin $USER -n $PROJECT
-  echo "Admin 권한이 $USER 사용자에게 $PROJECT 프로젝트에 부여되었습니다."
-done
+# 사용자에게 cluster-admin 권한 부여
+oc adm policy add-cluster-role-to-user cluster-admin $USER
 
-echo "모든 프로젝트에 대해 $USER 사용자에게 admin 권한이 부여되었습니다."
+echo "Cluster-admin 권한이 $USER 사용자에게 부여되었습니다."
