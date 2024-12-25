@@ -1,18 +1,28 @@
 # 헤놀로지 NAS SSD MOUNT 작업
 
+# 이 오류는 마운트할 파일 시스템 유형이 잘못된 것을 나타냅니다. `linux_raid_member` 파일 시스템 유형은 RAID 배열의 일부인 것을 의미합니다. RAID 배열을 마운트하려면 다음 단계를 따르세요:
+
+#1. **mdadm 명령어 사용**: RAID 배열을 초기화하고 마운트합니다.
+mdadm --assemble --scan
+mount /dev/md0 /APP
+#    여기서 `/dev/md0`는 실제 RAID 디바이스 이름이며, `/APP`는 마운트할 경로입니다.
+
+#2. **RAID 디바이스 확인**: `mdadm --detail /dev/md0` 명령어를 사용하여 RAID 디바이스 상태를 확인할 수 있습니다.
+
+
 # 1. **LVM2 모듈 로드**:
-sudo modprobe dm-mod
+modprobe dm-mod
 
 # 2. **볼륨 그룹 초기화**:
-sudo vgscan
-sudo vgchange -ay
+vgscan
+vgchange -ay
 
 # 3. **볼륨 마운트**:
-sudo mount /dev/VolGroup00/LogVol00 /APP
+mount /dev/VolGroup00/LogVol00 /APP
 
 #여기서 `VolGroup00`와 `LogVol00`는 실제 볼륨 그룹과 로그 볼륨 이름입니다. 이 단계를 통해 LVM2 레이블을 사용한 볼륨을 올바르게 초기화하고 마운트할 수 있습니다.
 
-sudo vgdisplay
+vgdisplay
 #  --- Volume group ---
 #  VG Name               VolGroup00
 #  System ID
@@ -34,7 +44,7 @@ sudo vgdisplay
 #  Free  PE / Size       0 / 0
 #  VG UUID               ABCD-1234-EFGH-5678
 
-sudo lvdisplay
+lvdisplay
 #  --- Logical volume ---
 #  LV Path                /dev/VolGroup00/LogVol00
 #  LV Name                LogVol00
@@ -52,10 +62,10 @@ sudo lvdisplay
 #  - currently set to     256
 #  Block device           253:0
 
-sudo vgs
+vgs
 #  VG        #PV #LV #SN Attr   VSize   VFree
 #  VolGroup00   1   2   0 wz--n- <20.00g    0
 
-sudo lvs
+lvs
 #  LV       VG        Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
 #  LogVol00 VolGroup00 -wi-ao---- <10.00g                                                    
