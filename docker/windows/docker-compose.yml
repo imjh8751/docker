@@ -1,10 +1,18 @@
-version: "3"
 services:
   windows:
     image: dockurr/windows
     container_name: windows
+    environment:
+      VERSION: "11"
+      RAM_SIZE: "12G"
+      CPU_CORES: "6"
+      DISK_SIZE: "150G"
+      USERNAME: "admin"
+      PASSWORD: "admin"
+      LANGUAGE: "Korean"
     devices:
       - /dev/kvm
+      - /dev/net/tun
     cap_add:
       - NET_ADMIN
     ports:
@@ -12,20 +20,16 @@ services:
       - 3389:3389/tcp
       - 3389:3389/udp
     stop_grace_period: 2m
-    restart: on-failure
-    environment:
-      #VERSION: "win11"
-      VERSION: "win10"
-      #VERSION: "2025"
-      #VERSION: "2022"
-      #VERSION: "2019"
-      RAM_SIZE: "12G"
-      CPU_CORES: "6"
-      DISK_SIZE: "150G"
-      #VERSION: "https://example.com/win.iso"
     volumes:
-      #- ./win11:/storage
-      - ./win10:/storage
-      #- ./server2025:/storage
-      #- ./server2022:/storage
-      #- ./server2019:/storage
+      #- /APP/windows/win11:/storage
+      - /APP/windows/win10:/storage
+      #- /APP/windows/server2025:/storage
+      #- /APP/windows/server2022:/storage
+      #- /APP/windows/server2019:/storage
+    networks:
+      vlan:
+        ipv4_address: 192.168.0.77
+
+networks:
+  vlan:
+    external: true
