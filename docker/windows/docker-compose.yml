@@ -3,7 +3,7 @@ services:
     image: dockurr/windows
     container_name: windows
     environment:
-      VERSION: "11"
+      VERSION: "11" # 11l, 2025, 2022, 2019
       RAM_SIZE: "12G"
       CPU_CORES: "6"
       DISK_SIZE: "150G"
@@ -26,10 +26,10 @@ services:
       #- /APP/windows/server2025:/storage
       #- /APP/windows/server2022:/storage
       #- /APP/windows/server2019:/storage
-    networks:
-      vlan:
-        ipv4_address: 192.168.0.77
+#    networks:
+#      vlan:
+#        ipv4_address: 192.168.0.77
 
-networks:
-  vlan:
-    external: true
+#networks:
+#  vlan:
+#    external: true
