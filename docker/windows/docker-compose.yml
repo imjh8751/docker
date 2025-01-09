@@ -2,6 +2,7 @@ services:
   windows:
     image: dockurr/windows
     container_name: windows
+    restart: always
     environment:
       VERSION: "11" # 11l, 2025, 2022, 2019
       RAM_SIZE: "12G"
