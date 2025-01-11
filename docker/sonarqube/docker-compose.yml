@@ -10,7 +10,7 @@ services:
       - /APP/sonarqube/sonarqube_temp:/opt/sonarqube/temp
     environment:
       #- SONARQUBE_JDBC_URL=jdbc:h2:tcp://sonarqube_db:9092/sonar
-      - SONARQUBE_JDBC_URL=postgresql://sonar:sonar@sonarqube_db:5432/sonarqube?connect_timeout=300
+      - SONARQUBE_JDBC_URL=postgresql://sonarqube_db:5432/sonarqube?connect_timeout=300
       - SONARQUBE_JDBC_USERNAME=sonar
       - SONARQUBE_JDBC_PASSWORD=sonar
       - SONARQUBE_WEB_CONTEXT=/sonar
