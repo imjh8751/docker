@@ -3,7 +3,7 @@ services:
     image: sonarqube
     ports:
       - "9000:9000"
-    volumes:
+    volumes: # chown 1000 /APP/sonarqube/sonarqube*
       - /APP/sonarqube/sonarqube_data:/opt/sonarqube/data
       - /APP/sonarqube/sonarqube_extensions:/opt/sonarqube/extensions
       - /APP/sonarqube/sonarqube_logs:/opt/sonarqube/logs
