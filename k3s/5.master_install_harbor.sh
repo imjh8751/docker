@@ -22,7 +22,9 @@ cp harbor.yml.tmpl harbor.yml
 # 사용자 설정에 맞게 harbor.yml 파일 수정 (이 부분은 사용자 설정에 따라 필요)
 
 # 설치 스크립트 실행
-#./install.sh
+#clair : 도커 이미지 취약점 분석도구
+#chartmuseum : helm chart repository
+#./install.sh --with-clair --with-chartmuseum
 
 # 완료 메시지 출력
 #echo "Harbor $HARBOR_VERSION 버전 설치가 완료되었습니다!"
