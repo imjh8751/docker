@@ -8,11 +8,11 @@ yum install bind bind-utils -y
 mkdir -p /root/setup_files
 cd /root/setup_files
 
-#OCP_VER=4.12.71
-OCP_VER=4.17.4
+# 2025.01 기준 최신버전은 4.17
+STABLE_VER=4.12
 
 # 웹 페이지에서 HTML 내용을 가져옵니다
-content=$(curl -s https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/)
+content=$(curl -s https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable-$STABLE_VER/)
 
 # 필요한 버전 정보를 추출합니다
 OCP_VER=`echo "$content" | grep -oP '(?<=openshift-client-linux-)[^"]*(?=.tar.gz)' | awk -F '-' '{print $1}' | head -n 1`
