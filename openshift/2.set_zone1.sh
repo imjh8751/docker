@@ -95,4 +95,5 @@ bootstrap.ocp4   IN      A        192.168.0.70
 master01.ocp4    IN      A        192.168.0.71
 EOF
 
+chown root:named /var/named/okd*.zone
 echo "DNS records have been added to $ZONE_FILE"
