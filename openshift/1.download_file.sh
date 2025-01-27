@@ -26,7 +26,7 @@ tar -xvf openshift-client-linux-$OCP_VER.tar.gz
 tar -xvf openshift-install-linux-$OCP_VER.tar.gz
 
 # local 복사
-mv oc kubectl openshift-install /usr/local/bin
+mv oc kubectl openshift-install /usr/local/sbin
 
 # 버전 확인
 oc version
