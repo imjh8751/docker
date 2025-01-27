@@ -71,4 +71,5 @@ cat <<EOF >> $ZONE_FILE3
 71         IN    PTR    master01.ocp4.okd.io.
 EOF
 
+chown root:named /var/named/0.168.*.zone
 echo "Reverse DNS records have been added to $ZONE_FILE"
