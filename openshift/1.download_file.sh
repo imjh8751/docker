@@ -18,10 +18,8 @@ content=$(curl -s https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stab
 OCP_VER=`echo "$content" | grep -oP '(?<=openshift-client-linux-)[^"]*(?=.tar.gz)' | awk -F '-' '{print $1}' | head -n 1`
 
 # 파일 다운로드 : https://mirror.openshift.com/pub/openshift-v4/clients/ocp/
-#wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/$OCP_VER/openshift-client-linux-$OCP_VER.tar.gz
-#wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/$OCP_VER/openshift-install-linux-$OCP_VER.tar.gz
-wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux-$OCP_VER.tar.gz
-wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-install-linux-$OCP_VER.tar.gz
+wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable-$STABLE_VER/openshift-client-linux-$OCP_VER.tar.gz
+wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable-$STABLE_VER/openshift-install-linux-$OCP_VER.tar.gz
 
 # 압축 해제
 tar -xvf openshift-client-linux-$OCP_VER.tar.gz
