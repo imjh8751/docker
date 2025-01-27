@@ -68,7 +68,10 @@ chmod 644 /usr/share/nginx/html/files/*
 # coreos 파일 다운로드
 cd /usr/share/nginx/html/files
 openshift-install coreos print-stream-json | grep '.iso[^.]' | grep x86_64
-wget https://rhcos.mirror.openshift.com/art/storage/prod/streams/4.17-9.4/builds/417.94.202409120353-0/x86_64/rhcos-417.94.202409120353-0-live.x86_64.iso
+COREOS=`openshift-install coreos print-stream-json | grep '.iso[^.]' | grep x86_64 | awk -F '"' '/location/ {print $4}'`
+echo $COREOS
+wget $COREOS
+#wget https://rhcos.mirror.openshift.com/art/storage/prod/streams/4.17-9.4/builds/417.94.202409120353-0/x86_64/rhcos-417.94.202409120353-0-live.x86_64.iso
 
 # igition hash 값 생성
 cd /usr/share/nginx/html/files
