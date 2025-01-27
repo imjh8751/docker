@@ -72,6 +72,7 @@ COREOS=`openshift-install coreos print-stream-json | grep '.iso[^.]' | grep x86_
 echo $COREOS
 wget $COREOS
 #wget https://rhcos.mirror.openshift.com/art/storage/prod/streams/4.17-9.4/builds/417.94.202409120353-0/x86_64/rhcos-417.94.202409120353-0-live.x86_64.iso
+rsync -avhP rhcos*.iso 192.168.0.101:/pv2-zfs/pv2-vol/template/iso 
 
 # igition hash 값 생성
 cd /usr/share/nginx/html/files
