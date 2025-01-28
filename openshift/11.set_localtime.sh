@@ -17,6 +17,3 @@ for server in "${servers[@]}"; do
 done
 
 echo "All commands executed successfully."
-
-# install bootstrap and master
-openshift-install --dir /root/installation_directory wait-for bootstrap-complete --log-level=info
