@@ -15,6 +15,6 @@ sed -i 's/allow-query     {[^}]*};/allow-query     { any; };/g' $NAMED_CONF
 FORWARDERS="        forwarders { 8.8.8.8; 168.126.63.1; };"
 
 # sed 명령어를 사용하여 recursion yes; 아래에 들여쓰기된 forwarders 추가
-sed -i '/recursion yes;/a '"$FORWARDERS" "$NAMED_CONF"
+sed -i '/recursion yes;/a\ '"$FORWARDERS" "$NAMED_CONF"
 
 echo "Options have been updated in $NAMED_CONF"
