@@ -1,3 +1,3 @@
 #!/bin/bash
 
-openshift-install --dir=/root/ocp/config wait-for install-complete
+openshift-install --dir=/root/installation_directory wait-for install-complete
