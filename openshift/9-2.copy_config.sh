@@ -11,6 +11,11 @@ openshift-install coreos print-stream-json | grep '.iso[^.]' | grep x86_64
 COREOS=`openshift-install coreos print-stream-json | grep '.iso[^.]' | grep x86_64 | awk -F '"' '/location/ {print $4}'`
 echo $COREOS
 wget $COREOS
+
+# SNO 설치 시 주석 해제
+#alias coreos-installer='podman run --privileged --pull always --rm -v /dev:/dev -v /run/udev:/run/udev -v $PWD:/data -w /data quay.io/coreos/coreos-installer:release' 
+#coreos-installer iso ignition embed -fi /root/installation_directory/bootstrap-in-place-for-live-iso.ign rhcos*.iso
+
 #wget https://rhcos.mirror.openshift.com/art/storage/prod/streams/4.17-9.4/builds/417.94.202409120353-0/x86_64/rhcos-417.94.202409120353-0-live.x86_64.iso
 rsync -avhP rhcos*.iso 192.168.0.101:/pv2-zfs/pv2-vol/template/iso 
 
