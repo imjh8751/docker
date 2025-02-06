@@ -1,5 +1,3 @@
-version: '3.4'
-
 services:
   remotely:
     image: immybot/remotely:latest
