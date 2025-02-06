@@ -22,8 +22,8 @@ services:
     environment:
       PGDATA: /var/lib/postgresql/data/guacamole
       POSTGRES_DB: guacamole_db
-      POSTGRES_PASSWORD: 'ChooseYourOwnPasswordHere1234'
-      POSTGRES_USER: guacamole_user
+      POSTGRES_PASSWORD: 'Admin2580!'
+      POSTGRES_USER: guacamole
     image: postgres:15.2-alpine
     networks:
       - guacnetwork_compose
