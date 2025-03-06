@@ -16,4 +16,4 @@ COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
 # 컨테이너 시작 시 실행될 명령
-CMD ["nginx", "-g", "daemon off;"
+CMD ["nginx", "-g", "daemon off;"]
