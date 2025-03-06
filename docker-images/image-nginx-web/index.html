@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>클라이언트 접속 정보</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .info-box {
+            background-color: white;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .info-item {
+            margin-bottom: 10px;
+            word-break: break-all;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #666;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .info-value {
+            background-color: #f9f9f9;
+            padding: 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="info-box">
+        <h1>클라이언트 접속 정보</h1>
+        <div class="info-item">
+            <span class="info-label">클라이언트 IP:</span>
+            <div id="client-ip" class="info-value">-</div>
+        </div>
+        <div class="info-item">
+            <span class="info-label">브라우저 User Agent:</span>
+            <div id="user-agent" class="info-value">-</div>
+        </div>
+        <div class="info-item">
+            <span class="info-label">접속 시간:</span>
+            <div id="access-time" class="info-value">-</div>
+        </div>
+        <div class="info-item">
+            <span class="info-label">브라우저 정보:</span>
+            <div id="browser-info" class="info-value">-</div>
+        </div>
+    </div>
+
+    <script>
+        // 브라우저 정보 탐지 함수
+        function getBrowserInfo() {
+            const ua = navigator.userAgent;
+            const browsers = [
+                {name: 'Edge', regex: /Edge\/(\d+)/},
+                {name: 'Chrome', regex: /Chrome\/(\d+)/},
+                {name: 'Firefox', regex: /Firefox\/(\d+)/},
+                {name: 'Safari', regex: /Safari\/(\d+)/},
+                {name: 'Opera', regex: /Opera\/(\d+)/},
+                {name: 'MSIE', regex: /MSIE (\d+)/},
+                {name: 'Trident', regex: /Trident\/(\d+)/}
+            ];
+
+            for (let browser of browsers) {
+                const match = ua.match(browser.regex);
+                if (match) {
+                    return `${browser.name} (버전: ${match[1]})`;
+                }
+            }
+            return '알 수 없는 브라우저';
+        }
+
+        // 페이지 로드 시 실행되는 함수
+        function displayClientInfo() {
+            // 클라이언트 IP (서버 측 요청 필요)
+            fetch('/client-ip')
+                .then(response => response.text())
+                .then(ip => {
+                    document.getElementById('client-ip').textContent = ip;
+                })
+                .catch(() => {
+                    document.getElementById('client-ip').textContent = '정보를 가져올 수 없음';
+                });
+
+            // User Agent
+            document.getElementById('user-agent').textContent = navigator.userAgent;
+
+            // 접속 시간
+            document.getElementById('access-time').textContent = new Date().toLocaleString();
+            // 브라우저 정보
+            document.getElementById('browser-info').textContent = getBrowserInfo();
+        }
+
+        // 페이지 로드 시 실행
+        window.onload = displayClientInfo;
+    </script>
+</body>
+</html>
