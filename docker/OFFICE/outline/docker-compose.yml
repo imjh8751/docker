@@ -1,9 +1,9 @@
-version: "3.2"
 services:
   outline:
     image: docker.getoutline.com/outlinewiki/outline:latest
+    container_name: outline
+    restart: always
     env_file: ./docker.env
-    network_mode: "host"
     ports:
       - "3000:3000"
     volumes:
@@ -11,11 +11,14 @@ services:
     depends_on:
       - postgres
       - redis
+    networks:
+      - outline-network
 
   redis:
     image: redis
+    container_name: redis
+    restart: always
     env_file: ./docker.env
-    network_mode: "host"
     ports:
       - "6379:6379"
     volumes:
@@ -26,11 +29,14 @@ services:
       interval: 10s
       timeout: 30s
       retries: 3
+    networks:
+      - outline-network
 
   postgres:
     image: postgres
+    container_name: postgres
+    restart: always
     env_file: ./docker.env
-    network_mode: "host"
     ports:
       - "5432:5432"
     volumes:
@@ -44,3 +50,9 @@ services:
       POSTGRES_USER: 'user'
       POSTGRES_PASSWORD: 'pass'
       POSTGRES_DB: 'outline'
+    networks:
+      - outline-network
+
+networks:
+  outline-network:
+    driver: bridge
