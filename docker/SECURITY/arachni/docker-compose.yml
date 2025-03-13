@@ -1,7 +1,6 @@
 services:
   web:
     image: arachni
-    build: .
     ports:
       - "9292:9292"
-    command: sudo -u 1000 bin/arachni_web -o 0.0.0.0
+    command: bin/arachni_web -o 0.0.0.0
