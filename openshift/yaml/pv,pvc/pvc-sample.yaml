@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc4-nas-ocp-pvc-log
+  #namespace: los-app-prd # 사용할 네임스페이스로 변경
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi # PV에 설정한 스토리지 용량과 동일하게 설정
+  selector:
+    matchLabels:
+      name: pv4-nas-ocp-pv-log
