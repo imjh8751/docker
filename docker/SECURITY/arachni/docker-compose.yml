@@ -1,6 +1,6 @@
 services:
   web:
-    image: ahannigan/docker-arachni
+    image: imjh8751/arachni
     build: .
     ports:
       - "9292:9292"
