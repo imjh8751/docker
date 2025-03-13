@@ -1,4 +1,4 @@
-FROM debian:8
+FROM debian:bookworm
 
 ARG VERSION=1.6.1.3
 ARG WEB_VERSION=0.6.1.1
