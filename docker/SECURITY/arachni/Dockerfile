@@ -7,9 +7,16 @@ ARG WEB_VERSION=0.6.1.1
 RUN adduser --disabled-password --gecos "" --uid 1000 master
 
 RUN apt-get -qq update && \
-    apt-get -qq install -y --no-install-recommends wget ca-certificates libcurl4 libnghttp2-14 && \
+    apt-get -qq install -y --no-install-recommends wget ca-certificates libcurl4 libnghttp2-14 unzip chromium && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+# chromedriver 다운로드 및 설치
+RUN wget https://chromedriver.storage.googleapis.com/123.0.6312.86/chromedriver_linux64.zip && \
+    unzip chromedriver_linux64.zip && \
+    mv chromedriver /arachni/bin/../.system/usr/bin/ && \
+    rm chromedriver_linux64.zip && \
+    chmod +x /arachni/bin/../.system/usr/bin/chromedriver
 
 RUN mkdir /arachni && \
     wget -qO- https://github.com/Arachni/arachni/releases/download/v${VERSION}/arachni-${VERSION}-${WEB_VERSION}-linux-x86_64.tar.gz | \
