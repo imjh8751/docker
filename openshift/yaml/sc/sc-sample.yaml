@@ -1,0 +1,10 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-storageclass
+provisioner: kubernetes.io/nfs
+parameters:
+  server: 192.168.0.98 # NFS 서버 IP 주소
+  path: /pv4-zfs/pv4-nas-ocp/ocp-storageclass # NFS 공유 경로
+reclaimPolicy: Retain # 삭제 정책 (Retain 또는 Delete)
+volumeBindingMode: Immediate # 볼륨 바인딩 모드 (Immediate 또는 WaitForFirstConsumer)
