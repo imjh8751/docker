@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-nfs-storageclass
+  #namespace: los-app-prd # 사용할 네임스페이스로 변경
+spec:
+  accessModes:
+    - ReadWriteMany # 접근 모드 설정 (ReadWriteOnce, ReadOnlyMany, ReadWriteMany)
+  resources:
+    requests:
+      storage: 10Gi # 요청하는 스토리지 용량
+  storageClassName: nfs-storageclass # 사용할 스토리지 클래스 이름
