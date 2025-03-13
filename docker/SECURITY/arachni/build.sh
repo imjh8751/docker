@@ -10,3 +10,6 @@ docker build --build-arg VERSION=1.6.1.3 --build-arg WEB_VERSION=0.6.1.1 -t arac
 
 # 방법 3 : docker-compose 수행
 docker compose up -d web
+
+# 계정
+admin@admin.admin / administrator
