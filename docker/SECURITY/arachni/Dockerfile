@@ -1,6 +1,6 @@
 FROM debian:8
 
-ARG VERSION=1.6.1.1
+ARG VERSION=1.6.1.3
 ARG WEB_VERSION=0.6.1.1
 
 RUN apt-get -qq update && \
