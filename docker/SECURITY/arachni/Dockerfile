@@ -2,6 +2,7 @@ FROM debian:bookworm
 
 ARG VERSION=1.6.1.3
 ARG WEB_VERSION=0.6.1.1
+ARG CHROME_VERSION=114.0.5735.90
 
 # master 계정 생성 (UID 1000)
 RUN adduser --disabled-password --gecos "" --uid 1000 master
@@ -12,7 +13,7 @@ RUN apt-get -qq update && \
     rm -rf /var/lib/apt/lists/*
 
 # chromedriver 다운로드 및 설치
-RUN wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip && \
+RUN wget https://chromedriver.storage.googleapis.com/${CHROME_VERSION}/chromedriver_linux64.zip && \
     unzip chromedriver_linux64.zip && \
     mv chromedriver /usr/bin/ && \
     rm chromedriver_linux64.zip && \
