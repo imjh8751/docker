@@ -12,7 +12,7 @@ RUN apt-get -qq update && \
     rm -rf /var/lib/apt/lists/*
 
 # chromedriver 다운로드 및 설치
-RUN wget https://chromedriver.storage.googleapis.com/123.0.6312.86/chromedriver_linux64.zip && \
+RUN wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip && \
     unzip chromedriver_linux64.zip && \
     mv chromedriver /arachni/bin/../.system/usr/bin/ && \
     rm chromedriver_linux64.zip && \
