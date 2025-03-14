@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stress-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stress
+  template:
+    metadata:
+      labels:
+        app: stress
+    spec:
+      containers:
+      - name: stress
+        image: imjh8751/stress-test-app:podman-1
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        livenessProbe:
+          httpGet:
+            path: / # 또는 애플리케이션의 상태 확인 엔드포인트
+            port: 8080
+          initialDelaySeconds: 15 # 컨테이너 시작 후 첫 프로브까지의 지연 시간
+          periodSeconds: 10 # 프로브 실행 간격
+          timeoutSeconds: 5 # 프로브 타임아웃
+          failureThreshold: 3 # 실패 허용 횟수
+        readinessProbe:
+          httpGet:
+            path: / # 또는 애플리케이션의 상태 확인 엔드포인트
+            port: 8080
+          initialDelaySeconds: 5 # 컨테이너 시작 후 첫 프로브까지의 지연 시간
+          periodSeconds: 10 # 프로브 실행 간격
+          timeoutSeconds: 5 # 프로브 타임아웃
+          failureThreshold: 3 # 실패 허용 횟수
