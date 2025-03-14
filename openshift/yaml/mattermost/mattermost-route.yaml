@@ -1,0 +1,14 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: mattermost-route
+spec:
+  host: mattermost.apps.ocp4.okd.io
+  to:
+    kind: Service
+    name: mattermost-service
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
