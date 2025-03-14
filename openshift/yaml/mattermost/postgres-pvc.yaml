@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres-pvc-data
+  name: postgres-pvc
   #namespace: los-app-prd # 사용할 네임스페이스로 변경
 spec:
   accessModes:
