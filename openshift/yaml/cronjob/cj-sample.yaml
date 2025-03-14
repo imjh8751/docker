@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: restart-nginx-deployment
+  namespace: los-app-prd # 배포가 있는 네임스페이스로 변경
+spec:
+  schedule: "0 */3 * * *" # 매 3시간마다 실행
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: restart-container
+            image: quay.io/openshift/origin-cli:latest #oc 명령어가 포함된 이미지
+            command: ["oc", "rollout", "restart", "deployment/nginx-deployment", "-n", "<배포가 있는 네임스페이스>"]
+          restartPolicy: Never
+          serviceAccountName: restart-deploy-sa # 서비스 어카운트 이름
+  successfulJobsHistoryLimit: 3 # 성공한 작업 기록 유지 개수
+  failedJobsHistoryLimit: 1 # 실패한 작업 기록 유지 개수
