@@ -1,0 +1,15 @@
+kind: Route
+metadata:
+  name: nginx-route
+spec:
+  host: nginx.ocp4.okd.io  # 원하는 호스트 이름으로 변경
+  port:
+    targetPort: 80 # 서비스의 80 포트를 연결
+  to:
+    kind: Service
+    name: nginx-service
+    weight: 100
+  port:
+    targetPort: 80
+  tls:
+    termination: edge
