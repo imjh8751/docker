@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mattermost
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mattermost
+  template:
+    metadata:
+      labels:
+        app: mattermost
+    spec:
+      containers:
+      - name: mattermost
+        image: mattermost/mattermost-team:10.5.1
+        ports:
+        - containerPort: 443
+        - containerPort: 8065
+        env:
+        - name: MM_SQLSETTINGS_DATASOURCE
+          value: "postgres://mattermost:mattermost_password@postgres-service:5432/mattermostdb?sslmode=disable"
+        - name: MM_SERVICESETTINGS_SITEURL
+          value: "https://mattermost.apps.ocp4.okd.io"
+        readinessProbe:
+          httpGet:
+            path: /api/v4/system/ping
+            port: 8065
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /api/v4/system/ping
+            port: 8065
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "1Gi"
+          limits:
+            cpu: "1000m"
+            memory: "2Gi"
+        volumeMounts:
+        - name: mattermost-data
+          mountPath: /opt/mattermost/data
+      volumes:
+      - name: mattermost-data
+        persistentVolumeClaim:
+          claimName: mattermost-pvc
