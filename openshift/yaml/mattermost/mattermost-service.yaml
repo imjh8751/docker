@@ -6,11 +6,11 @@ spec:
   selector:
     app: mattermost
   ports:
-  - name: https
-    protocol: TCP
-    port: 443
-    targetPort: 443
   - name: http-mattermost
     protocol: TCP
     port: 8065
     targetPort: 8065
+  - name: https
+    protocol: TCP
+    port: 443
+    targetPort: 443
