@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mattermost-pv
+spec:
+  capacity:
+    storage: 10Gi # PVC와 동일한 용량
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 192.168.0.98 # NFS 서버 IP 주소 변경 필요
+    path: /pv4-zfs/pv4-nas-ocp/ocp-data/mattermost/data # NFS 서버 경로 변경 필요
