@@ -1,0 +1,16 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: stress-route
+spec:
+  host: stress.ocp4.okd.io  # 원하는 호스트 이름으로 변경
+  port:
+    targetPort: 80 # 서비스의 80 포트를 연결
+  to:
+    kind: Service
+    name: stress-service
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
