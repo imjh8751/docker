@@ -8,6 +8,7 @@ services:
     volumes:
       - /APP/redis/redis-bitnami/redis-cluster_data-0:/bitnami/redis/data
     environment:
+      #- ALLOW_EMPTY_PASSWORD=yes
       - REDIS_PASSWORD=bitnami
       - REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5
   redis-node-1:
@@ -19,6 +20,7 @@ services:
     volumes:
       - /APP/redis/redis-bitnami/redis-cluster_data-1:/bitnami/redis/data
     environment:
+      #- ALLOW_EMPTY_PASSWORD=yes
       - REDIS_PASSWORD=bitnami
       - REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5
   redis-node-2:
@@ -30,6 +32,7 @@ services:
     volumes:
       - /APP/redis/redis-bitnami/redis-cluster_data-2:/bitnami/redis/data
     environment:
+      #- ALLOW_EMPTY_PASSWORD=yes
       - REDIS_PASSWORD=bitnami
       - REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5
   redis-node-3:
@@ -41,6 +44,7 @@ services:
     volumes:
       - /APP/redis/redis-bitnami/redis-cluster_data-3:/bitnami/redis/data
     environment:
+      #- ALLOW_EMPTY_PASSWORD=yes
       - REDIS_PASSWORD=bitnami
       - REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5
   redis-node-4:
@@ -52,6 +56,7 @@ services:
     volumes:
       - /APP/redis/redis-bitnami/redis-cluster_data-4:/bitnami/redis/data
     environment:
+      #- ALLOW_EMPTY_PASSWORD=yes
       - REDIS_PASSWORD=bitnami
       - REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5
   redis-node-5:
@@ -69,6 +74,7 @@ services:
       - redis-node-3
       - redis-node-4
     environment:
+      #- ALLOW_EMPTY_PASSWORD=yes
       - REDIS_PASSWORD=bitnami
       - REDISCLI_AUTH=bitnami
       - REDIS_CLUSTER_REPLICAS=1
