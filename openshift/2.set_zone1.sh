@@ -26,7 +26,6 @@ helper.ocp4      IN      A        192.168.0.69
 api.ocp4         IN      A        192.168.0.69
 api-int.ocp4     IN      A        192.168.0.69
 *.apps.ocp4      IN      A        192.168.0.69
-*.ocp4           IN      A        192.168.0.69
 console-openshift-console.apps.ocp4  IN  A  192.168.0.69
 oauth-openshift.apps.ocp4  IN  A  192.168.0.69
 
@@ -57,7 +56,6 @@ helper.ocp4      IN      A        192.168.0.69
 api.ocp4         IN      A        192.168.0.69
 api-int.ocp4     IN      A        192.168.0.69
 *.apps.ocp4      IN      A        192.168.0.69
-*.ocp4           IN      A        192.168.0.69
 console-openshift-console.apps.ocp4  IN  A  192.168.0.69
 oauth-openshift.apps.ocp4  IN  A  192.168.0.69
 
@@ -85,8 +83,7 @@ ocp.ocp4         IN      A        192.168.0.69
 helper.ocp4      IN      A        192.168.0.69
 api.ocp4         IN      A        192.168.0.69
 api-int.ocp4     IN      A        192.168.0.69
-*.apps.ocp4      IN      A        192.168.0.69
-*.ocp4           IN      A        192.168.0.69
+*.apps.ocp4      IN      A        192.168.0.6
 console-openshift-console.apps.ocp4  IN  A  192.168.0.69
 oauth-openshift.apps.ocp4  IN  A  192.168.0.69
 
