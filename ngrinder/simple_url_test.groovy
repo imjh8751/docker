@@ -16,16 +16,18 @@ import org.ngrinder.http.cookie.Cookie
 import org.ngrinder.http.cookie.CookieManager
 import groovy.json.JsonSlurper
 
+
 // 이미 방문한 URL을 추적하기 위한 Set
 import java.util.concurrent.ConcurrentHashMap
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+
 /**
- * URL 응답에서 모든 링크를 찾아 example.com 도메인을 포함하는 URL만 방문하는 테스트 스크립트
- *
- * @author admin
- */
+* example.com 도메인의 정적 리소스 확장자(.css, .js, .jpg 등)를 가진 URL만 크롤링하는 테스트 스크립트
+*
+* @author admin
+*/
 @RunWith(GrinderRunner)
 class TestRunner {
     public static GTest test
@@ -33,23 +35,33 @@ class TestRunner {
     public static Map<String, String> headers = [:]
     public static Map<String, Object> params = [:]
     public static List<Cookie> cookies = []
-    
+   
     // 방문한 URL을 추적하기 위한 ConcurrentHashMap 기반 Set
     public static Set<String> visitedUrls = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>())
-    
+   
     // 크롤링할 도메인 설정
-    public static final String TARGET_DOMAIN = "example.com"
-    
+    public static final String TARGET_DOMAIN = "twww.kblife.co.kr"
+   
     // 최대 방문 깊이
     public static final int MAX_DEPTH = 3
-    
-    // 링크 추출을 위한 정규표현식 패턴
-    public static final Pattern HREF_PATTERN = Pattern.compile("<a\\s+[^>]*href=[\"']([^\"']+)[\"'][^>]*>", Pattern.CASE_INSENSITIVE)
-    
+   
+    // 정적 리소스 확장자 목록
+    public static final List<String> STATIC_EXTENSIONS = [
+        ".css", ".js", ".jpg", ".jpeg", ".png", ".gif", ".svg", ".webp",
+        ".woff", ".woff2", ".ttf", ".eot", ".otf", ".ico", ".pdf", ".mp3", ".mp4"
+    ]
+   
+    // HTML에서 리소스 URL을 추출하기 위한 패턴들
+    public static final Pattern CSS_PATTERN = Pattern.compile("<link[^>]*href=[\"']([^\"']+)[\"'][^>]*>", Pattern.CASE_INSENSITIVE)
+    public static final Pattern JS_PATTERN = Pattern.compile("<script[^>]*src=[\"']([^\"']+)[\"'][^>]*>", Pattern.CASE_INSENSITIVE)
+    public static final Pattern IMG_PATTERN = Pattern.compile("<img[^>]*src=[\"']([^\"']+)[\"'][^>]*>", Pattern.CASE_INSENSITIVE)
+    public static final Pattern BACKGROUND_PATTERN = Pattern.compile("url\\([\"']?([^\"'\\)]+)[\"']?\\)", Pattern.CASE_INSENSITIVE)
+    public static final Pattern SOURCE_PATTERN = Pattern.compile("<source[^>]*src=[\"']([^\"']+)[\"'][^>]*>", Pattern.CASE_INSENSITIVE)
+   
     @BeforeProcess
     public static void beforeProcess() {
         HTTPRequestControl.setConnectionTimeout(300000)
-        test = new GTest(1, "URL Crawler Test")
+        test = new GTest(1, "Static Resources Crawler Test")
         request = new HTTPRequest()
         grinder.logger.info("before process.")
     }
@@ -60,121 +72,228 @@ class TestRunner {
         grinder.statistics.delayReports = true
         grinder.logger.info("before thread.")
     }
-    
+   
     @Before
     public void before() {
-        
-		setHeaders([
+        setHeaders([
             "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-			"accept-language": "ko,en;q=0.9,en-US;q=0.8",
-			"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-			"Referrer-Policy": "strict-origin-when-cross-origin",
-			"accept-encoding": "gzip, deflate",  // 압축 허용
-			"connection": "keep-alive"  // 연결 유지
-		])
-        
+            "accept-language": "ko,en;q=0.9,en-US;q=0.8",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+            "Referrer-Policy": "strict-origin-when-cross-origin",
+                                "connection": "keep-alive"  // 연결 유지
+        ])
+       
         request.setHeaders(headers)
         CookieManager.addCookies(cookies)
         grinder.logger.info("before. init headers and cookies")
     }
-    
+   
     @Test
     public void test() {
-        // 초기 URL 설정 (테스트 대상 URL로 변경 필요)
-        String initialUrl = "http://192.168.0.37:9011"
-        
-        // 초기 URL 방문 및 링크 크롤링 시작
-        crawlUrl(initialUrl, 0)
+        // 초기 URL 설정 (example.com의 메인 페이지로 시작)
+        String initialUrl = https://twww.kblife.co.kr
+       
+        // 초기 URL 방문하여 정적 리소스 수집 시작
+        processPage(initialUrl, 0)
     }
-    
+   
     /**
-     * URL을 방문하고 링크를 추출하여 target 도메인이 포함된 링크를 재귀적으로 방문
-     * 
+     * HTML 페이지를 방문하여 정적 리소스를 추출하고 호출하는 메서드
+     *
      * @param url 방문할 URL
      * @param depth 현재 방문 깊이
      */
-    private void crawlUrl(String url, int depth) {
+    private void processPage(String url, int depth) {
         // 최대 깊이 체크
         if (depth > MAX_DEPTH) {
             return
         }
-        
+       
         // 이미 방문한 URL인지 확인
         if (visitedUrls.contains(url)) {
             return
         }
-        
+       
+        // example.com 도메인이 아닌 경우 무시
+        if (!url.contains(TARGET_DOMAIN)) {
+            return
+        }
+       
         // URL 방문 기록 추가
         visitedUrls.add(url)
-        
+       
         try {
-            grinder.logger.info("Visiting URL: {}", url)
-            
+            grinder.logger.info("Processing HTML page: {}", url)
+           
             // URL 방문
             HTTPResponse response = request.GET(url)
-            
-			// 응답 상태 코드 확인
-			grinder.logger.info("Response status code: {}", response.statusCode);
-
-			// 응답 헤더 확인
-			grinder.logger.info("Response headers: {}", response.getHeaders());
-			
+           
             // 응답 상태 코드 확인
+            grinder.logger.info("Response status code: {}", response.statusCode)
+           
             if (response.statusCode == 200) {
-                // 페이지 내용에서 링크 추출
+                // 페이지 내용에서 모든 리소스 URL 추출
                 String htmlContent = new String(response.getBodyText())
-				// response.getBody() 대신 아래 메서드들을 시도해 보세요
-				//String htmlContent = response.getBodyText();  // 텍스트로 가져오기
-				// 또는
-				//String htmlContent = new String(response.getBodyBytes());  // 바이트 배열로 가져온 후 변환
-				// 또는 (헤더 및 본문 모두 포함)
-				//String fullResponse = response.getText();
-				
-                List<String> extractedUrls = extractLinks(htmlContent)
-                
-                // 추출된 링크 순회
-                extractedUrls.each { href ->
-                    String absoluteUrl = makeAbsoluteUrl(url, href)
-                    
-                    // TARGET_DOMAIN이 포함된 URL만 크롤링
-                    if (absoluteUrl != null && absoluteUrl.contains(TARGET_DOMAIN)) {
-                        // 재귀적으로 링크 방문
-                        crawlUrl(absoluteUrl, depth + 1)
+                List<String> resourceUrls = extractResourceUrls(htmlContent)
+                grinder.logger.info("resourceUrls: {}개 {}", resourceUrls.size(), resourceUrls)
+               
+                // 정적 리소스만 필터링하여 요청
+                resourceUrls.each { resourceUrl ->
+                    String absoluteUrl = makeAbsoluteUrl(url, resourceUrl)
+                   
+                    if (absoluteUrl != null &&
+                        absoluteUrl.contains(TARGET_DOMAIN) &&
+                        isStaticResource(absoluteUrl)) {
+                       
+                        // 해당 URL이 아직 방문하지 않은 정적 리소스인 경우에만 요청
+                        if (!visitedUrls.contains(absoluteUrl)) {
+                            fetchStaticResource(absoluteUrl)
+                        }
                     }
                 }
-                
+               
+                // HTML 페이지에서 다른 HTML 페이지 링크를 찾아 재귀적으로 탐색
+                /*if (depth < MAX_DEPTH) {
+                    List<String> htmlLinks = extractHtmlLinks(htmlContent)
+                    htmlLinks.each { link ->
+                        String absoluteLink = makeAbsoluteUrl(url, link)
+                        if (absoluteLink != null &&
+                            absoluteLink.contains(TARGET_DOMAIN) &&
+                            !isStaticResource(absoluteLink)) {
+                            processPage(absoluteLink, depth + 1)
+                        }
+                    }
+                }*/
+               
                 assertThat(response.statusCode, is(200))
             } else {
-                grinder.logger.warn("Warning. The response may not be correct. The response code was {}.", response.statusCode)
+                grinder.logger.warn("Warning. Failed to process page. The response code was {}.", response.statusCode)
             }
         } catch (Exception e) {
-            grinder.logger.error("Error crawling URL {}: {}", url, e.message)
+            grinder.logger.error("Error processing page {}: {}", url, e.message)
         }
     }
-    
+   
     /**
-     * HTML 콘텐츠에서 링크 추출
-     * 
-     * @param htmlContent HTML 콘텐츠
-     * @return 추출된 링크 목록
+     * 정적 리소스 URL을 실제로 요청하는 메서드
+     *
+     * @param url 요청할 정적 리소스 URL
      */
-    private List<String> extractLinks(String htmlContent) {
+    private void fetchStaticResource(String url) {
+        try {
+            visitedUrls.add(url)
+            grinder.logger.info("Fetching static resource: {}", url)
+           
+            HTTPResponse response = request.GET(url)
+           
+            grinder.logger.info("Static resource fetched: {} (Status: {})", url, response.statusCode)
+           
+            if (response.statusCode == 200) {
+                grinder.logger.info("Successfully fetched static resource: {}", url)
+            } else {
+                grinder.logger.warn("Warning. Failed to fetch static resource: {} (Status: {})", url, response.statusCode)
+            }
+        } catch (Exception e) {
+            grinder.logger.error("Error fetching static resource {}: {}", url, e.message)
+        }
+    }
+   
+    /**
+     * HTML 페이지에서 다른 HTML 페이지 링크를 추출하는 메서드
+     *
+     * @param htmlContent HTML 콘텐츠
+     * @return HTML 페이지 링크 목록
+     */
+    private List<String> extractHtmlLinks(String htmlContent) {
         List<String> links = new ArrayList<>()
-        Matcher matcher = HREF_PATTERN.matcher(htmlContent)
-        
+        Pattern pattern = Pattern.compile("<a\\s+[^>]*href=[\"']([^\"']+)[\"'][^>]*>", Pattern.CASE_INSENSITIVE)
+        Matcher matcher = pattern.matcher(htmlContent)
+       
         while (matcher.find()) {
             String href = matcher.group(1)
-            if (href != null && !href.isEmpty()) {
+            if (href != null && !href.isEmpty() &&
+                !href.startsWith("#") &&
+
+               !href.startsWith("javascript:") &&
+                !isStaticResource(href)) {
                 links.add(href)
             }
         }
-        
+       
         return links
     }
-    
+   
+    /**
+     * HTML 페이지에서 모든 유형의 리소스 URL을 추출하는 메서드
+     *
+     * @param htmlContent HTML 콘텐츠
+     * @return 추출된 리소스 URL 목록
+     */
+    private List<String> extractResourceUrls(String htmlContent) {
+        Set<String> urls = new HashSet<>()
+
+
+        // CSS 파일 추출
+        addMatchesToList(CSS_PATTERN.matcher(htmlContent), urls, 1)
+       
+        // JavaScript 파일 추출
+        addMatchesToList(JS_PATTERN.matcher(htmlContent), urls, 1)
+       
+        // 이미지 파일 추출
+        addMatchesToList(IMG_PATTERN.matcher(htmlContent), urls, 1)
+       
+        // CSS 내 배경 이미지 URL 추출
+        addMatchesToList(BACKGROUND_PATTERN.matcher(htmlContent), urls, 1)
+       
+        // source 태그의 src 속성 추출 (비디오, 오디오 등)
+        addMatchesToList(SOURCE_PATTERN.matcher(htmlContent), urls, 1)
+       
+        return new ArrayList<>(urls)
+    }
+   
+    /**
+     * 패턴 매칭 결과를 리스트에 추가하는 헬퍼 메서드
+     */
+    private void addMatchesToList(Matcher matcher, Set<String> list, int group) {
+        while (matcher.find()) {
+            String url = matcher.group(group)
+            if (url != null && !url.isEmpty()) {
+                list.add(url)
+            }
+        }
+    }
+   
+    /**
+     * 주어진 URL이 정적 리소스인지 확인하는 메서드
+     *
+     * @param url 확인할 URL
+     * @return 정적 리소스 여부
+     */
+    private boolean isStaticResource(String url) {
+        if (url == null || url.isEmpty()) {
+            return false
+        }
+       
+        // URL에 쿼리 파라미터가 있는 경우 제거 (예: .css?v=123)
+        String cleanUrl = url
+        int queryIndex = cleanUrl.indexOf('?')
+        if (queryIndex > 0) {
+            cleanUrl = cleanUrl.substring(0, queryIndex)
+        }
+       
+        // 정적 리소스 확장자 확인
+        for (String ext : STATIC_EXTENSIONS) {
+            if (cleanUrl.toLowerCase().endsWith(ext)) {
+                return true
+            }
+        }
+       
+        return false
+    }
+   
     /**
      * 상대 URL을 절대 URL로 변환
-     * 
+     *
      * @param baseUrl 기준 URL
      * @param href 상대 또는 절대 URL
      * @return 절대 URL
@@ -183,12 +302,12 @@ class TestRunner {
         if (href == null || href.isEmpty() || href.startsWith("#") || href.startsWith("javascript:")) {
             return null
         }
-        
+       
         // 이미 절대 URL인 경우
-        if (href.startsWith("http://") || href.startsWith("https://")) {
+        if (href.startsWith(http://) || href.startsWith(https://)) {
             return href
         }
-        
+       
         try {
             // baseUrl에서 도메인 추출
             URL url = new URL(baseUrl)
@@ -196,7 +315,7 @@ class TestRunner {
             if (url.getPort() != -1) {
                 baseDomain += ":" + url.getPort()
             }
-            
+           
             // 상대 경로를 절대 경로로 변환
             if (href.startsWith("/")) {
                 return baseDomain + href
@@ -218,7 +337,7 @@ class TestRunner {
             return null
         }
     }
-    
+   
     /**
      * HTTP 헤더를 설정하는 함수
      *
