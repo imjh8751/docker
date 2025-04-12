@@ -8,6 +8,7 @@ services:
       - SUDO_PASSWORD=1q2w3e4r5t^Y
       - PROXY_DOMAIN=vscode.itapi.org
       - PASSWORD=1q2w3e4r5t^Y
+      - SUDO_PASSWORD=master #optional
       - TZ=Asia/Seoul
       - PGID=100
       - PUID=1026
