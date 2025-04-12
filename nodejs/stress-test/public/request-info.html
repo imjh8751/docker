@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTTP 요청 정보 테스터</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    pre {
+      background: #f8f8f8;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      overflow-x: auto;
+    }
+    .header-item {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    .header-item input {
+      margin-right: 10px;
+    }
+    .header-item button {
+      background: #f44336;
+      padding: 5px 10px;
+    }
+    .tab {
+      overflow: hidden;
+      border: 1px solid #ccc;
+      background-color: #f1f1f1;
+      border-radius: 4px 4px 0 0;
+    }
+    .tab button {
+      background-color: inherit;
+      float: left;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 10px 16px;
+      transition: 0.3s;
+      color: #333;
+    }
+    .tab button:hover {
+      background-color: #ddd;
+    }
+    .tab button.active {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .tabcontent {
+      display: none;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-top: none;
+      border-radius: 0 0 4px 4px;
+      background-color: white;
+    }
+    .show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h1>HTTP 요청 정보 테스터</h1>
+  
+  <div class="container">
+    <div class="tab">
+      <button class="tablinks active" onclick="openTab(event, 'GetTab')">GET 요청</button>
+      <button class="tablinks" onclick="openTab(event, 'PostTab')">POST 요청</button>
+      <button class="tablinks" onclick="openTab(event, 'CustomTab')">사용자 정의 요청</button>
+    </div>
+    
+    <!-- GET 요청 탭 -->
+    <div id="GetTab" class="tabcontent show">
+      <h2>GET 요청 보내기</h2>
+      <form id="getForm">
+        <div class="form-group">
+          <label for="getPath">경로 (Path):</label>
+          <input type="text" id="getPath" value="/api/test" placeholder="/api/test">
+        </div>
+        
+        <div class="form-group">
+          <label>Query 파라미터:</label>
+          <div id="getParams">
+            <div class="header-item">
+              <input type="text" placeholder="키" class="param-key">
+              <input type="text" placeholder="값" class="param-value">
+              <button type="button" onclick="removeItem(this)">삭제</button>
+            </div>
+          </div>
+          <button type="button" onclick="addParam('getParams')">파라미터 추가</button>
+        </div>
+        
+        <div class="form-group">
+          <label>헤더:</label>
+          <div id="getHeaders">
+            <div class="header-item">
+              <input type="text" placeholder="헤더명" class="header-key">
+              <input type="text" placeholder="값" class="header-value">
+              <button type="button" onclick="removeItem(this)">삭제</button>
+            </div>
+          </div>
+          <button type="button" onclick="addHeader('getHeaders')">헤더 추가</button>
+        </div>
+        
+        <button type="button" onclick="sendRequest('GET')">요청 보내기</button>
+      </form>
+    </div>
+    
+    <!-- POST 요청 탭 -->
+    <div id="PostTab" class="tabcontent">
+      <h2>POST 요청 보내기</h2>
+      <form id="postForm">
+        <div class="form-group">
+          <label for="postPath">경로 (Path):</label>
+          <input type="text" id="postPath" value="/api/test" placeholder="/api/test">
+        </div>
+        
+        <div class="form-group">
+          <label for="contentType">Content-Type:</label>
+          <select id="contentType">
+            <option value="application/json">application/json</option>
+            <option value="application/x-www-form-urlencoded">application/x-www-form-urlencoded</option>
+            <option value="multipart/form-data">multipart/form-data</option>
+            <option value="text/plain">text/plain</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="requestBody">요청 바디 (JSON):</label>
+          <textarea id="requestBody" rows="6" placeholder='{"name": "value", "items": [1, 2, 3]}'></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>헤더:</label>
+          <div id="postHeaders">
+            <div class="header-item">
+              <input type="text" placeholder="헤더명" class="header-key">
+              <input type="text" placeholder="값" class="header-value">
+              <button type="button" onclick="removeItem(this)">삭제</button>
+            </div>
+          </div>
+          <button type="button" onclick="addHeader('postHeaders')">헤더 추가</button>
+        </div>
+        
+        <button type="button" onclick="sendRequest('POST')">요청 보내기</button>
+      </form>
+    </div>
+    
+    <!-- 사용자 정의 요청 탭 -->
+    <div id="CustomTab" class="tabcontent">
+      <h2>사용자 정의 요청 보내기</h2>
+      <form id="customForm">
+        <div class="form-group">
+          <label for="customMethod">HTTP 메서드:</label>
+          <select id="customMethod">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="DELETE">DELETE</option>
+            <option value="PATCH">PATCH</option>
+            <option value="HEAD">HEAD</option>
+            <option value="OPTIONS">OPTIONS</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="customPath">경로 (Path):</label>
+          <input type="text" id="customPath" value="/api/test" placeholder="/api/test">
+        </div>
+        
+        <div class="form-group">
+          <label for="customContentType">Content-Type:</label>
+          <select id="customContentType">
+            <option value="application/json">application/json</option>
+            <option value="application/x-www-form-urlencoded">application/x-www-form-urlencoded</option>
+            <option value="multipart/form-data">multipart/form-data</option>
+            <option value="text/plain">text/plain</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="customRequestBody">요청 바디 (JSON):</label>
+          <textarea id="customRequestBody" rows="6" placeholder='{"name": "value", "items": [1, 2, 3]}'></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>Query 파라미터:</label>
+          <div id="customParams">
+            <div class="header-item">
+              <input type="text" placeholder="키" class="param-key">
+              <input type="text" placeholder="값" class="param-value">
+              <button type="button" onclick="removeItem(this)">삭제</button>
+            </div>
+          </div>
+          <button type="button" onclick="addParam('customParams')">파라미터 추가</button>
+        </div>
+        
+        <div class="form-group">
+          <label>헤더:</label>
+          <div id="customHeaders">
+            <div class="header-item">
+              <input type="text" placeholder="헤더명" class="header-key">
+              <input type="text" placeholder="값" class="header-value">
+              <button type="button" onclick="removeItem(this)">삭제</button>
+            </div>
+          </div>
+          <button type="button" onclick="addHeader('customHeaders')">헤더 추가</button>
+        </div>
+        
+        <button type="button" onclick="sendRequest('CUSTOM')">요청 보내기</button>
+      </form>
+    </div>
+  </div>
+  
+  <div class="container">
+    <h2>응답 결과</h2>
+    <pre id="responseOutput">여기에 응답이 표시됩니다.</pre>
+  </div>
+  
+  <script>
+    // 탭 기능
+    function openTab(evt, tabName) {
+      const tabcontent = document.getElementsByClassName("tabcontent");
+      for (let i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
+      
+      const tablinks = document.getElementsByClassName("tablinks");
+      for (let i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+      
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.className += " active";
+    }
+    
+    // 헤더 추가
+    function addHeader(containerId) {
+      const container = document.getElementById(containerId);
+      const div = document.createElement('div');
+      div.className = 'header-item';
+      div.innerHTML = `
+        <input type="text" placeholder="헤더명" class="header-key">
+        <input type="text" placeholder="값" class="header-value">
+        <button type="button" onclick="removeItem(this)">삭제</button>
+      `;
+      container.appendChild(div);
+    }
+    
+    // 파라미터 추가
+    function addParam(containerId) {
+      const container = document.getElementById(containerId);
+      const div = document.createElement('div');
+      div.className = 'header-item';
+      div.innerHTML = `
+        <input type="text" placeholder="키" class="param-key">
+        <input type="text" placeholder="값" class="param-value">
+        <button type="button" onclick="removeItem(this)">삭제</button>
+      `;
+      container.appendChild(div);
+    }
+    
+    // 아이템 제거
+    function removeItem(button) {
+      const div = button.parentElement;
+      div.parentElement.removeChild(div);
+    }
+    
+    // 헤더 수집
+    function collectHeaders(containerId) {
+      const headers = {};
+      const headerItems = document.querySelectorAll(`#${containerId} .header-item`);
+      
+      headerItems.forEach(item => {
+        const key = item.querySelector('.header-key').value.trim();
+        const value = item.querySelector('.header-value').value.trim();
+        
+        if (key) {
+          headers[key] = value;
+        }
+      });
+      
+      return headers;
+    }
+    
+    // 파라미터 수집
+    function collectParams(containerId) {
+      const params = {};
+      const paramItems = document.querySelectorAll(`#${containerId} .header-item`);
+      
+      paramItems.forEach(item => {
+        const key = item.querySelector('.param-key').value.trim();
+        const value = item.querySelector('.param-value').value.trim();
+        
+        if (key) {
+          params[key] = value;
+        }
+      });
+      
+      return params;
+    }
+    
+    // 요청 보내기
+    async function sendRequest(type) {
+      const responseOutput = document.getElementById('responseOutput');
+      responseOutput.textContent = '요청 처리 중...';
+      
+      try {
+        let url, method, headers, body, params;
+        
+        // 요청 타입에 따라 파라미터 설정
+        if (type === 'GET') {
+          method = 'GET';
+          url = document.getElementById('getPath').value;
+          headers = collectHeaders('getHeaders');
+          params = collectParams('getParams');
+          body = null;
+        } else if (type === 'POST') {
+          method = 'POST';
+          url = document.getElementById('postPath').value;
+          headers = collectHeaders('postHeaders');
+          headers['Content-Type'] = document.getElementById('contentType').value;
+          body = document.getElementById('requestBody').value;
+          params = {};
+        } else {
+          method = document.getElementById('customMethod').value;
+          url = document.getElementById('customPath').value;
+          headers = collectHeaders('customHeaders');
+          headers['Content-Type'] = document.getElementById('customContentType').value;
+          body = document.getElementById('customRequestBody').value;
+          params = collectParams('customParams');
+        }
+        
+        // URL에 쿼리 파라미터 추가
+        if (Object.keys(params).length > 0) {
+          const queryParams = new URLSearchParams();
+          for (const [key, value] of Object.entries(params)) {
+            queryParams.append(key, value);
+          }
+          url += '?' + queryParams.toString();
+        }
+        
+        // 요청 객체 생성
+        const options = {
+          method,
+          headers
+        };
+        
+        // POST, PUT 등의 메서드에 요청 바디 추가
+        if (method !== 'GET' && method !== 'HEAD' && body) {
+          try {
+            options.body = JSON.parse(body);
+            options.body = JSON.stringify(options.body);
+          } catch (e) {
+            options.body = body;
+          }
+        }
+        
+        // 요청 전송
+        const response = await fetch(url, options);
+        const data = await response.json();
+        
+        // 응답 표시
+        responseOutput.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        responseOutput.textContent = `오류 발생: ${error.message}`;
+      }
+    }
+  </script>
+</body>
+</html>
