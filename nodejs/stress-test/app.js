@@ -4,6 +4,7 @@ const https = require('https');
 const path = require('path');
 const { URL } = require('url');
 const socketIo = require('socket.io');
+const os = require('os'); // CPU/메모리 정보를 위한 모듈 추가
 
 const app = express();
 const server = http.createServer(app);
@@ -25,11 +26,16 @@ app.post('/start-test', (req, res) => {
   // 요청한 소켓 ID 조회 (요청 헤더에서 소켓 ID를 전달받음)
   const socketId = req.headers['socket-id'];
   
+  if (!socketId) {
+    return res.status(400).json({ error: 'Socket ID is required' });
+  }
+  
   // 이미 진행 중인 테스트가 있다면 중지
-  if (socketId && activeTests.has(socketId)) {
-    const { testIntervalId, statsIntervalId } = activeTests.get(socketId);
+  if (activeTests.has(socketId)) {
+    const { testIntervalId, statsIntervalId, systemMonitorId } = activeTests.get(socketId);
     if (testIntervalId) clearInterval(testIntervalId);
     if (statsIntervalId) clearInterval(statsIntervalId);
+    if (systemMonitorId) clearInterval(systemMonitorId);
     activeTests.delete(socketId);
   }
 
@@ -37,12 +43,9 @@ app.post('/start-test', (req, res) => {
   res.json({ message: 'Test started' });
 
   // 테스트 시작
-  runLoadTest(url, method, headers, body, requestCount, testDuration, 
+  runLoadTest(socketId, url, method, headers, body, requestCount, testDuration, 
     requestInterval, initialUsers, userIncrement);
 });
-
-// 이 코드는 app.js 파일의 기존 코드에 추가해야 할 부분입니다
-// 아래 코드를 app.js의 서버 시작 코드 앞에 추가하세요 (server.listen 위에)
 
 // 활성 테스트 상태 관리
 let activeTests = new Map(); // 테스트 ID와 관련된 인터벌 ID들을 저장
@@ -57,16 +60,17 @@ io.on('connection', (socket) => {
     
     // 해당 소켓 ID와 연결된 테스트를 중지
     if (activeTests.has(socket.id)) {
-      const { testIntervalId, statsIntervalId } = activeTests.get(socket.id);
+      const { testIntervalId, statsIntervalId, systemMonitorId } = activeTests.get(socket.id);
       
       // 인터벌 클리어
       if (testIntervalId) clearInterval(testIntervalId);
       if (statsIntervalId) clearInterval(statsIntervalId);
+      if (systemMonitorId) clearInterval(systemMonitorId);
       
       // 활성 테스트에서 제거
       activeTests.delete(socket.id);
       
-      // 클라이언트에 테스트 중지 통보
+      // 클라이언트에 테스트 중지 통보 (해당 클라이언트에게만)
       socket.emit('testStopped', {
         message: 'Test was stopped by user request'
       });
@@ -81,10 +85,11 @@ io.on('connection', (socket) => {
     
     // 연결이 끊긴 클라이언트의 테스트 정리
     if (activeTests.has(socket.id)) {
-      const { testIntervalId, statsIntervalId } = activeTests.get(socket.id);
+      const { testIntervalId, statsIntervalId, systemMonitorId } = activeTests.get(socket.id);
       
       if (testIntervalId) clearInterval(testIntervalId);
       if (statsIntervalId) clearInterval(statsIntervalId);
+      if (systemMonitorId) clearInterval(systemMonitorId);
       
       activeTests.delete(socket.id);
       console.log('Test resources cleared for disconnected client:', socket.id);
@@ -98,12 +103,53 @@ server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-// 부하 테스트 실행 함수
-function runLoadTest(url, method, headers, body, requestCount, testDuration, 
-  requestInterval, initialUsers, userIncrement) {
+let prevIdle = 0;
+let prevTotal = 0;
+
+// 시스템 리소스 사용량 측정 함수
+function getSystemStats() {
+  // CPU 사용량 계산 (%)
+  const cpus = os.cpus();
+  let totalIdle = 0;
+  let totalTick = 0;
   
-  // 소켓 ID 추출 (어떤 클라이언트가 요청했는지 확인하기 위함)
-  const socketId = io.sockets.sockets.keys().next().value;
+  for (const cpu of cpus) {
+    for (const type in cpu.times) {
+      totalTick += cpu.times[type];
+    }
+    totalIdle += cpu.times.idle;
+  }
+
+  const idleDiff = totalIdle - prevIdle;
+  const totalDiff = totalTick - prevTotal;
+  const cpuUsage = totalDiff > 0 ? parseFloat((1 - idleDiff / totalDiff) * 100).toFixed(2) : 0;
+
+  prevIdle = totalIdle;
+  prevTotal = totalTick;
+  
+  // 전체 시스템 메모리와 사용 가능한 메모리 (MB)
+  const totalMem = os.totalmem() / (1024 * 1024);
+  const freeMem = os.freemem() / (1024 * 1024);
+  const usedMem = totalMem - freeMem;
+  const memoryUsage = (usedMem / totalMem) * 100;  
+  
+  // 현재 프로세스의 메모리 사용량 (MB)
+  const processMemory = process.memoryUsage();
+  const rss = processMemory.rss / (1024 * 1024);
+  
+  return {
+    cpuCount: cpus.length,
+    cpuUsage: parseFloat(cpuUsage),
+    totalMemory: parseFloat(totalMem.toFixed(2)),
+    usedMemory: parseFloat(usedMem.toFixed(2)),
+    memoryUsage: parseFloat(memoryUsage.toFixed(2)),
+    processMemory: parseFloat(rss.toFixed(2))
+  };
+}
+
+// 부하 테스트 실행 함수 (socketId 매개변수 추가)
+function runLoadTest(socketId, url, method, headers, body, requestCount, testDuration, 
+  requestInterval, initialUsers, userIncrement) {
   
   // 테스트 결과 통계
   const stats = {
@@ -119,7 +165,9 @@ function runLoadTest(url, method, headers, body, requestCount, testDuration,
     responseTimeHistory: [],
     userCountHistory: [],
     successRateHistory: [],
-    failRateHistory: []
+    failRateHistory: [],
+    cpuHistory: [],
+    memoryHistory: []
   };
 
   // URL 파싱
@@ -144,9 +192,28 @@ function runLoadTest(url, method, headers, body, requestCount, testDuration,
   // 테스트 종료 시간 계산
   const endTime = testDuration ? Date.now() + (testDuration * 1000) : null;
 
+  // 시스템 리소스 모니터링 (2초 간격)
+  const systemMonitorId = setInterval(() => {
+    const systemStats = getSystemStats();
+    const totalElapsedTime = (Date.now() - stats.startTime) / 1000;
+    
+    stats.cpuHistory.push({
+      time: totalElapsedTime,
+      value: systemStats.cpuUsage
+    });
+    
+    stats.memoryHistory.push({
+      time: totalElapsedTime,
+      value: systemStats.memoryUsage
+    });
+    
+    // 해당 클라이언트에게만 시스템 상태 전송
+    io.to(socketId).emit('systemStats', systemStats);
+  }, 2000);
+
   // 실시간 통계 업데이트 간격 (1초)
   const statsIntervalId = setInterval(() => {
-    updateStats(stats);
+    updateStats(socketId, stats);
     
     // 테스트 종료 조건 확인
     if ((requestCount && stats.totalRequests >= requestCount) || 
@@ -160,6 +227,7 @@ function runLoadTest(url, method, headers, body, requestCount, testDuration,
       
       // 통계 인터벌도 클리어 (자기 자신)
       clearInterval(statsIntervalId);
+      clearInterval(systemMonitorId);
       
       // 활성 테스트에서 제거
       if (activeTests.has(socketId)) {
@@ -168,7 +236,7 @@ function runLoadTest(url, method, headers, body, requestCount, testDuration,
       
       if (!testFinished) {
         testFinished = true;
-        finalizeTest(stats);
+        finalizeTest(socketId, stats);
       }
     }
   }, 1000);
@@ -183,7 +251,7 @@ function runLoadTest(url, method, headers, body, requestCount, testDuration,
         break;
       }
       
-      sendRequest(options, isHttps, postData, stats);
+      sendRequest(socketId, options, isHttps, postData, stats);
     }
     
     // 사용자 수 증가
@@ -191,11 +259,11 @@ function runLoadTest(url, method, headers, body, requestCount, testDuration,
   }, requestInterval);
   
   // 인터벌 ID를 저장하여 나중에 중지할 수 있도록 함
-  activeTests.set(socketId, { testIntervalId, statsIntervalId });
+  activeTests.set(socketId, { testIntervalId, statsIntervalId, systemMonitorId });
 }
 
-// HTTP 요청 보내기
-function sendRequest(options, isHttps, postData, stats) {
+// HTTP 요청 보내기 (socketId 매개변수 추가)
+function sendRequest(socketId, options, isHttps, postData, stats) {
   const startTime = Date.now();
   stats.totalRequests++;
   
@@ -219,8 +287,8 @@ function sendRequest(options, isHttps, postData, stats) {
         const errorKey = `Status ${res.statusCode}`;
         stats.errors[errorKey] = (stats.errors[errorKey] || 0) + 1;
         
-        // 실패 정보 전송
-        io.emit('error', {
+        // 실패 정보 전송 (해당 클라이언트에게만)
+        io.to(socketId).emit('error', {
           statusCode: res.statusCode,
           time: new Date().toISOString(),
           responseTime,
@@ -239,8 +307,8 @@ function sendRequest(options, isHttps, postData, stats) {
     const errorKey = error.code || 'Unknown Error';
     stats.errors[errorKey] = (stats.errors[errorKey] || 0) + 1;
     
-    // 실패 정보 전송
-    io.emit('error', {
+    // 실패 정보 전송 (해당 클라이언트에게만)
+    io.to(socketId).emit('error', {
       code: error.code,
       time: new Date().toISOString(),
       responseTime,
@@ -255,8 +323,8 @@ function sendRequest(options, isHttps, postData, stats) {
   req.end();
 }
 
-// 통계 업데이트 및 클라이언트에 전송
-function updateStats(stats) {
+// 통계 업데이트 및 클라이언트에 전송 (socketId 매개변수 추가)
+function updateStats(socketId, stats) {
   const now = Date.now();
   const elapsedTime = (now - stats.lastReportTime) / 1000; // 초 단위
   const totalElapsedTime = (now - stats.startTime) / 1000; // 초 단위
@@ -297,8 +365,8 @@ function updateStats(stats) {
     value: failRate 
   });
   
-  // 클라이언트에 데이터 전송
-  io.emit('stats', {
+  // 클라이언트에 데이터 전송 (해당 클라이언트에게만)
+  io.to(socketId).emit('stats', {
     totalRequests: stats.totalRequests,
     successCount: stats.successCount,
     failCount: stats.failCount,
@@ -312,6 +380,8 @@ function updateStats(stats) {
     userCountHistory: stats.userCountHistory,
     successRateHistory: stats.successRateHistory,
     failRateHistory: stats.failRateHistory,
+    cpuHistory: stats.cpuHistory,
+    memoryHistory: stats.memoryHistory,
     errors: stats.errors,
     elapsedTime: totalElapsedTime
   });
@@ -325,8 +395,8 @@ function updateStats(stats) {
   }
 }
 
-// 테스트 완료 후 최종 보고
-function finalizeTest(stats) {
+// 테스트 완료 후 최종 보고 (socketId 매개변수 추가)
+function finalizeTest(socketId, stats) {
   const testDuration = (Date.now() - stats.startTime) / 1000; // 초 단위
   
   const finalStats = {
@@ -344,8 +414,11 @@ function finalizeTest(stats) {
     responseTimeHistory: stats.responseTimeHistory,
     userCountHistory: stats.userCountHistory,
     successRateHistory: stats.successRateHistory,
-    failRateHistory: stats.failRateHistory
+    failRateHistory: stats.failRateHistory,
+    cpuHistory: stats.cpuHistory,
+    memoryHistory: stats.memoryHistory
   };
   
-  io.emit('testComplete', finalStats);
+  // 해당 클라이언트에게만 최종 결과 전송
+  io.to(socketId).emit('testComplete', finalStats);
 }
