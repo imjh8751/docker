@@ -148,6 +148,7 @@ function getSystemStats() {
 }
 
 // 부하 테스트 실행 함수 (socketId 매개변수 추가)
+// runLoadTest 함수를 수정 - server.js 파일에서 이 함수를 찾아 교체하세요
 function runLoadTest(socketId, url, method, headers, body, requestCount, testDuration, 
   requestInterval, initialUsers, userIncrement) {
   
@@ -167,7 +168,8 @@ function runLoadTest(socketId, url, method, headers, body, requestCount, testDur
     successRateHistory: [],
     failRateHistory: [],
     cpuHistory: [],
-    memoryHistory: []
+    memoryHistory: [],
+    pendingRequests: new Map() // 진행 중인 요청을 추적하기 위한 맵
   };
 
   // URL 파싱
@@ -229,11 +231,7 @@ function runLoadTest(socketId, url, method, headers, body, requestCount, testDur
       clearInterval(statsIntervalId);
       clearInterval(systemMonitorId);
       
-      // 활성 테스트에서 제거
-      if (activeTests.has(socketId)) {
-        activeTests.delete(socketId);
-      }
-      
+      // 활성 테스트에서 제거 (대기 중인 요청이 모두 처리될 때까지 기다림)
       if (!testFinished) {
         testFinished = true;
         finalizeTest(socketId, stats);
@@ -263,12 +261,24 @@ function runLoadTest(socketId, url, method, headers, body, requestCount, testDur
 }
 
 // HTTP 요청 보내기 (socketId 매개변수 추가)
+// sendRequest 함수를 수정 - server.js 파일에서 이 함수를 찾아 교체하세요
 function sendRequest(socketId, options, isHttps, postData, stats) {
   const startTime = Date.now();
   stats.totalRequests++;
   
+  // 진행 중인 요청 추적을 위해 요청 ID 생성
+  const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+  
+  // 진행 중인 요청 추적
+  if (!stats.pendingRequests) stats.pendingRequests = new Map();
+  stats.pendingRequests.set(requestId, startTime);
+  
   const requester = isHttps ? https : http;
-  const req = requester.request(options, (res) => {
+  
+  // 타임아웃 옵션 추가 (60초)
+  const requestOptions = {...options, timeout: 60000};
+  
+  const req = requester.request(requestOptions, (res) => {
     let responseData = '';
     
     res.on('data', (chunk) => {
@@ -279,6 +289,9 @@ function sendRequest(socketId, options, isHttps, postData, stats) {
       const endTime = Date.now();
       const responseTime = endTime - startTime;
       stats.responseTimes.push(responseTime);
+      
+      // 완료된 요청 추적에서 제거
+      if (stats.pendingRequests) stats.pendingRequests.delete(requestId);
       
       if (res.statusCode >= 200 && res.statusCode < 400) {
         stats.successCount++;
@@ -298,11 +311,36 @@ function sendRequest(socketId, options, isHttps, postData, stats) {
     });
   });
   
+  // 타임아웃 이벤트 핸들러 추가
+  req.on('timeout', () => {
+    req.abort();
+    const endTime = Date.now();
+    const responseTime = endTime - startTime;
+    stats.responseTimes.push(responseTime);
+    stats.failCount++;
+    
+    // 완료된 요청 추적에서 제거
+    if (stats.pendingRequests) stats.pendingRequests.delete(requestId);
+    
+    const errorKey = 'Request Timeout';
+    stats.errors[errorKey] = (stats.errors[errorKey] || 0) + 1;
+    
+    io.to(socketId).emit('error', {
+      code: 'TIMEOUT',
+      time: new Date().toISOString(),
+      responseTime,
+      message: '요청 타임아웃 (60초)'
+    });
+  });
+  
   req.on('error', (error) => {
     const endTime = Date.now();
     const responseTime = endTime - startTime;
     stats.responseTimes.push(responseTime);
     stats.failCount++;
+    
+    // 완료된 요청 추적에서 제거
+    if (stats.pendingRequests) stats.pendingRequests.delete(requestId);
     
     const errorKey = error.code || 'Unknown Error';
     stats.errors[errorKey] = (stats.errors[errorKey] || 0) + 1;
@@ -321,6 +359,9 @@ function sendRequest(socketId, options, isHttps, postData, stats) {
   }
   
   req.end();
+  
+  // 요청 객체와 시작 시간 반환 (테스트 종료 시 처리를 위해)
+  return { req, startTime, requestId };
 }
 
 // 통계 업데이트 및 클라이언트에 전송 (socketId 매개변수 추가)
@@ -397,6 +438,39 @@ function updateStats(socketId, stats) {
 
 // 테스트 완료 후 최종 보고 (socketId 매개변수 추가)
 function finalizeTest(socketId, stats) {
+  const testDuration = (Date.now() - stats.startTime) / 1000; // 초 단위
+  
+  // 대기 중인 요청이 있는지 확인
+  const pendingRequestsCount = stats.pendingRequests ? stats.pendingRequests.size : 0;
+  
+  if (pendingRequestsCount > 0) {
+    // 대기 중인 요청이 있음을 알림
+    io.to(socketId).emit('pendingRequests', {
+      count: pendingRequestsCount,
+      message: `${pendingRequestsCount}개의 요청이 아직 진행 중입니다. 모든 요청이 완료될 때까지 기다립니다...`
+    });
+    
+    // 모든 요청이 완료될 때까지 주기적으로 확인
+    const pendingCheckInterval = setInterval(() => {
+      if (!stats.pendingRequests || stats.pendingRequests.size === 0) {
+        clearInterval(pendingCheckInterval);
+        sendFinalStats(socketId, stats);
+      } else {
+        // 아직 진행 중인 요청 수 알림
+        io.to(socketId).emit('pendingRequests', {
+          count: stats.pendingRequests.size,
+          message: `${stats.pendingRequests.size}개의 요청이 아직 진행 중입니다...`
+        });
+      }
+    }, 1000);
+  } else {
+    // 대기 중인 요청이 없으면 바로 결과 전송
+    sendFinalStats(socketId, stats);
+  }
+}
+
+// 최종 통계 전송 함수 (새 함수)
+function sendFinalStats(socketId, stats) {
   const testDuration = (Date.now() - stats.startTime) / 1000; // 초 단위
   
   const finalStats = {
