@@ -122,8 +122,8 @@
       
       <!-- 오른쪽 결과 패널 -->
       <div class="col-md-8">
-        <!-- 요약 통계 -->
-        <div class="row">
+        <!-- 요약 통계 -->		
+		<div class="row">
           <div class="col-md-3">
             <div class="card stats-card">
               <div class="card-body">
@@ -153,6 +153,26 @@
               <div class="card-body bg-info text-white">
                 <h5>TPS</h5>
                 <div id="tps" class="display-6">0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 새로운 시스템 리소스 사용률 카드 추가 -->
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <div class="card stats-card">
+              <div class="card-body bg-warning">
+                <h5>CPU 사용률</h5>
+                <div id="cpu-usage" class="display-6">0%</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card stats-card">
+              <div class="card-body bg-secondary text-white">
+                <h5>메모리 사용률</h5>
+                <div id="memory-usage" class="display-6">0%</div>
               </div>
             </div>
           </div>
@@ -213,6 +233,26 @@
               <div class="card-header">성공/실패율 추이</div>
               <div class="card-body chart-container">
                 <canvas id="rate-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+		
+		<!-- 이 코드를 기존 차트 섹션 아래에 추가 -->
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">CPU 사용률 추이</div>
+              <div class="card-body chart-container">
+                <canvas id="cpu-chart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">메모리 사용률 추이</div>
+              <div class="card-body chart-container">
+                <canvas id="memory-chart"></canvas>
               </div>
             </div>
           </div>
@@ -393,6 +433,81 @@
           }
         })
       };
+	  
+	  // CPU 사용률 차트
+      charts.cpu = new Chart(document.getElementById('cpu-chart').getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'CPU 사용률 (%)',
+            data: [],
+            borderColor: 'rgba(255, 193, 7, 1)',
+            backgroundColor: 'rgba(255, 193, 7, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.2
+          }]
+        },
+        options: {
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: '시간 (초)'
+              }
+            },
+            y: {
+              beginAtZero: true,
+              max: 100,
+              title: {
+                display: true,
+                text: 'CPU 사용률 (%)'
+              }
+            }
+          },
+          responsive: true,
+          maintainAspectRatio: false
+        }
+      });
+      
+      // 메모리 사용률 차트
+      charts.memory = new Chart(document.getElementById('memory-chart').getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: '메모리 사용률 (%)',
+            data: [],
+            borderColor: 'rgba(108, 117, 125, 1)',
+            backgroundColor: 'rgba(108, 117, 125, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.2
+          }]
+        },
+        options: {
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: '시간 (초)'
+              }
+            },
+            y: {
+              beginAtZero: true,
+              max: 100,
+              title: {
+                display: true,
+                text: '메모리 사용률 (%)'
+              }
+            }
+          },
+          responsive: true,
+          maintainAspectRatio: false
+        }
+      });
+
       
       // 테스트 종료 조건 선택 이벤트
       document.getElementById('requestCount').addEventListener('change', function() {
@@ -516,6 +631,8 @@
         updateChart(charts.tps, data.tpsHistory);
         updateChart(charts.responseTime, data.responseTimeHistory);
         updateChart(charts.users, data.userCountHistory);
+        updateChart(charts.cpu, data.cpuHistory);
+        updateChart(charts.memory, data.memoryHistory);
         
         // 성공/실패율 차트는 두 데이터셋이 있으므로 따로 처리
         if (data.successRateHistory && data.successRateHistory.length > 0) {
@@ -524,6 +641,19 @@
           charts.rates.data.datasets[0].data = data.successRateHistory.map(item => item.value);
           charts.rates.data.datasets[1].data = data.failRateHistory.map(item => item.value);
           charts.rates.update();
+        }
+      });
+	  
+      // 시스템 리소스 데이터 수신 처리
+      socket.on('systemStats', function(data) {
+        // CPU 및 메모리 사용률 표시 업데이트
+        document.getElementById('cpu-usage').textContent = data.cpuUsage.toFixed(2) + '%';
+        document.getElementById('memory-usage').textContent = data.memoryUsage.toFixed(2) + '%';
+        
+        // CPU 및 메모리 차트 업데이트 (stats 이벤트에서 받는 히스토리 데이터)
+        if (data.cpuHistory && data.cpuHistory.length > 0) {
+          updateChart(charts.cpu, data.cpuHistory);
+          updateChart(charts.memory, data.memoryHistory);
         }
       });
       
@@ -541,6 +671,29 @@
         }
       });
       
+      // 대기 중인 요청 정보 수신
+      socket.on('pendingRequests', function(data) {
+        // 테스트 진행 상태 업데이트
+        const testProgressBar = document.getElementById('test-progress');
+        testProgressBar.className = 'progress-bar progress-bar-striped progress-bar-animated';
+        testProgressBar.style.width = '99%'; // 거의 완료되었지만 아직 처리 중임을 표시
+        
+        // 진행 중인 요청에 대한 알림 표시
+        const progressText = document.createElement('div');
+        progressText.className = 'alert alert-info mt-2';
+        progressText.id = 'pending-requests-alert';
+        progressText.innerHTML = `<strong>대기 중:</strong> ${data.message}`;
+        
+        // 이미 알림이 있으면 업데이트, 없으면 추가
+        const existingAlert = document.getElementById('pending-requests-alert');
+        if (existingAlert) {
+          existingAlert.innerHTML = `<strong>대기 중:</strong> ${data.message}`;
+        } else {
+          const testProgressContainer = testProgressBar.parentElement.parentElement;
+          testProgressContainer.appendChild(progressText);
+        }
+      });
+	  
       // 테스트 완료 이벤트
       socket.on('testComplete', function(finalStats) {
         document.getElementById('start-test').disabled = false;
