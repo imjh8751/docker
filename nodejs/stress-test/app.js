@@ -183,8 +183,18 @@ function runLoadTest(socketId, url, method, headers, body, requestCount, testDur
     headers: headers
   };
 
-  // JSON 문자열화
-  const postData = typeof body === 'string' ? body : JSON.stringify(body);
+  // JSON 문자열화 및 백슬래시 처리
+  let postData;
+  if (method !== 'GET' && method !== 'HEAD' && body) {
+    if (typeof body === 'string') {
+      postData = body.replace(/\\/g, '');
+    } else {
+      postData = JSON.stringify(body).replace(/\\/g, '');
+    }
+  } else {
+    postData = '';
+  }
+  
   if (method !== 'GET' && method !== 'HEAD') {
     options.headers['Content-Length'] = Buffer.byteLength(postData);
   }
@@ -261,10 +271,34 @@ function runLoadTest(socketId, url, method, headers, body, requestCount, testDur
 }
 
 // HTTP 요청 보내기 (socketId 매개변수 추가)
-// sendRequest 함수를 수정 - server.js 파일에서 이 함수를 찾아 교체하세요
 function sendRequest(socketId, options, isHttps, postData, stats) {
   const startTime = Date.now();
   stats.totalRequests++;
+  
+  // URL의 백슬래시 처리 - path 값에서 백슬래시를 제거
+  if (options.path) {
+    options.path = options.path.replace(/\\/g, '');
+  }
+  
+  // JSON 데이터의 백슬래시 처리
+  if (postData && typeof postData === 'string') {
+    // JSON 문자열에서 백슬래시 제거
+    postData = postData.replace(/\\/g, '');
+    
+    // 헤더에서 Content-Length 재계산이 필요함
+    if (options.method !== 'GET' && options.method !== 'HEAD') {
+      options.headers['Content-Length'] = Buffer.byteLength(postData);
+    }
+  }
+  
+  // 헤더의 모든 값에서 백슬래시 제거
+  if (options.headers) {
+    for (const key in options.headers) {
+      if (typeof options.headers[key] === 'string') {
+        options.headers[key] = options.headers[key].replace(/\\/g, '');
+      }
+    }
+  }
   
   // 진행 중인 요청 추적을 위해 요청 ID 생성
   const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
