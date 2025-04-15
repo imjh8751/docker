@@ -141,6 +141,20 @@
       
       <!-- 오른쪽 결과 패널 -->
       <div class="col-md-8">
+	  <!-- 서버 정보 표시 - 오른쪽 결과 패널 시작 부분에 추가 -->
+        <div class="card mb-3">
+          <div class="card-header">서버 정보</div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <p><strong>호스트명:</strong> <span id="server-hostname">-</span></p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>IP 주소:</strong> <span id="server-ip">-</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
         <!-- 요약 통계 -->		
 		<div class="row">
           <div class="col-md-3">
@@ -643,6 +657,15 @@
           });
           chart.update();
         });
+      });
+	  
+	  // 서버 정보 수신 처리 - 기존 socket.on 이벤트 핸들러들과 함께 추가
+      socket.on('serverInfo', function(data) {
+        document.getElementById('server-hostname').textContent = data.hostname;
+        
+        // IP 주소 목록 표시
+        const ipList = data.ipAddresses.map(ip => `${ip.interface}: ${ip.address}`).join('<br>');
+        document.getElementById('server-ip').innerHTML = ipList || 'IP 정보 없음';
       });
       
       // 통계 데이터 수신
