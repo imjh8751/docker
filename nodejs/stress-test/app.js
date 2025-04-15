@@ -450,10 +450,17 @@ function finalizeTest(socketId, stats) {
       message: `${pendingRequestsCount}개의 요청이 아직 진행 중입니다. 모든 요청이 완료될 때까지 기다립니다...`
     });
     
+    // 통계 업데이트를 계속하기 위한 인터벌 (본래 statsIntervalId와 별개로 생성)
+    const pendingStatsInterval = setInterval(() => {
+      // 진행 중인 동안에도 통계 업데이트 계속
+      updateStats(socketId, stats);
+    }, 1000);
+    
     // 모든 요청이 완료될 때까지 주기적으로 확인
     const pendingCheckInterval = setInterval(() => {
       if (!stats.pendingRequests || stats.pendingRequests.size === 0) {
         clearInterval(pendingCheckInterval);
+        clearInterval(pendingStatsInterval); // 통계 업데이트 인터벌도 정리
         sendFinalStats(socketId, stats);
       } else {
         // 아직 진행 중인 요청 수 알림
@@ -469,9 +476,12 @@ function finalizeTest(socketId, stats) {
   }
 }
 
-// 최종 통계 전송 함수 (새 함수)
+// 최종 통계 전송 함수
 function sendFinalStats(socketId, stats) {
   const testDuration = (Date.now() - stats.startTime) / 1000; // 초 단위
+  
+  // 마지막으로 한 번 더 통계 업데이트를 실행하여 최종 상태 반영
+  updateStats(socketId, stats);
   
   const finalStats = {
     totalRequests: stats.totalRequests,
@@ -492,6 +502,9 @@ function sendFinalStats(socketId, stats) {
     cpuHistory: stats.cpuHistory,
     memoryHistory: stats.memoryHistory
   };
+  
+  // activeTests에서 해당 테스트 제거
+  activeTests.delete(socketId);
   
   // 해당 클라이언트에게만 최종 결과 전송
   io.to(socketId).emit('testComplete', finalStats);
