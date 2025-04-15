@@ -54,6 +54,30 @@ let activeTests = new Map(); // 테스트 ID와 관련된 인터벌 ID들을 저
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.id);
   
+  // 서버 IP 주소 정보 전송 - 이 부분을 추가
+  const networkInterfaces = os.networkInterfaces();
+  const ipAddresses = [];
+  
+  // 모든 네트워크 인터페이스에서 IPv4 주소 수집
+  Object.keys(networkInterfaces).forEach((interfaceName) => {
+    const interfaces = networkInterfaces[interfaceName];
+    interfaces.forEach((iface) => {
+      // IPv4 주소만 필터링하고 내부 루프백 주소는 제외
+      if (iface.family === 'IPv4' && !iface.internal) {
+        ipAddresses.push({
+          interface: interfaceName,
+          address: iface.address
+        });
+      }
+    });
+  });
+  
+  // 클라이언트에 IP 정보 전송
+  socket.emit('serverInfo', {
+    ipAddresses: ipAddresses,
+    hostname: os.hostname()
+  });
+  
   // 테스트 중지 이벤트 처리
   socket.on('stopTest', () => {
     console.log('Stop test requested by client:', socket.id);
