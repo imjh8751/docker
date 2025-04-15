@@ -567,12 +567,14 @@
         const method = document.getElementById('method').value;
         let headers;
         let body;
-        
-        try {
-          headers = JSON.parse(document.getElementById('headers').value);
-		  
-		  // 사용자가 입력한 User-Agent가 있으면 헤더에 추가
-          const userAgent = document.getElementById('userAgent').value;
+		
+		try {
+          // 헤더 값에서 백슬래시 제거 후 파싱
+          headersStr = document.getElementById('headers').value.replace(/\\/g, '');
+          headers = JSON.parse(headersStr);
+          
+          // 사용자가 입력한 User-Agent가 있으면 헤더에 추가
+          userAgent = document.getElementById('userAgent').value;
           if (userAgent && !headers['User-Agent']) {
             headers['User-Agent'] = userAgent;
           }
@@ -583,7 +585,9 @@
         
         try {
           if (method !== 'GET' && method !== 'HEAD') {
-            body = JSON.parse(document.getElementById('body').value);
+            // 바디 값에서 백슬래시 제거 후 파싱
+            bodyStr = document.getElementById('body').value.replace(/\\/g, '');
+            body = JSON.parse(bodyStr);
           }
         } catch (error) {
           alert('바디가 유효한 JSON 형식이 아닙니다: ' + error.message);
