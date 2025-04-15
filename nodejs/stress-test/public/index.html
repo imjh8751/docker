@@ -60,6 +60,22 @@
                 </select>
               </div>
               
+			  <div class="mb-3">
+                <label for="userAgent" class="form-label">User-Agent</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="userAgent" placeholder="사용자 정의 User-Agent 입력">
+                  <select class="form-select" id="userAgentSelect" style="max-width: 180px;">
+                    <option value="">직접 입력</option>
+                    <option value="Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1">iOS Safari</option>
+                    <option value="Mozilla/5.0 (Linux; Android 13; SM-S908B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36">Android Chrome</option>
+                    <option value="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15">Mac Safari</option>
+                    <option value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36">Windows Chrome</option>
+                    <option value="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.64">Edge</option>
+                    <option value="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/112.0">Firefox</option>
+                  </select>
+                </div>
+              </div>
+			  
               <div class="mb-3">
                 <label for="headers" class="form-label">HTTP 헤더 (JSON)</label>
                 <textarea class="json-editor form-control" id="headers">{
@@ -279,6 +295,24 @@
   
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+	  // User-Agent 셀렉트박스 이벤트 처리
+      document.getElementById('userAgentSelect').addEventListener('change', function() {
+        const userAgent = this.value;
+        document.getElementById('userAgent').value = userAgent;
+        
+        // 헤더에 User-Agent 추가
+        if (userAgent) {
+          try {
+            const headersInput = document.getElementById('headers');
+            let headers = JSON.parse(headersInput.value);
+            headers['User-Agent'] = userAgent;
+            headersInput.value = JSON.stringify(headers, null, 2);
+          } catch (error) {
+            console.error('헤더 JSON 파싱 오류:', error);
+          }
+        }
+      });
+	
       // 소켓 연결
       const socket = io();
       
@@ -536,6 +570,12 @@
         
         try {
           headers = JSON.parse(document.getElementById('headers').value);
+		  
+		  // 사용자가 입력한 User-Agent가 있으면 헤더에 추가
+          const userAgent = document.getElementById('userAgent').value;
+          if (userAgent && !headers['User-Agent']) {
+            headers['User-Agent'] = userAgent;
+          }
         } catch (error) {
           alert('헤더가 유효한 JSON 형식이 아닙니다: ' + error.message);
           return;
