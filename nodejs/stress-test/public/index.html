@@ -16,9 +16,9 @@
       height: 150px;
       width: 100%;
     }
-    .chart-container {
-      height: 300px;
-      margin-bottom: 20px;
+	.chart-container {
+      height: 250px;
+      margin-bottom: 15px;
     }
     .error-log {
       max-height: 200px;
@@ -146,92 +146,71 @@
       
       <!-- 오른쪽 결과 패널 -->
       <div class="col-md-8">
-	  <!-- 서버 정보 표시 - 오른쪽 결과 패널 시작 부분에 추가 -->
-        <div class="card mb-3">
-          <div class="card-header">서버 정보</div>
-          <div class="card-body">
+	    <!-- 서버 정보 표시 - 컴팩트한 디자인으로 변경 -->
+        <div class="card mb-2">
+          <div class="card-header py-1">서버 정보</div>
+          <div class="card-body py-2">
             <div class="row">
               <div class="col-md-6">
-                <p><strong>호스트명:</strong> <span id="server-hostname">-</span></p>
+                <small><strong>호스트명:</strong> <span id="server-hostname">-</span></small>
               </div>
               <div class="col-md-6">
-                <p><strong>IP 주소:</strong> <span id="server-ip">-</span></p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- 요약 통계 -->		
-		<div class="row">
-          <div class="col-md-3">
-            <div class="card stats-card">
-              <div class="card-body">
-                <h5>총 요청</h5>
-                <div id="total-requests" class="display-6">0</div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card stats-card">
-              <div class="card-body bg-success text-white">
-                <h5>성공</h5>
-                <div id="success-count" class="display-6">0</div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card stats-card">
-              <div class="card-body bg-danger text-white">
-                <h5>실패</h5>
-                <div id="fail-count" class="display-6">0</div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="card stats-card">
-              <div class="card-body bg-info text-white">
-                <h5>TPS</h5>
-                <div id="tps" class="display-6">0</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 새로운 시스템 리소스 사용률 카드 추가 -->
-        <div class="row mt-3">
-          <div class="col-md-6">
-            <div class="card stats-card">
-              <div class="card-body bg-warning">
-                <h5>CPU 사용률</h5>
-                <div id="cpu-usage" class="display-6">0%</div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="card stats-card">
-              <div class="card-body bg-secondary text-white">
-                <h5>메모리 사용률</h5>
-                <div id="memory-usage" class="display-6">0%</div>
+                <small><strong>IP 주소:</strong> <span id="server-ip">-</span></small>
               </div>
             </div>
           </div>
         </div>
         
-        <!-- 테스트 진행 상황 -->
-        <div class="card">
-          <div class="card-header">테스트 상태</div>
-          <div class="card-body">
-            <div class="progress mb-3">
+		<!-- 요약 통계 - 한 줄로 통합 -->
+        <div class="row g-2">
+          <div class="col-12">
+            <div class="card stats-card">
+              <div class="card-body p-2 d-flex justify-content-between">
+                <div class="text-center mx-1">
+                  <h6 class="mb-0">총 요청</h6>
+                  <div id="total-requests" class="fs-5">0</div>
+                </div>
+                <div class="text-center mx-1 bg-success text-white px-2 rounded">
+                  <h6 class="mb-0">성공</h6>
+                  <div id="success-count" class="fs-5">0</div>
+                </div>
+                <div class="text-center mx-1 bg-danger text-white px-2 rounded">
+                  <h6 class="mb-0">실패</h6>
+                  <div id="fail-count" class="fs-5">0</div>
+                </div>
+                <div class="text-center mx-1 bg-info text-white px-2 rounded">
+                  <h6 class="mb-0">TPS</h6>
+                  <div id="tps" class="fs-5">0</div>
+                </div>
+                <div class="text-center mx-1 bg-warning px-2 rounded">
+                  <h6 class="mb-0">CPU 사용률</h6>
+                  <div id="cpu-usage" class="fs-5">0%</div>
+                </div>
+                <div class="text-center mx-1 bg-secondary text-white px-2 rounded">
+                  <h6 class="mb-0">메모리 사용률</h6>
+                  <div id="memory-usage" class="fs-5">0%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 테스트 진행 상황 - 더 컴팩트하게 변경 -->
+        <div class="card mt-2">
+          <div class="card-header py-1">테스트 상태</div>
+          <div class="card-body py-2">
+            <div class="progress mb-2" style="height: 10px;">
               <div id="test-progress" class="progress-bar" role="progressbar" style="width: 0%"></div>
             </div>
             <div class="row">
               <div class="col-md-4">
-                <p><strong>경과 시간:</strong> <span id="elapsed-time">0</span>초</p>
+                <small><strong>경과:</strong> <span id="elapsed-time">0</span>초</small>
               </div>
               <div class="col-md-4">
-                <p><strong>평균 응답 시간:</strong> <span id="avg-response-time">0</span>ms</p>
+                <small><strong>응답시간:</strong> <span id="avg-response-time">0</span>ms</small>
               </div>
               <div class="col-md-4">
-                <p><strong>현재 가상 유저:</strong> <span id="active-users">0</span></p>
+                <small><strong>가상유저:</strong> <span id="active-users">0</span></small>
               </div>
             </div>
           </div>
