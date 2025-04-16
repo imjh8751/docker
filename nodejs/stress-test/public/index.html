@@ -131,6 +131,11 @@
                 <label for="increment" class="form-label">요청 주기당 가상 유저 증가 수</label>
                 <input type="number" class="form-control" id="increment" value="0" min="0">
               </div>
+			  
+              <div class="mb-3">
+                <label for="timeout" class="form-label">요청 타임아웃 (밀리초)</label>
+                <input type="number" class="form-control" id="timeout" value="300000" min="1000">
+              </div>
               
               <button type="submit" class="btn btn-primary" id="start-test">테스트 시작</button>
               <button type="button" class="btn btn-danger" id="stop-test" disabled>테스트 중지</button>
