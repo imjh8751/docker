@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 app.post('/start-test', (req, res) => {
   // 요청 바디에서 테스트 설정을 가져옴
   const { url, method, headers, body, requestCount, testDuration, 
-    requestInterval, initialUsers, userIncrement } = req.body;
+    requestInterval, initialUsers, userIncrement, timeout } = req.body;
 
   // 요청한 소켓 ID 조회 (요청 헤더에서 소켓 ID를 전달받음)
   const socketId = req.headers['socket-id'];
@@ -44,7 +44,7 @@ app.post('/start-test', (req, res) => {
 
   // 테스트 시작
   runLoadTest(socketId, url, method, headers, body, requestCount, testDuration, 
-    requestInterval, initialUsers, userIncrement);
+    requestInterval, initialUsers, userIncrement, timeout);
 });
 
 // 활성 테스트 상태 관리
@@ -174,7 +174,7 @@ function getSystemStats() {
 // 부하 테스트 실행 함수 (socketId 매개변수 추가)
 // runLoadTest 함수를 수정 - server.js 파일에서 이 함수를 찾아 교체하세요
 function runLoadTest(socketId, url, method, headers, body, requestCount, testDuration, 
-  requestInterval, initialUsers, userIncrement) {
+  requestInterval, initialUsers, userIncrement, timeout) {
   
   // 테스트 결과 통계
   const stats = {
@@ -283,7 +283,7 @@ function runLoadTest(socketId, url, method, headers, body, requestCount, testDur
         break;
       }
       
-      sendRequest(socketId, options, isHttps, postData, stats);
+      sendRequest(socketId, options, isHttps, postData, stats, timeout);
     }
     
     // 사용자 수 증가
@@ -295,7 +295,7 @@ function runLoadTest(socketId, url, method, headers, body, requestCount, testDur
 }
 
 // HTTP 요청 보내기 (socketId 매개변수 추가)
-function sendRequest(socketId, options, isHttps, postData, stats) {
+function sendRequest(socketId, options, isHttps, postData, stats, timeout) {
   const startTime = Date.now();
   stats.totalRequests++;
   
@@ -334,7 +334,7 @@ function sendRequest(socketId, options, isHttps, postData, stats) {
   const requester = isHttps ? https : http;
   
   // 타임아웃 옵션 추가 (60초)
-  const requestOptions = {...options, timeout: 60000};
+  const requestOptions = {...options, timeout: timeout || 60000};
   
   const req = requester.request(requestOptions, (res) => {
     let responseData = '';
