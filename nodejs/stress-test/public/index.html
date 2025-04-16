@@ -565,7 +565,8 @@
 		
 		try {
           // 헤더 값에서 백슬래시 제거 후 파싱
-          const headersStr = document.getElementById('headers').value.replace(/\\/g, '');
+          const headersStr = document.getElementById('headers').value;
+		  //headersStr = headersStr.replace(/\\/g, ''); // \" 를 " 로 치환
           headers = JSON.parse(headersStr);
           
           // 사용자가 입력한 User-Agent가 있으면 헤더에 추가
