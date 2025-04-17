@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Server port="-1" shutdown="SHUTDOWN">
+  <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+  <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+  <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+
+  <GlobalNamingResources>
+    <Resource name="UserDatabase" auth="Container"
+              type="org.apache.catalina.UserDatabase"
+              description="User database that can be updated and saved"
+              factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+              pathname="conf/tomcat-users.xml" />
+  </GlobalNamingResources>
+
+  <Service name="Catalina">
+    <!-- HTTP/1.1 Connector - 성능 최적화 설정 -->
+    <Connector port="8080" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443"
+               maxThreads="400"
+               minSpareThreads="25"
+               maxSpareThreads="75"
+               enableLookups="false"
+               acceptCount="100"
+               disableUploadTimeout="true"
+               compression="on"
+               compressionMinSize="2048"
+               noCompressionUserAgents="gozilla, traviata"
+               compressableMimeType="text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json"
+               URIEncoding="UTF-8"
+               server="Server" />
+
+    <!-- SSL/TLS 보안 설정이 적용된 HTTPS 커넥터 설정 -->
+    <!-- 실제 환경에서 SSL 인증서 경로를 적절히 설정해야 함 -->
+    <!--
+    <Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
+               maxThreads="150" SSLEnabled="true"
+               enableLookups="false" disableUploadTimeout="true"
+               acceptCount="100" scheme="https" secure="true"
+               sslProtocol="TLS" sslEnabledProtocols="TLSv1.2,TLSv1.3"
+               ciphers="TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
+               clientAuth="false"
+               keystoreFile="${user.home}/.keystore" keystorePass="changeit" />
+    -->
+
+    <Engine name="Catalina" defaultHost="localhost">
+      <Realm className="org.apache.catalina.realm.LockOutRealm">
+        <Realm className="org.apache.catalina.realm.UserDatabaseRealm"
+               resourceName="UserDatabase" />
+      </Realm>
+
+      <Host name="localhost" appBase="webapps"
+            unpackWARs="true" autoDeploy="false" deployOnStartup="true"
+            xmlValidation="false" xmlNamespaceAware="false">
+
+        <!-- 앱별 세션 쿠키 보안 설정 -->
+        <Context path="" docBase="ROOT" reloadable="false">
+            <CookieProcessor className="org.apache.tomcat.util.http.Rfc6265CookieProcessor"
+                             sameSiteCookies="strict" />
+        </Context>
+
+        <!-- 액세스 로깅 설정 -->
+        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+               prefix="localhost_access_log" suffix=".txt"
+               pattern="%h %l %u %t &quot;%r&quot; %s %b &quot;%{Referer}i&quot; &quot;%{User-Agent}i&quot; %D" />
+
+        <!-- 요청 헤더 크기 제한 -->
+        <!--Valve className="org.apache.catalina.valves.RequestLimitValve"
+               maxRequestHeaders="100"
+               maxHeaderCount="100"
+               maxHeaderSize="8192" /-->
+               
+        <!-- 원격 IP 주소 확인 (프록시 환경에서 사용) -->
+        <Valve className="org.apache.catalina.valves.RemoteIpValve"
+               remoteIpHeader="X-Forwarded-For"
+               protocolHeader="X-Forwarded-Proto"
+               protocolHeaderHttpsValue="https" />
+               
+        <!-- 관리자 페이지 접근 제한 - 완전히 비활성화 -->
+        <Context path="/manager" docBase="" />
+        <Context path="/host-manager" docBase="" />
+      </Host>
+    </Engine>
+  </Service>
+</Server>
