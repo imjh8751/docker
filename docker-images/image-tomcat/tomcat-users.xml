@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tomcat-users xmlns="http://tomcat.apache.org/xml"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://tomcat.apache.org/xml tomcat-users.xsd"
+              version="1.0">
+  <!-- 관리자 계정 및 롤 모두 비활성화 -->
+  <!-- 이 파일에 관리자 계정을 정의하지 않으면 관리자 인터페이스에 접근할 수 없음 -->
+  <!-- 보안을 위해 아무 사용자도 정의하지 않음 -->
+</tomcat-users>
