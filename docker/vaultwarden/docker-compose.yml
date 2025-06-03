@@ -1,11 +1,12 @@
-version: '3.3'
 services:
-    server:
-        container_name: vaultwarden
-        volumes:
-            - '/vw-data/:/data/'
-        ports:
-            - '80:80'
-        image: 'vaultwarden/server:latest'
-
-#https://github.com/dani-garcia/vaultwarden
+  vaultwarden:
+    container_name: vaultwarden
+    image: vaultwarden/server
+    restart: always
+    ports:
+      - 8088:80
+    volumes:
+      - /APP/vaultwarden/data:/data
+    environment:
+      - TZ=Asia/Seoul
+      - ADMIN_TOKEN=Admin2580! #PW까먹었을때https://[domain]/admin
