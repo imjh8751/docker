@@ -11,3 +11,7 @@ docker run -d -p 3333:3333 --cap-add=NET_RAW --name network-tracer network-trace
 curl -X POST http://localhost:3333/trace \
   -H "Content-Type: application/json" \
   -d '{"destination": "google.com", "port": 80}'
+
+curl -X POST http://localhost:3333/trace \
+  -H "Content-Type: application/json" \
+  -d '{"destination": "google.com", "port": 80}' | jq -r '.visualization'
