@@ -1,0 +1,30 @@
+{
+  "name": "network-traceroute-visualizer",
+  "version": "1.0.0",
+  "description": "실시간 네트워크 경로 추적 시각화 도구",
+  "main": "server.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "traceroute",
+    "network",
+    "visualization",
+    "nodejs",
+    "express"
+  ],
+  "author": "Network Admin",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
