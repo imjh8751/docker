@@ -5,6 +5,7 @@ services:
         environment:
             - 'OC_URL=https://localhost:9200'
             - 'PROXY_HTTP_ADDR=0.0.0.0:9200'
+            - IDM_ADMIN_PASSWORD=admin
             - OC_INSECURE=true
         volumes:
             - '/APP/opencloud/opencloud-data:/var/lib/opencloud'
