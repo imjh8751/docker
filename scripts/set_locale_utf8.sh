@@ -2,9 +2,19 @@
 
 set -e
 
-echo "▶️ 시스템 Locale을 한국어(ko_KR.UTF-8)로 설정합니다."
+echo "▶️ 시스템 Locale과 Timezone, vi 설정을 한국어(KST) 기준으로 구성합니다."
 
-# 1. locale 패키지 설치 및 설정
+# 1. 시간대 설정
+echo "🕒 시간대를 Asia/Seoul로 설정합니다..."
+ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+if [ -f /etc/timezone ]; then
+  echo "Asia/Seoul" > /etc/timezone
+fi
+export TZ="Asia/Seoul"
+
+# 2. locale 설정
+echo "🌐 Locale을 한국어(UTF-8)로 설정 중..."
+
 if [ -f /etc/debian_version ]; then
   echo "🟢 Debian/Ubuntu 계열 감지됨"
   apt update && apt install -y locales vim
@@ -19,7 +29,7 @@ else
   exit 1
 fi
 
-# 2. locale 환경변수 설정
+# 3. locale 환경변수 적용
 if [ -f /etc/locale.conf ]; then
   echo "LANG=ko_KR.UTF-8" > /etc/locale.conf
 elif [ -f /etc/default/locale ]; then
@@ -30,28 +40,21 @@ export LANG=ko_KR.UTF-8
 export LANGUAGE=ko_KR:ko
 export LC_ALL=ko_KR.UTF-8
 
-# 3. Vim 설정 보완 (한글 깨짐 방지)
-echo "📄 vi(vim) 한글 설정 적용 중..."
+# 4. vim 설정
+echo "📄 vi/vim 한글 설정 적용 중..."
+VIMRC_SYS=""
+[ -f /etc/vimrc ] && VIMRC_SYS="/etc/vimrc"
+[ -f /etc/vim/vimrc ] && VIMRC_SYS="/etc/vim/vimrc"
 
-# 시스템 전역 설정
-if [ -f /etc/vimrc ]; then
-  VIMRC="/etc/vimrc"
-elif [ -f /etc/vim/vimrc ]; then
-  VIMRC="/etc/vim/vimrc"
-else
-  VIMRC=""
-fi
-
-if [ -n "$VIMRC" ]; then
-  grep -q "set encoding=utf-8" "$VIMRC" 2>/dev/null || {
-    echo -e "\n\" [자동추가] 한글 지원" >> "$VIMRC"
-    echo "set encoding=utf-8" >> "$VIMRC"
-    echo "set fileencodings=utf-8,euc-kr,cp949" >> "$VIMRC"
-    echo "set termencoding=utf-8" >> "$VIMRC"
+if [ -n "$VIMRC_SYS" ]; then
+  grep -q "set encoding=utf-8" "$VIMRC_SYS" 2>/dev/null || {
+    echo -e "\n\" [자동추가] 한글 지원" >> "$VIMRC_SYS"
+    echo "set encoding=utf-8" >> "$VIMRC_SYS"
+    echo "set fileencodings=utf-8,euc-kr,cp949" >> "$VIMRC_SYS"
+    echo "set termencoding=utf-8" >> "$VIMRC_SYS"
   }
 fi
 
-# 사용자 ~/.vimrc 도 생성
 USER_VIMRC="$HOME/.vimrc"
 if ! grep -q "set encoding=utf-8" "$USER_VIMRC" 2>/dev/null; then
   echo -e "\n\" [자동추가] 한글 지원" >> "$USER_VIMRC"
@@ -60,9 +63,14 @@ if ! grep -q "set encoding=utf-8" "$USER_VIMRC" 2>/dev/null; then
   echo "set termencoding=utf-8" >> "$USER_VIMRC"
 fi
 
-echo "✅ 모든 설정 완료. 아래 명령어로 즉시 적용 가능:"
+# 5. 결과 확인
 echo ""
-echo "  source /etc/locale.conf  또는  source /etc/default/locale"
-echo "  export LANG=ko_KR.UTF-8"
+echo "✅ 설정 완료 결과:"
+echo "🕓 현재 시간 (KST): $(date)"
+echo "🌍 현재 locale:"
+locale
+
 echo ""
-echo "📢 이제 vi/vim에서 한글이 정상 표시됩니다!"
+echo "⚠️ 세션에 즉시 적용하려면 다음 명령을 실행하세요:"
+echo "  source /etc/locale.conf     # 또는 /etc/default/locale"
+echo "  export TZ=Asia/Seoul        # 타임존 적용"
