@@ -11,6 +11,7 @@ echo "📦 NAS 마운트 디렉토리 생성 중..."
 MOUNT_MAP=(
   "/DATA_NAS1=192.168.0.102:/export/DOCKER"
   "/DATA_NAS2=192.168.0.101:/pv2-zfs/pv2-files/TEMP"
+  "/DATA_NAS3=192.168.0.100:/mnt/pve/pv"
   #"/DATA_NAS3=192.168.0.102:/export/ALBUM"
   "/DATA_NAS4=192.168.0.102:/export/UTIL"
   "/DATA_NAS5=192.168.0.101:/pv2-zfs-data/pv2-files"
@@ -50,8 +51,8 @@ for item in "${MOUNT_MAP[@]}"; do
 done
 
 # ✅ mount-check.sh 생성
-CHECK_SCRIPT="/root/docker/mount-check.sh"
-mkdir -p /root/docker
+CHECK_SCRIPT="/home/orangepi/shell/mount-check.sh"
+mkdir -p /home/orangepi/shell
 
 cat <<'EOF' > "$CHECK_SCRIPT"
 #!/bin/bash
@@ -62,6 +63,7 @@ LOG_FILE="/var/log/mount-checker.log"
 declare -A MOUNT_TARGETS=(
   ["/DATA_NAS1"]="192.168.0.102:/export/DOCKER"
   ["/DATA_NAS2"]="192.168.0.101:/pv2-zfs/pv2-files/TEMP"
+  ["/DATA_NAS3"]="192.168.0.100:/mnt/pve/pv1-files"
   #["/DATA_NAS3"]="192.168.0.102:/export/ALBUM"
   ["/DATA_NAS4"]="192.168.0.102:/export/UTIL"
   ["/DATA_NAS5"]="192.168.0.101:/pv2-zfs-data/pv2-files"
