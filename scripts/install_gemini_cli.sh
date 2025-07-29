@@ -29,6 +29,34 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+# 저장소 정리 함수
+fix_repositories() {
+    log_info "저장소 설정을 확인하고 수정합니다..."
+    
+    # 백업 생성
+    sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup.$(date +%Y%m%d_%H%M%S)
+    
+    # 문제가 있는 저장소 비활성화
+    if grep -q "bullseye-backports" /etc/apt/sources.list; then
+        log_info "문제가 있는 bullseye-backports 저장소를 비활성화합니다..."
+        sudo sed -i 's/^deb.*bullseye-backports.*/#&/' /etc/apt/sources.list
+    fi
+    
+    # sources.list.d 디렉토리도 확인
+    if [ -d "/etc/apt/sources.list.d" ]; then
+        for file in /etc/apt/sources.list.d/*.list; do
+            if [ -f "$file" ] && grep -q "bullseye-backports" "$file"; then
+                log_info "$(basename $file)에서 문제가 있는 저장소를 비활성화합니다..."
+                sudo sed -i 's/^deb.*bullseye-backports.*/#&/' "$file"
+            fi
+        done
+    fi
+    
+    # 캐시 정리
+    sudo apt clean
+    sudo rm -rf /var/lib/apt/lists/*
+}
+
 # OS 감지 함수
 detect_os() {
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
@@ -105,8 +133,14 @@ install_macos() {
 install_ubuntu_debian() {
     log_info "Ubuntu/Debian 환경에서 설치를 시작합니다..."
     
-    # 패키지 목록 업데이트
-    sudo apt update
+    # 저장소 문제 해결
+    fix_repositories
+    
+    # 패키지 목록 업데이트 (에러 무시)
+    log_info "패키지 목록을 업데이트합니다..."
+    sudo apt update || {
+        log_warning "일부 저장소에서 업데이트 실패, 계속 진행합니다..."
+    }
     
     # curl 설치 (없는 경우)
     if ! command -v curl >/dev/null 2>&1; then
@@ -117,10 +151,25 @@ install_ubuntu_debian() {
     # Node.js 설치
     if ! check_nodejs; then
         log_info "NodeSource repository 추가 중..."
-        curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+        curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - || {
+            log_warning "NodeSource 저장소 추가 실패, 기본 저장소에서 설치 시도..."
+            sudo apt install -y nodejs npm
+            
+            # 버전이 낮은 경우 nvm으로 업그레이드
+            if ! check_nodejs; then
+                log_info "nvm을 통해 최신 Node.js 설치 중..."
+                curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+                export NVM_DIR="$HOME/.nvm"
+                [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+                nvm install --lts
+                nvm use --lts
+            fi
+        }
         
-        log_info "Node.js 설치 중..."
-        sudo apt install -y nodejs
+        if ! check_nodejs; then
+            log_info "Node.js 설치 중..."
+            sudo apt install -y nodejs npm
+        fi
     fi
 }
 
