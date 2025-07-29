@@ -129,14 +129,56 @@ install_macos() {
     npm install -g npm@latest
 }
 
+# 기존 Node.js 완전 제거 함수
+clean_nodejs() {
+    log_info "기존 Node.js 설치를 완전히 제거합니다..."
+    
+    # 모든 Node.js 관련 패키지 제거
+    sudo apt remove --purge -y nodejs npm nodejs-legacy node-gyp 2>/dev/null || true
+    sudo apt autoremove -y 2>/dev/null || true
+    
+    # 추가적인 정리
+    sudo rm -rf /usr/local/bin/npm /usr/local/share/man/man1/node* /usr/local/lib/dtrace/node.d
+    sudo rm -rf ~/.npm ~/.node-gyp /opt/local/bin/node /opt/local/include/node /opt/local/lib/node_modules
+    sudo rm -rf /usr/local/lib/node* /usr/local/include/node* /usr/local/bin/node*
+    
+    # dpkg 상태 정리
+    sudo dpkg --configure -a 2>/dev/null || true
+    sudo apt --fix-broken install -y 2>/dev/null || true
+    
+    log_success "기존 Node.js 제거 완료"
+}
+
+# 프록시 설정 해제 함수
+disable_proxy() {
+    log_info "프록시 설정을 확인하고 해제합니다..."
+    
+    # 환경변수 프록시 해제
+    unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
+    
+    # apt 프록시 설정 확인 및 임시 해제
+    if [ -f /etc/apt/apt.conf ]; then
+        sudo mv /etc/apt/apt.conf /etc/apt/apt.conf.backup 2>/dev/null || true
+    fi
+    
+    if [ -f /etc/apt/apt.conf.d/proxy.conf ]; then
+        sudo mv /etc/apt/apt.conf.d/proxy.conf /etc/apt/apt.conf.d/proxy.conf.backup 2>/dev/null || true
+    fi
+    
+    log_success "프록시 설정 해제 완료"
+}
+
 # Ubuntu/Debian용 설치 함수
 install_ubuntu_debian() {
     log_info "Ubuntu/Debian 환경에서 설치를 시작합니다..."
     
+    # 프록시 설정 해제
+    disable_proxy
+    
     # 저장소 문제 해결
     fix_repositories
     
-    # 패키지 목록 업데이트 (에러 무시)
+    # 패키지 목록 업데이트
     log_info "패키지 목록을 업데이트합니다..."
     sudo apt update || {
         log_warning "일부 저장소에서 업데이트 실패, 계속 진행합니다..."
@@ -150,27 +192,81 @@ install_ubuntu_debian() {
     
     # Node.js 설치
     if ! check_nodejs; then
-        log_info "NodeSource repository 추가 중..."
-        curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash - || {
-            log_warning "NodeSource 저장소 추가 실패, 기본 저장소에서 설치 시도..."
-            sudo apt install -y nodejs npm
+        # 기존 Node.js 완전 제거
+        clean_nodejs
+        
+        log_info "Node.js 설치 방법을 선택합니다..."
+        
+        # 방법 1: NodeSource 저장소 사용 (프록시 없이)
+        log_info "NodeSource repository 추가 시도..."
+        if curl -fsSL --connect-timeout 10 https://deb.nodesource.com/setup_lts.x | sudo -E bash -; then
+            log_info "NodeSource에서 Node.js 설치 중..."
+            sudo apt install -y nodejs
+        else
+            log_warning "NodeSource 접근 실패, nvm으로 설치 시도..."
             
-            # 버전이 낮은 경우 nvm으로 업그레이드
-            if ! check_nodejs; then
-                log_info "nvm을 통해 최신 Node.js 설치 중..."
-                curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+            # 방법 2: nvm 사용
+            log_info "nvm을 통해 Node.js 설치 중..."
+            if curl -o- --connect-timeout 10 https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash; then
                 export NVM_DIR="$HOME/.nvm"
                 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
                 nvm install --lts
                 nvm use --lts
+                nvm alias default lts/*
+            else
+                log_warning "nvm 설치 실패, 바이너리 직접 설치 시도..."
+                
+                # 방법 3: 직접 바이너리 다운로드
+                install_nodejs_binary
             fi
-        }
-        
-        if ! check_nodejs; then
-            log_info "Node.js 설치 중..."
-            sudo apt install -y nodejs npm
         fi
     fi
+}
+
+# Node.js 바이너리 직접 설치 함수
+install_nodejs_binary() {
+    log_info "Node.js 바이너리를 직접 다운로드하여 설치합니다..."
+    
+    # 아키텍처 감지
+    ARCH=$(uname -m)
+    case $ARCH in
+        x86_64) NODE_ARCH="x64" ;;
+        aarch64|arm64) NODE_ARCH="arm64" ;;
+        armv7l) NODE_ARCH="armv7l" ;;
+        *) log_error "지원하지 않는 아키텍처: $ARCH"; exit 1 ;;
+    esac
+    
+    NODE_VERSION="20.11.0"  # LTS 버전
+    NODE_URL="https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-${NODE_ARCH}.tar.xz"
+    
+    # 임시 디렉토리에 다운로드
+    TEMP_DIR=$(mktemp -d)
+    cd "$TEMP_DIR"
+    
+    if wget -T 30 "$NODE_URL" || curl -L -o "node-v${NODE_VERSION}-linux-${NODE_ARCH}.tar.xz" "$NODE_URL"; then
+        tar -xf "node-v${NODE_VERSION}-linux-${NODE_ARCH}.tar.xz"
+        
+        # /usr/local에 설치
+        sudo cp -r "node-v${NODE_VERSION}-linux-${NODE_ARCH}"/* /usr/local/
+        
+        # 심볼릭 링크 생성
+        sudo ln -sf /usr/local/bin/node /usr/bin/node
+        sudo ln -sf /usr/local/bin/npm /usr/bin/npm
+        sudo ln -sf /usr/local/bin/npx /usr/bin/npx
+        
+        # PATH 업데이트
+        echo 'export PATH="/usr/local/bin:$PATH"' >> ~/.bashrc
+        export PATH="/usr/local/bin:$PATH"
+        
+        log_success "Node.js 바이너리 설치 완료"
+    else
+        log_error "Node.js 다운로드에 실패했습니다. 인터넷 연결을 확인하세요."
+        exit 1
+    fi
+    
+    # 정리
+    cd - > /dev/null
+    rm -rf "$TEMP_DIR"
 }
 
 # CentOS/RHEL/Fedora용 설치 함수
@@ -229,19 +325,77 @@ install_windows() {
     fi
 }
 
+# npm 전역 디렉토리 설정 함수
+setup_npm_global() {
+    log_info "npm 전역 디렉토리를 사용자 홈으로 설정합니다..."
+    
+    # 전역 설치 디렉토리를 사용자 홈으로 변경
+    mkdir -p ~/.npm-global
+    npm config set prefix '~/.npm-global'
+    
+    # PATH에 추가
+    if ! grep -q "~/.npm-global/bin" ~/.bashrc; then
+        echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc
+    fi
+    
+    if ! grep -q "~/.npm-global/bin" ~/.profile; then
+        echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.profile
+    fi
+    
+    # 현재 세션에 적용
+    export PATH=~/.npm-global/bin:$PATH
+    
+    log_success "npm 전역 디렉토리 설정 완료"
+}
+
 # Gemini CLI 설치 함수
 install_gemini_cli() {
     log_info "Gemini CLI 설치 중..."
     
-    # 전역 설치
-    npm install -g @google/gemini-cli
+    # 방법 1: npm 전역 디렉토리 설정 후 설치
+    setup_npm_global
     
-    if [ $? -eq 0 ]; then
+    if npm install -g @google/gemini-cli; then
         log_success "Gemini CLI가 성공적으로 설치되었습니다!"
-    else
-        log_error "Gemini CLI 설치에 실패했습니다."
-        exit 1
+        return 0
     fi
+    
+    log_warning "사용자 디렉토리 설치 실패, sudo로 시도합니다..."
+    
+    # 방법 2: sudo로 설치 (권장하지 않지만 대안)
+    if sudo npm install -g @google/gemini-cli --unsafe-perm=true --allow-root; then
+        log_success "Gemini CLI가 성공적으로 설치되었습니다!"
+        
+        # 사용자가 실행할 수 있도록 권한 설정
+        sudo chown -R $(whoami) /usr/lib/node_modules/@google 2>/dev/null || true
+        return 0
+    fi
+    
+    log_warning "전역 설치 실패, 로컬 설치를 시도합니다..."
+    
+    # 방법 3: 로컬 설치 후 심볼릭 링크
+    mkdir -p ~/gemini-cli
+    cd ~/gemini-cli
+    
+    if npm install @google/gemini-cli; then
+        # 실행 가능한 심볼릭 링크 생성
+        mkdir -p ~/.local/bin
+        ln -sf ~/gemini-cli/node_modules/.bin/gemini ~/.local/bin/gemini
+        
+        # PATH에 추가
+        if ! grep -q "~/.local/bin" ~/.bashrc; then
+            echo 'export PATH=~/.local/bin:$PATH' >> ~/.bashrc
+        fi
+        export PATH=~/.local/bin:$PATH
+        
+        log_success "Gemini CLI가 로컬에 성공적으로 설치되었습니다!"
+        cd - > /dev/null
+        return 0
+    fi
+    
+    log_error "모든 설치 방법이 실패했습니다."
+    cd - > /dev/null
+    exit 1
 }
 
 # 설치 후 설정 안내
