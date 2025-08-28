@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="WebSphere Liberty Server">
+    
+    <!-- 필요한 기능들 -->
+    <featureManager>
+        <feature>webProfile-8.0</feature>
+        <feature>adminCenter-1.0</feature>
+        <feature>restConnector-2.0</feature>
+        <feature>localConnector-1.0</feature>
+    </featureManager>
+    
+    <!-- 기본 레지스트리 설정 -->
+    <basicRegistry id="basic" realm="BasicRealm">
+        <!-- Admin Console 사용자 -->
+        <user name="admin" password="admin123" />
+        <user name="user" password="user123" />
+        <group name="administrators">
+            <member name="admin" />
+        </group>
+    </basicRegistry>
+    
+    <!-- 보안 역할 매핑 -->
+    <administrator-role>
+        <user>admin</user>
+    </administrator-role>
+    
+    <!-- HTTP 엔드포인트 -->
+    <httpEndpoint id="defaultHttpEndpoint"
+                  httpPort="9080"
+                  httpsPort="9443"
+                  host="*" />
+    
+    <!-- Admin Center 설정 -->
+    <remoteFileAccess>
+        <writeDir>${server.config.dir}</writeDir>
+    </remoteFileAccess>
+    
+    <!-- 애플리케이션 -->
+    <applicationManager autoExpand="true"/>
+    
+    <!-- WAR 파일들이 자동으로 배포되는 디렉토리 -->
+    <applicationMonitor updateTrigger="mbean"/>
+    
+    <!-- 애플리케이션별 Context Root 설정 -->
+    <!-- 예시 1: myapp.war를 /myapp으로 설정 -->
+    <webApplication id="myapp" 
+                    location="myapp.war" 
+                    contextRoot="/myapp" 
+                    name="myapp"/>
+    
+    <!-- 예시 4: 루트 컨텍스트로 설정하려면 contextRoot="/" -->
+    <!--
+    <webApplication id="frontend" 
+                    location="frontend.war" 
+                    contextRoot="/" 
+                    name="frontend"/>
+    -->
+    
+    <!-- 로깅 설정 -->
+    <logging traceSpecification="*=info" maxFileSize="20" maxFiles="10"/>
+    
+</server>
