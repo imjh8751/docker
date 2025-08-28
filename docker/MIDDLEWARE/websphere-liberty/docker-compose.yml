@@ -1,0 +1,22 @@
+services:
+  websphere-liberty:
+    image: icr.io/appcafe/websphere-liberty:latest
+    container_name: websphere-liberty
+    ports:
+      - "9080:9080"    # HTTP 포트
+      - "9443:9443"    # HTTPS 포트
+      - "9060:9060"    # Admin Console 포트
+    volumes:
+      - ./server.xml:/config/server.xml
+      - ./apps:/config/apps
+      - ./logs:/logs
+    environment:
+      - LICENSE=accept
+      - WLP_LOGGING_CONSOLE_LOGLEVEL=info
+      - WLP_LOGGING_CONSOLE_SOURCE=message,trace,accessLog,ffdc,audit
+    networks:
+      - liberty-network
+
+networks:
+  liberty-network:
+    driver: bridge
