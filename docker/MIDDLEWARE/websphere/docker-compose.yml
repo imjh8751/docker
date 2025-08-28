@@ -1,18 +1,48 @@
-version: '3.9'
 services:
-    websphere-traditional:
-        image: 'ibmcom/websphere-traditional:latest'
-        ports:
-            - '9443:9443'
-            - '9043:9043'
-        environment:
-            - SERVER_NAME=server1
-            - NODE_NAME=DefaultNode01
-            - PROFILE_NAME=AppSrv01
-            - UPDATE_HOSTNAME=true
-        volumes:
-            - './PASSWORD:/tmp/PASSWORD'
-        hostname: devwas
-        container_name: websphere
-
-# initial ID : wsadmin
+  websphere:
+    image: ibmcom/websphere-traditional:9.0.5.24
+    #image: ibmcom/websphere-traditional:8.5.5.27
+    container_name: websphere
+    hostname: websphere
+    ports:
+      - "9060:9060"  # Admin Console (HTTP)
+      - "9043:9043"  # Admin Console (HTTPS)
+      - "9080:9080"  # APP Console (HTTP)
+      - "9443:9443"  # APP Console (HTTPS)
+    volumes:
+      # 패스워드 파일
+      - ./PASSWORD:/tmp/PASSWORD
+      
+      # WebSphere 주요 디렉토리들
+      #- ./websphere/profiles:/opt/IBM/WebSphere/AppServer/profiles
+      #- ./websphere/logs:/opt/IBM/WebSphere/AppServer/logs
+      #- ./websphere/config:/opt/IBM/WebSphere/AppServer/config
+      #- ./websphere/installedApps:/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/installedApps
+      #- ./websphere/applications:/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/applications
+      #- ./websphere/deployedApps:/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/config/cells/DefaultCell01/applications
+      
+      # 백업 및 설정 파일들
+      #- ./websphere/backup:/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/backup
+      #- ./websphere/temp:/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/temp
+      #- ./websphere/wstemp:/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/wstemp
+      
+      # JVM 로그 및 덤프
+      #- ./websphere/javacore:/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/javacore
+      #- ./websphere/heapdump:/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/heapdump
+    restart: unless-stopped
+    # 환경 변수 (필요한 경우 추가)
+    environment:
+      - ENABLE_BASIC_LOGGING=true
+      - SERVER_NAME=server1
+      - NODE_NAME=DefaultNode01
+      - PROFILE_NAME=AppSrv01
+      - UPDATE_HOSTNAME=true
+    # 메모리 제한 (필요한 경우)
+    # mem_limit: 2g
+    # 헬스체크 (선택사항)
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:9043/ibm/console"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 120s
