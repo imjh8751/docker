@@ -1,0 +1,153 @@
+services:
+  # WebSphere 초기화 및 파일 복사 서비스
+  websphere-init:
+    image: ibmcom/websphere-traditional:9.0.5.24
+    container_name: websphere-init
+    user: "0:0"  # root 권한으로 실행
+    volumes:
+      - ./websphere:/host-backup
+    command: >
+      sh -c "
+        echo 'WebSphere 디렉토리 복사 스크립트 시작...'
+        echo '==============================='
+        
+        echo '1. 호스트 디렉토리 생성...'
+        mkdir -p /host-backup/{profiles,logs,config,installedApps,applications,deployedApps,backup,temp,wstemp,javacore,heapdump}
+        
+        echo '2. WebSphere 주요 디렉토리 복사 시작...'
+        
+        # WebSphere 주요 디렉토리들
+        echo '  - profiles 복사...'
+        if [ -d /opt/IBM/WebSphere/AppServer/profiles ] && [ \"\$(ls -A /opt/IBM/WebSphere/AppServer/profiles 2>/dev/null)\" ]; then
+          cp -rp /opt/IBM/WebSphere/AppServer/profiles/* /host-backup/profiles/ 2>/dev/null || echo '    Warning: profiles 디렉토리 복사 실패'
+        else
+          echo '    Warning: profiles 디렉토리가 비어있거나 존재하지 않음'
+        fi
+        
+        echo '  - logs 복사...'
+        if [ -d /opt/IBM/WebSphere/AppServer/logs ] && [ \"\$(ls -A /opt/IBM/WebSphere/AppServer/logs 2>/dev/null)\" ]; then
+          cp -rp /opt/IBM/WebSphere/AppServer/logs/* /host-backup/logs/ 2>/dev/null || echo '    Warning: logs 디렉토리 복사 실패'
+        else
+          echo '    Info: logs 디렉토리가 비어있거나 존재하지 않음 (정상)'
+        fi
+        
+        echo '  - config 복사...'
+        if [ -d /opt/IBM/WebSphere/AppServer/config ] && [ \"\$(ls -A /opt/IBM/WebSphere/AppServer/config 2>/dev/null)\" ]; then
+          cp -rp /opt/IBM/WebSphere/AppServer/config/* /host-backup/config/ 2>/dev/null || echo '    Warning: config 디렉토리 복사 실패'
+        else
+          echo '    Warning: config 디렉토리가 비어있거나 존재하지 않음'
+        fi
+        
+        # 프로파일 기반 디렉토리들 (AppSrv01이 존재하는 경우에만)
+        if [ -d /opt/IBM/WebSphere/AppServer/profiles/AppSrv01 ]; then
+          echo '  - installedApps 복사...'
+          if [ -d /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/installedApps ]; then
+            cp -rp /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/installedApps/* /host-backup/installedApps/ 2>/dev/null || echo '    Info: installedApps가 비어있음'
+          fi
+          
+          echo '  - applications 복사...'
+          if [ -d /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/applications ]; then
+            cp -rp /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/applications/* /host-backup/applications/ 2>/dev/null || echo '    Info: applications가 비어있음'
+          fi
+          
+          echo '  - deployedApps 복사...'
+          if [ -d /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/config/cells/DefaultCell01/applications ]; then
+            cp -rp /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/config/cells/DefaultCell01/applications/* /host-backup/deployedApps/ 2>/dev/null || echo '    Info: deployedApps가 비어있음'
+          fi
+          
+          echo '  - backup 복사...'
+          if [ -d /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/backup ]; then
+            cp -rp /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/backup/* /host-backup/backup/ 2>/dev/null || echo '    Info: backup이 비어있음'
+          fi
+          
+          echo '  - temp 복사...'
+          if [ -d /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/temp ]; then
+            cp -rp /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/temp/* /host-backup/temp/ 2>/dev/null || echo '    Info: temp가 비어있음'
+          fi
+          
+          echo '  - wstemp 복사...'
+          if [ -d /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/wstemp ]; then
+            cp -rp /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/wstemp/* /host-backup/wstemp/ 2>/dev/null || echo '    Info: wstemp가 비어있음'
+          fi
+          
+          echo '  - javacore 복사...'
+          if [ -d /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/javacore ]; then
+            cp -rp /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/javacore/* /host-backup/javacore/ 2>/dev/null || echo '    Info: javacore가 비어있음'
+          fi
+          
+          echo '  - heapdump 복사...'
+          if [ -d /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/heapdump ]; then
+            cp -rp /opt/IBM/WebSphere/AppServer/profiles/AppSrv01/heapdump/* /host-backup/heapdump/ 2>/dev/null || echo '    Info: heapdump가 비어있음'
+          fi
+        else
+          echo '  Warning: AppSrv01 프로파일이 존재하지 않음. 기본 디렉토리만 생성됨'
+        fi
+        
+        echo '3. 권한 설정 (1001:0)...'
+        chown -R 1001:0 /host-backup/
+        chmod -R 755 /host-backup/
+        
+        echo '4. 복사 완료! 결과 확인:'
+        echo '================================'
+        for dir in profiles logs config installedApps applications deployedApps backup temp wstemp javacore heapdump; do
+          if [ -d \"/host-backup/\$dir\" ] && [ \"\$(ls -A /host-backup/\$dir 2>/dev/null)\" ]; then
+            file_count=\$(find /host-backup/\$dir -type f | wc -l)
+            echo \"✓ \$dir: \$file_count 개 파일 복사됨\"
+          else
+            echo \"✗ \$dir: 비어있음\"
+          fi
+        done
+        
+        echo ''
+        echo '초기 파일 복사 완료!'
+        echo '이제 websphere 서비스를 시작할 수 있습니다.'
+      "
+    profiles:
+      - init
+
+  websphere:
+    image: ibmcom/websphere-traditional:9.0.5.24
+    #image: ibmcom/websphere-traditional:8.5.5.27
+    container_name: websphere
+    hostname: websphere
+    user: "1001:0"  # WebSphere 실행 사용자
+    ports:
+      - "9060:9060"  # Admin Console (HTTP)
+      - "9043:9043"  # Admin Console (HTTPS)
+      - "9080:9080"  # APP Console (HTTP) - 포트 수정
+      - "9443:9443"  # APP Console (HTTPS)
+    volumes:
+      # 패스워드 파일
+      - ./PASSWORD:/tmp/PASSWORD
+      
+      # WebSphere 주요 디렉토리들 (초기화 후 주석 해제)
+      - ./websphere/profiles:/opt/IBM/WebSphere/AppServer/profiles
+      - ./websphere/logs:/opt/IBM/WebSphere/AppServer/logs
+      - ./websphere/config:/opt/IBM/WebSphere/AppServer/config
+      - ./websphere/installedApps:/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/installedApps
+      - ./websphere/applications:/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/applications
+      - ./websphere/deployedApps:/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/config/cells/DefaultCell01/applications
+      
+      # 백업 및 설정 파일들
+      - ./websphere/backup:/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/backup
+      - ./websphere/temp:/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/temp
+      - ./websphere/wstemp:/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/wstemp
+      
+      # JVM 로그 및 덤프
+      - ./websphere/javacore:/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/javacore
+      - ./websphere/heapdump:/opt/IBM/WebSphere/AppServer/profiles/AppSrv01/heapdump
+    
+    restart: unless-stopped
+    # 환경 변수 (필요한 경우 추가)
+    environment:
+      - ENABLE_BASIC_LOGGING=true
+    # 메모리 제한 (필요한 경우)
+    # mem_limit: 2g
+    
+    # 헬스체크 (선택사항)
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:9043/ibm/console"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 120s
