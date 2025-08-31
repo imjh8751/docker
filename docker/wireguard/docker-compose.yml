@@ -1,4 +1,3 @@
-version: "2.1"
 services:
   wireguard:
     image: ghcr.io/linuxserver/wireguard
@@ -10,7 +9,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Asia/Seoul
-      - SERVERURL=imjh8751.iptime.org #optional
+      - SERVERURL=wireguard.itapi.org #optional
       - SERVERPORT=51820 #optional
       - PEERS=pc1, pc2, pc3, pc4, pc5 #optional
       - PEERDNS=8.8.8.8 #optional
