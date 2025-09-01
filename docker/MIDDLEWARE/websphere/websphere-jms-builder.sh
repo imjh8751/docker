@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# WAS JMS Producer/Consumer 자동 생성 및 빌드 스크립트
+# WAS JMS Producer/Consumer 자동 생성 및 빌드 스크립트 (멀티모듈 Maven)
 # 사용법: ./setup.sh
 
 echo "=== WAS JMS Producer/Consumer 프로젝트 생성 시작 ==="
@@ -14,16 +14,9 @@ cd $PROJECT_ROOT
 echo "✓ 프로젝트 디렉토리 생성: $PROJECT_ROOT"
 
 # =================================================================
-# 1. Producer 프로젝트 구조 생성
+# 1. 루트 pom.xml (멀티 모듈)
 # =================================================================
-echo "📦 Producer 프로젝트 생성 중..."
-
-mkdir -p producer/src/main/java/com/example/producer
-mkdir -p producer/src/main/webapp/WEB-INF
-mkdir -p producer/META-INF
-
-# Producer pom.xml
-cat > producer/pom.xml << 'EOF'
+cat > pom.xml << 'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -32,15 +25,52 @@ cat > producer/pom.xml << 'EOF'
     <modelVersion>4.0.0</modelVersion>
     
     <groupId>com.example</groupId>
-    <artifactId>jms-producer</artifactId>
+    <artifactId>jms-demo-parent</artifactId>
     <version>1.0.0</version>
-    <packaging>ear</packaging>
+    <packaging>pom</packaging>
+    
+    <modules>
+        <module>producer-web</module>
+        <module>producer-ear</module>
+        <module>consumer-ejb</module>
+        <module>consumer-ear</module>
+    </modules>
     
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    
+</project>
+EOF
+
+echo "✓ 루트 pom.xml 생성 완료"
+
+# =================================================================
+# 2. Producer Web 모듈 (WAR)
+# =================================================================
+echo "📦 Producer Web 모듈 생성 중..."
+
+mkdir -p producer-web/src/main/java/com/example/producer
+mkdir -p producer-web/src/main/webapp/WEB-INF
+
+cat > producer-web/pom.xml << 'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>com.example</groupId>
+        <artifactId>jms-demo-parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    
+    <artifactId>producer-web</artifactId>
+    <packaging>war</packaging>
     
     <dependencies>
         <dependency>
@@ -64,39 +94,17 @@ cat > producer/pom.xml << 'EOF'
     </dependencies>
     
     <build>
-        <finalName>producer</finalName>
+        <finalName>producer-web</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.2.3</version>
-                <configuration>
-                    <webXml>src\main\webapp\WEB-INF\web.xml</webXml>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-ear-plugin</artifactId>
-                <version>3.0.2</version>
-                <configuration>
-                    <displayName>JMS Producer</displayName>
-                    <modules>
-                        <webModule>
-                            <groupId>com.example</groupId>
-                            <artifactId>jms-producer</artifactId>
-                            <contextRoot>/producer</contextRoot>
-                        </webModule>
-                    </modules>
-                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -104,7 +112,7 @@ cat > producer/pom.xml << 'EOF'
 EOF
 
 # Producer Servlet
-cat > producer/src/main/java/com/example/producer/MessageProducerServlet.java << 'EOF'
+cat > producer-web/src/main/java/com/example/producer/MessageProducerServlet.java << 'EOF'
 package com.example.producer;
 
 import javax.servlet.ServletException;
@@ -198,7 +206,7 @@ public class MessageProducerServlet extends HttpServlet {
 EOF
 
 # Producer web.xml
-cat > producer/src/main/webapp/WEB-INF/web.xml << 'EOF'
+cat > producer-web/src/main/webapp/WEB-INF/web.xml << 'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -225,39 +233,16 @@ cat > producer/src/main/webapp/WEB-INF/web.xml << 'EOF'
 </web-app>
 EOF
 
-# Producer application.xml
-cat > producer/META-INF/application.xml << 'EOF'
-<?xml version="1.0" encoding="UTF-8"?>
-<application xmlns="http://java.sun.com/xml/ns/javaee"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-             http://java.sun.com/xml/ns/javaee/application_7.xsd"
-             version="7">
-    
-    <display-name>JMS Producer Application</display-name>
-    
-    <module>
-        <web>
-            <web-uri>producer.war</web-uri>
-            <context-root>/producer</context-root>
-        </web>
-    </module>
-    
-</application>
-EOF
-
-echo "✓ Producer 프로젝트 생성 완료"
+echo "✓ Producer Web 모듈 생성 완료"
 
 # =================================================================
-# 2. Consumer 프로젝트 구조 생성
+# 3. Producer EAR 모듈
 # =================================================================
-echo "📦 Consumer 프로젝트 생성 중..."
+echo "📦 Producer EAR 모듈 생성 중..."
 
-mkdir -p consumer/src/main/java/com/example/consumer
-mkdir -p consumer/META-INF
+mkdir -p producer-ear
 
-# Consumer pom.xml
-cat > consumer/pom.xml << 'EOF'
+cat > producer-ear/pom.xml << 'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -265,16 +250,72 @@ cat > consumer/pom.xml << 'EOF'
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     
-    <groupId>com.example</groupId>
-    <artifactId>jms-consumer</artifactId>
-    <version>1.0.0</version>
+    <parent>
+        <groupId>com.example</groupId>
+        <artifactId>jms-demo-parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    
+    <artifactId>producer-ear</artifactId>
     <packaging>ear</packaging>
     
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>producer-web</artifactId>
+            <version>1.0.0</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <finalName>producer</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ear-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <displayName>JMS Producer</displayName>
+                    <modules>
+                        <webModule>
+                            <groupId>com.example</groupId>
+                            <artifactId>producer-web</artifactId>
+                            <contextRoot>/producer</contextRoot>
+                        </webModule>
+                    </modules>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+EOF
+
+echo "✓ Producer EAR 모듈 생성 완료"
+
+# =================================================================
+# 4. Consumer EJB 모듈
+# =================================================================
+echo "📦 Consumer EJB 모듈 생성 중..."
+
+mkdir -p consumer-ejb/src/main/java/com/example/consumer
+
+cat > consumer-ejb/pom.xml << 'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>com.example</groupId>
+        <artifactId>jms-demo-parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    
+    <artifactId>consumer-ejb</artifactId>
+    <packaging>ejb</packaging>
     
     <dependencies>
         <dependency>
@@ -298,16 +339,12 @@ cat > consumer/pom.xml << 'EOF'
     </dependencies>
     
     <build>
-        <finalName>consumer</finalName>
+        <finalName>consumer-ejb</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -317,27 +354,13 @@ cat > consumer/pom.xml << 'EOF'
                     <ejbVersion>3.2</ejbVersion>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-ear-plugin</artifactId>
-                <version>3.0.2</version>
-                <configuration>
-                    <displayName>JMS Consumer</displayName>
-                    <modules>
-                        <ejbModule>
-                            <groupId>com.example</groupId>
-                            <artifactId>jms-consumer</artifactId>
-                        </ejbModule>
-                    </modules>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 </project>
 EOF
 
 # Consumer MDB
-cat > consumer/src/main/java/com/example/consumer/MessageConsumerMDB.java << 'EOF'
+cat > consumer-ejb/src/main/java/com/example/consumer/MessageConsumerMDB.java << 'EOF'
 package com.example.consumer;
 
 import javax.ejb.ActivationConfigProperty;
@@ -404,8 +427,8 @@ public class MessageConsumerMDB implements MessageListener {
 EOF
 
 # Consumer ejb-jar.xml
-mkdir -p consumer/src/main/resources/META-INF
-cat > consumer/src/main/resources/META-INF/ejb-jar.xml << 'EOF'
+mkdir -p consumer-ejb/src/main/resources/META-INF
+cat > consumer-ejb/src/main/resources/META-INF/ejb-jar.xml << 'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -440,28 +463,67 @@ cat > consumer/src/main/resources/META-INF/ejb-jar.xml << 'EOF'
 </ejb-jar>
 EOF
 
-# Consumer application.xml
-cat > consumer/META-INF/application.xml << 'EOF'
-<?xml version="1.0" encoding="UTF-8"?>
-<application xmlns="http://java.sun.com/xml/ns/javaee"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-             http://java.sun.com/xml/ns/javaee/application_7.xsd"
-             version="7">
-    
-    <display-name>JMS Consumer Application</display-name>
-    
-    <module>
-        <ejb>consumer.jar</ejb>
-    </module>
-    
-</application>
-EOF
-
-echo "✓ Consumer 프로젝트 생성 완료"
+echo "✓ Consumer EJB 모듈 생성 완료"
 
 # =================================================================
-# 3. WAS 설정 파일 생성 (참고용)
+# 5. Consumer EAR 모듈
+# =================================================================
+echo "📦 Consumer EAR 모듈 생성 중..."
+
+mkdir -p consumer-ear
+
+cat > consumer-ear/pom.xml << 'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>com.example</groupId>
+        <artifactId>jms-demo-parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    
+    <artifactId>consumer-ear</artifactId>
+    <packaging>ear</packaging>
+    
+    <dependencies>
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>consumer-ejb</artifactId>
+            <version>1.0.0</version>
+            <type>ejb</type>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <finalName>consumer</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ear-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <displayName>JMS Consumer</displayName>
+                    <modules>
+                        <ejbModule>
+                            <groupId>com.example</groupId>
+                            <artifactId>consumer-ejb</artifactId>
+                        </ejbModule>
+                    </modules>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+EOF
+
+echo "✓ Consumer EAR 모듈 생성 완료"
+
+# =================================================================
+# 6. WAS 설정 참고 파일
 # =================================================================
 echo "📋 WAS 설정 참고 파일 생성 중..."
 
@@ -505,7 +567,7 @@ cat > was-setup-guide.txt << 'EOF'
 EOF
 
 # =================================================================
-# 4. Maven 빌드 실행
+# 7. Maven 빌드 실행
 # =================================================================
 echo "🔨 Maven 빌드 시작..."
 
@@ -514,37 +576,22 @@ if ! command -v mvn &> /dev/null; then
     echo "❌ Maven이 설치되어 있지 않습니다. 다음 중 하나를 선택하세요:"
     echo "   1. Maven 설치: https://maven.apache.org/install.html"
     echo "   2. 또는 IDE에서 pom.xml 파일을 직접 빌드"
-    echo "   3. 또는 Ant 빌드 스크립트 사용 (아래 ant-build.xml 참조)"
 else
-    echo "✓ Maven 발견됨. 빌드 진행..."
+    echo "✓ Maven 발견됨. 전체 프로젝트 빌드 진행..."
     
-    # Producer 빌드
-    echo "🔨 Producer 빌드 중..."
-    cd producer
+    # 루트에서 전체 빌드
     mvn clean package
     if [ $? -eq 0 ]; then
-        echo "✅ Producer 빌드 성공: producer/target/producer.ear"
-        cp target/producer.ear ../producer.ear
+        echo "✅ 전체 빌드 성공"
+        cp producer-ear/target/producer.ear ./producer.ear
+        cp consumer-ear/target/consumer.ear ./consumer.ear
     else
-        echo "❌ Producer 빌드 실패"
+        echo "❌ 빌드 실패"
     fi
-    cd ..
-    
-    # Consumer 빌드
-    echo "🔨 Consumer 빌드 중..."
-    cd consumer
-    mvn clean package
-    if [ $? -eq 0 ]; then
-        echo "✅ Consumer 빌드 성공: consumer/target/consumer.ear"
-        cp target/consumer.ear ../consumer.ear
-    else
-        echo "❌ Consumer 빌드 실패"
-    fi
-    cd ..
 fi
 
 # =================================================================
-# 5. 빌드 결과 및 사용법 안내
+# 8. 빌드 결과 및 사용법 안내
 # =================================================================
 echo ""
 echo "🎉 === 빌드 완료! ==="
@@ -552,17 +599,27 @@ echo ""
 
 if [ -f "producer.ear" ] && [ -f "consumer.ear" ]; then
     echo "✅ 생성된 EAR 파일:"
-    echo "   📦 $(pwd)/producer.ear ($(du -h producer.ear | cut -f1))"
-    echo "   📦 $(pwd)/consumer.ear ($(du -h consumer.ear | cut -f1))"
+    echo "   📦 $(pwd)/producer.ear ($(du -h producer.ear 2>/dev/null | cut -f1 || echo '알수없음'))"
+    echo "   📦 $(pwd)/consumer.ear ($(du -h consumer.ear 2>/dev/null | cut -f1 || echo '알수없음'))"
 else
     echo "⚠️  EAR 파일이 생성되지 않았습니다. Maven 빌드를 수동으로 실행하세요:"
-    echo "   cd producer && mvn clean package"
-    echo "   cd consumer && mvn clean package"
+    echo "   mvn clean package"
 fi
 
 echo ""
 echo "📂 생성된 프로젝트 구조:"
-tree . 2>/dev/null || find . -type f | head -20
+echo "was-jms-demo/"
+echo "├── pom.xml (루트 멀티모듈)"
+echo "├── producer-web/ (WAR 모듈)"
+echo "│   ├── pom.xml"
+echo "│   └── src/main/java/.../MessageProducerServlet.java"
+echo "├── producer-ear/ (EAR 모듈)"
+echo "│   └── pom.xml"
+echo "├── consumer-ejb/ (EJB 모듈)"
+echo "│   ├── pom.xml"
+echo "│   └── src/main/java/.../MessageConsumerMDB.java"
+echo "└── consumer-ear/ (EAR 모듈)"
+echo "    └── pom.xml"
 
 echo ""
 echo "🚀 사용법:"
@@ -578,4 +635,3 @@ echo ""
 echo "📋 이 스크립트 실행 방법:"
 echo "   chmod +x setup.sh"
 echo "   ./setup.sh"
-EOF
