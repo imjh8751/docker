@@ -1,0 +1,13 @@
+# PostgreSQL 데이터소스 설정 CLI 스크립트
+embed-server --server-config=standalone.xml --std-out=echo
+
+# PostgreSQL JDBC 드라이버 추가
+/subsystem=datasources/jdbc-driver=postgresql:add(driver-name=postgresql,driver-module-name=org.postgresql,driver-xa-datasource-class-name=org.postgresql.xa.PGXADataSource)
+
+# 데이터소스 추가
+/subsystem=datasources/data-source=PostgreSQLDS:add(jndi-name=java:jboss/datasources/PostgreSQLDS,driver-name=postgresql,connection-url=jdbc:postgresql://database:5432/jbossdb,user-name=jboss,password=jboss123,validate-on-match=true,background-validation=false,valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker,exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter)
+
+# 데이터소스 활성화
+/subsystem=datasources/data-source=PostgreSQLDS:enable
+
+stop-embedded-server
