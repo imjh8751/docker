@@ -1,0 +1,49 @@
+services:
+  jboss:
+    build: .
+    container_name: jboss-server
+    depends_on:
+      - database
+    ports:
+      - "${JBOSS_HTTP_PORT}:8080"
+      - "${JBOSS_ADMIN_PORT}:9990"
+    environment:
+      - JAVA_OPTS=${JAVA_OPTS}
+    volumes:
+      - jboss-data:/opt/jboss/wildfly/standalone/data
+      - jboss-logs:/opt/jboss/wildfly/standalone/log
+    networks:
+      - jboss-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  database:
+    image: postgres:${POSTGRES_VERSION}
+    container_name: jboss-db
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - jboss-network
+    restart: unless-stopped
+
+volumes:
+  jboss-data:
+  jboss-logs:
+  jboss-deployments:
+  postgres-data:
+
+networks:
+  jboss-network:
+    driver: bridge
