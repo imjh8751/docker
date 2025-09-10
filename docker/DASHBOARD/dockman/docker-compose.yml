@@ -1,0 +1,15 @@
+services:
+  dockman:
+    container_name: dockman
+    image: ghcr.io/ra341/dockman:latest
+    environment:
+      # 1️⃣
+      - DOCKMAN_COMPOSE_ROOT=/APP/dockman
+    volumes:
+      #  2️⃣              3️⃣                
+      - /APP/dockman/stacks:/path/to/stacks
+      - /APP/dockman/config:/config
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8866:8866"
+    restart: always
