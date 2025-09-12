@@ -1,5 +1,3 @@
-version: "3.5"
-
 services:
   bunkerweb:
     image: bunkerity/bunkerweb:1.5.8
