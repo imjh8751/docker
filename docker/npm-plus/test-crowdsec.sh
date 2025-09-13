@@ -4,6 +4,9 @@ docker exec -t crowdsec cscli collections list
 # 컬렉션 (npmplus) 등이 다 적용되어있는지   
 docker exec -t crowdsec cscli metrics
 
+# ip blocked 된 목록
+docker exec crowdsec cscli decisions list
+
 # 로그파일 수집이 잘 이루어지고 있는지
 #docker exec -t crowdsec cscli decision add -i x.x.x.x
 #docker exec -t crowdsec cscli decision delete -i x.x.x.x
