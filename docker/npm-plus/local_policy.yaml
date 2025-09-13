@@ -1,0 +1,2244 @@
+policies:
+  default:
+    triggers:
+      - appsec-default-log-trigger
+    mode: inactive
+    practices:
+      - webapp-default-practice
+    custom-response: appsec-default-web-user-response
+  specific-rules:
+    - host: npm-monitor.itapi.org
+      name: npm-managed-specific-rule-proxyhost-11
+      triggers:
+        - npm-managed-log-trigger-proxyhost-11
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-11
+    - host: glpi.itapi.org
+      name: npm-managed-specific-rule-proxyhost-14
+      triggers:
+        - npm-managed-log-trigger-proxyhost-14
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-14
+    - host: qbit3.itapi.org
+      name: npm-managed-specific-rule-proxyhost-20
+      triggers:
+        - npm-managed-log-trigger-proxyhost-20
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-20
+    - host: pbs.itapi.org
+      name: npm-managed-specific-rule-proxyhost-25
+      triggers:
+        - npm-managed-log-trigger-proxyhost-25
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-25
+    - host: n8n.itapi.org
+      name: npm-managed-specific-rule-proxyhost-29
+      triggers:
+        - npm-managed-log-trigger-proxyhost-29
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-29
+    - host: mirotalk.itapi.org
+      name: npm-managed-specific-rule-proxyhost-30
+      triggers:
+        - npm-managed-log-trigger-proxyhost-30
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-30
+    - host: ldap.itapi.org
+      name: npm-managed-specific-rule-proxyhost-31
+      triggers:
+        - npm-managed-log-trigger-proxyhost-31
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-31
+    - host: kafka-ui.itapi.org
+      name: npm-managed-specific-rule-proxyhost-32
+      triggers:
+        - npm-managed-log-trigger-proxyhost-32
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-32
+    - host: jupyter.iatpi.org
+      name: npm-managed-specific-rule-proxyhost-33
+      triggers:
+        - npm-managed-log-trigger-proxyhost-33
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-33
+    - host: jellyfin2.itapi.org
+      name: npm-managed-specific-rule-proxyhost-36
+      triggers:
+        - npm-managed-log-trigger-proxyhost-36
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-36
+    - host: ittools.itapi.org
+      name: npm-managed-specific-rule-proxyhost-37
+      triggers:
+        - npm-managed-log-trigger-proxyhost-37
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-37
+    - host: intellissh.itapi.org
+      name: npm-managed-specific-rule-proxyhost-38
+      triggers:
+        - npm-managed-log-trigger-proxyhost-38
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-38
+    - host: immich.itapi.org
+      name: npm-managed-specific-rule-proxyhost-39
+      triggers:
+        - npm-managed-log-trigger-proxyhost-39
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-39
+    - host: fenrus.itapi.org
+      name: npm-managed-specific-rule-proxyhost-40
+      triggers:
+        - npm-managed-log-trigger-proxyhost-40
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-40
+    - host: photoprism.itapi.org
+      name: npm-managed-specific-rule-proxyhost-23
+      triggers:
+        - npm-managed-log-trigger-proxyhost-23
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-23
+    - host: omv.itapi.org
+      name: npm-managed-specific-rule-proxyhost-7
+      triggers:
+        - npm-managed-log-trigger-proxyhost-7
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-7
+    - host: drawio.itapi.org
+      name: npm-managed-specific-rule-proxyhost-41
+      triggers:
+        - npm-managed-log-trigger-proxyhost-41
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-41
+    - host: pve3.itapi.org
+      name: npm-managed-specific-rule-proxyhost-3
+      triggers:
+        - npm-managed-log-trigger-proxyhost-3
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-3
+    - host: pve4.itapi.org
+      name: npm-managed-specific-rule-proxyhost-4
+      triggers:
+        - npm-managed-log-trigger-proxyhost-4
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-4
+    - host: mattermost.itapi.org
+      name: npm-managed-specific-rule-proxyhost-9
+      triggers:
+        - npm-managed-log-trigger-proxyhost-9
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-9
+    - host: archivebox.itapi.org
+      name: npm-managed-specific-rule-proxyhost-10
+      triggers:
+        - npm-managed-log-trigger-proxyhost-10
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-10
+    - host: file3.itapi.org
+      name: npm-managed-specific-rule-proxyhost-13
+      triggers:
+        - npm-managed-log-trigger-proxyhost-13
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-13
+    - host: file-pve2.itapi.org
+      name: npm-managed-specific-rule-proxyhost-8
+      triggers:
+        - npm-managed-log-trigger-proxyhost-8
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-8
+    - host: gitlab.itapi.org
+      name: npm-managed-specific-rule-proxyhost-12
+      triggers:
+        - npm-managed-log-trigger-proxyhost-12
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-12
+    - host: jellyfin.itapi.org
+      name: npm-managed-specific-rule-proxyhost-35
+      triggers:
+        - npm-managed-log-trigger-proxyhost-35
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-35
+    - host: jenkins.itapi.org
+      name: npm-managed-specific-rule-proxyhost-34
+      triggers:
+        - npm-managed-log-trigger-proxyhost-34
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-34
+    - host: nextcloud.itapi.org
+      name: npm-managed-specific-rule-proxyhost-28
+      triggers:
+        - npm-managed-log-trigger-proxyhost-28
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-28
+    - host: nexterm.itapi.org
+      name: npm-managed-specific-rule-proxyhost-27
+      triggers:
+        - npm-managed-log-trigger-proxyhost-27
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-27
+    - host: nexus.iapi.org
+      name: npm-managed-specific-rule-proxyhost-26
+      triggers:
+        - npm-managed-log-trigger-proxyhost-26
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-26
+    - host: npm.itapi.org
+      name: npm-managed-specific-rule-proxyhost-5
+      triggers:
+        - npm-managed-log-trigger-proxyhost-5
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-5
+    - host: outline.itapi.org
+      name: npm-managed-specific-rule-proxyhost-6
+      triggers:
+        - npm-managed-log-trigger-proxyhost-6
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-6
+    - host: pgbackweb.itapi.org
+      name: npm-managed-specific-rule-proxyhost-24
+      triggers:
+        - npm-managed-log-trigger-proxyhost-24
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-24
+    - host: pialert.itapi.org
+      name: npm-managed-specific-rule-proxyhost-22
+      triggers:
+        - npm-managed-log-trigger-proxyhost-22
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-22
+    - host: pve.itapi.org
+      name: npm-managed-specific-rule-proxyhost-1
+      triggers:
+        - npm-managed-log-trigger-proxyhost-1
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-1
+    - host: pve2.itapi.org
+      name: npm-managed-specific-rule-proxyhost-2
+      triggers:
+        - npm-managed-log-trigger-proxyhost-2
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-2
+    - host: pve5.itapi.org
+      name: npm-managed-specific-rule-proxyhost-21
+      triggers:
+        - npm-managed-log-trigger-proxyhost-21
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-21
+    - host: uptime-kuma.itapi.org
+      name: npm-managed-specific-rule-proxyhost-15
+      triggers:
+        - npm-managed-log-trigger-proxyhost-15
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-15
+    - host: uptime.itapi.org
+      name: npm-managed-specific-rule-proxyhost-16
+      triggers:
+        - npm-managed-log-trigger-proxyhost-16
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-16
+    - host: vscode.itapi.org
+      name: npm-managed-specific-rule-proxyhost-17
+      triggers:
+        - npm-managed-log-trigger-proxyhost-17
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-17
+    - host: webcheck.itapi.org
+      name: npm-managed-specific-rule-proxyhost-42
+      triggers:
+        - npm-managed-log-trigger-proxyhost-42
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-42
+    - host: websphere.itapi.org
+      name: npm-managed-specific-rule-proxyhost-18
+      triggers:
+        - npm-managed-log-trigger-proxyhost-18
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-18
+    - host: wireguard.itapi.org
+      name: npm-managed-specific-rule-proxyhost-19
+      triggers:
+        - npm-managed-log-trigger-proxyhost-19
+      mode: detect-learn
+      practices:
+        - npm-managed-practice-proxyhost-19
+practices:
+  - name: webapp-default-practice
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: inactive
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-1
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-2
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-3
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-4
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-5
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-6
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-7
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: prevent-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-8
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-9
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-10
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-11
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-12
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-13
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-14
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-15
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-16
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-17
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-18
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-19
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-20
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-21
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-22
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-23
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: prevent-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-24
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-25
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-26
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-27
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-28
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-29
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-30
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-31
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-32
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-33
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-34
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-35
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-36
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-37
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-38
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-39
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-40
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-41
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: prevent-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+  - name: npm-managed-practice-proxyhost-42
+    web-attacks:
+      max-body-size-kb: 1000000
+      max-header-size-bytes: 102400
+      max-object-depth: 40
+      max-url-size-bytes: 32768
+      minimum-confidence: high
+      override-mode: detect-learn
+      protections:
+        csrf-protection: inactive
+        error-disclosure: inactive
+        non-valid-http-methods: false
+        open-redirect: inactive
+    anti-bot:
+      injected-URIs: []
+      validated-URIs: []
+      override-mode: inactive
+    snort-signatures:
+      configmap: []
+      override-mode: inactive
+    openapi-schema-validation:
+      configmap: []
+      override-mode: inactive
+log-triggers:
+  - name: appsec-default-log-trigger
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-1
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-2
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-3
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-4
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-5
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-6
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-7
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-8
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-9
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-10
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-11
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-12
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-13
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-14
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-15
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-16
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-17
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-18
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-19
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-20
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-21
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-22
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-23
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-24
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-25
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-26
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-27
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-28
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-29
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-30
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-31
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-32
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-33
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-34
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-35
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-36
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-37
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-38
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-39
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-40
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-41
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+  - name: npm-managed-log-trigger-proxyhost-42
+    access-control-logging:
+      allow-events: false
+      drop-events: true
+    additional-suspicious-events-logging:
+      enabled: true
+      minimum-severity: high
+      response-body: false
+      response-code: true
+    appsec-logging:
+      all-web-requests: false
+      detect-events: true
+      prevent-events: true
+    extended-logging:
+      http-headers: false
+      request-body: false
+      url-path: true
+      url-query: true
+    log-destination:
+      cloud: false
+      stdout:
+        format: json
+custom-responses:
+  - name: appsec-default-web-user-response
+    mode: response-code-only
+    http-response-code: 403
