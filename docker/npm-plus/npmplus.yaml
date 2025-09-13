@@ -1,0 +1,52 @@
+# NPMplus 로그 수집 설정
+filenames:
+  - /opt/npmplus/nginx/access.log
+  - /opt/npmplus/nginx/error.log
+  - /opt/npmplus/nginx/stream.log
+labels:
+  type: npmplus
+---
+# NPMplus Docker 컨테이너 로그
+source: docker
+container_name:
+ - npmplus
+labels:
+  type: npmplus
+---
+# ModSecurity 로그 (NPMplus 컨테이너 내)
+source: docker
+container_name:
+ - npmplus
+labels:
+  type: modsecurity
+---
+# OpenAppSec 에이전트 로그
+source: docker
+container_name:
+ - openappsec-agent
+labels:
+  type: openappsec
+---
+# OpenAppSec 로그 파일들
+filenames:
+  - /opt/openappsec/logs/*.log
+  - /opt/openappsec/logs/*.err
+labels:
+  type: openappsec
+---
+# OpenAppSec 관련 컨테이너들
+source: docker
+container_name:
+ - openappsec-smartsync
+ - openappsec-shared-storage
+ - openappsec-tuning-svc
+labels:
+  type: openappsec
+---
+# AppSec (가상 패칭) 설정 - 기존 유지
+listen_addr: 0.0.0.0:7422
+appsec_config: crowdsecurity/virtual-patching
+name: appsec
+source: appsec
+labels:
+  type: appsec
