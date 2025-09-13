@@ -11,7 +11,9 @@ docker exec crowdsec cscli decisions list
 #docker exec -t crowdsec cscli decision add -i x.x.x.x
 #docker exec -t crowdsec cscli decision delete -i x.x.x.x
 
-# 수동으로 차단이 잘 되고 있는지
+# crowdsec 등록
+# https://app.crowdsec.net/
+sudo cscli console enroll -e context cly01jdyi0003l3084tlp7dxb
 
 #2. 브라우저 자동 HTTPS 리다이렉트 해제
 #Chrome/Edge에서:
