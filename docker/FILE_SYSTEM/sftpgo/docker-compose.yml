@@ -7,7 +7,7 @@ services:
       - "12022:2022"
     environment:
       - SFTPGO_DEFAULT_ADMIN_USERNAME=admin
-      - SFTPGO_DEFAULT_ADMIN_PASSWORD=password
+      - SFTPGO_DEFAULT_ADMIN_PASSWORD=Admin2580!
     volumes:
       - /APP/sftpgo/data:/srv/sftpgo
       - /APP/sftpgo/config:/var/lib/sftpgo
