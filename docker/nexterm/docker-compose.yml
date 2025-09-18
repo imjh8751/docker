@@ -1,10 +1,27 @@
 services:
   nexterm:
-    ports:
-      - "6989:6989"
-    restart: always
-    volumes:
-      - /APP/nexterm:/app/data
+    container_name: nexterm
     image: germannewsmaker/nexterm:latest
-volumes:
-  nexterm:
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z 127.0.0.1 6989 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 90s
+    ports:
+      - 6989:6989
+    volumes:
+      - /APP/nexterm:/app/data:rw
+    environment:
+      - ENCRYPTION_KEY=f8208332fd514d9d89c6f2ef6f0855578040d1f94bc5eac4a1a47712e5aeb895
+      - NODE_ENV=production
+    restart: always
+
+# openssl rand -hex 32
+# ENCRYPTION_KEY=f8208332fd514d9d89c6f2ef6f0855578040d1f94bc5eac4a1a47712e5aeb895 node -e 'const{encrypt:t}=require(
+"./server/utils/encryption"),db=require("./server/utils/database"),Identity=require("./server/models/Identity"),migr
+ateEncryption=async()=>{try{let e=await Identity.findAll({hooks:!1});for(let a of e){let i={},r=e=>{if(a[e]&&!a[`${e
+}IV`]&&!a[`${e}AuthTag`]){let r=t(a[e]);i[e]=r.encrypted,i[`${e}IV`]=r.iv,i[`${e}AuthTag`]=r.authTag}};r("password")
+,r("sshKey"),r("passphrase"),Object.keys(i).length>0&&(await Identity.update(i,{where:{id:a.id}}),console.log(`Updat
+ed identity ${a.id}`))}console.log("Database migration completed successfully.")}catch(s){console.error("Error migra
+ting database:",s)}finally{await db.close()}};migrateEncryption();'
