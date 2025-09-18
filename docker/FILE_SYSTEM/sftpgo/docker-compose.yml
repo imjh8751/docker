@@ -1,0 +1,14 @@
+services:
+  sftpgo:
+    image: drakkan/sftpgo
+    container_name: sftpgo
+    ports:
+      - "18080:8080"
+      - "12022:2022"
+    environment:
+      - SFTPGO_DEFAULT_ADMIN_USERNAME=admin
+      - SFTPGO_DEFAULT_ADMIN_PASSWORD=password
+    volumes:
+      - /APP/sftpgo/data:/srv/sftpgo
+      - /APP/sftpgo/config:/var/lib/sftpgo
+    restart: always
