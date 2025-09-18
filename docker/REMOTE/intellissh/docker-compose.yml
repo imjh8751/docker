@@ -6,5 +6,5 @@ services:
       - 8080:3000
     volumes:
       # Mount for persistent backend data (SQLite DB, session info, etc.)
-      - /DOCKER_NAS1/intellissh/data:/app/server/data
+      - /APP/intellissh/data:/app/server/data
     restart: always
