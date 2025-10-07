@@ -23,14 +23,21 @@ services:
     stop_grace_period: 2m
     volumes:
       #- /APP/windows/win11:/storage
-      - /APP/windows/win10:/storage
+      #- /APP/windows/win10:/storage
       #- /APP/windows/server2025:/storage
-      #- /APP/windows/server2022:/storage
+      - /APP/windows/server2022:/storage
       #- /APP/windows/server2019:/storage
-#    networks:
-#      vlan:
-#        ipv4_address: 192.168.0.77
+    networks:
+      vlan:
+        ipv4_address: 192.168.0.110
 
-#networks:
-#  vlan:
-#    external: true
+networks:
+  vlan:
+    driver: macvlan
+    driver_opts:
+      parent: eth0
+    ipam:
+      config:
+        - subnet: 192.168.0.0/24
+          gateway: 192.168.0.1
+          ip_range: 192.168.0.0/24
