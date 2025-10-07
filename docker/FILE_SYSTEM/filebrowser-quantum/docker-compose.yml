@@ -1,0 +1,17 @@
+services:
+  filebrowser:
+    environment:
+      FILEBROWSER_CONFIG: "data/config.yaml"
+      FILEBROWSER_ADMIN_PASSWORD: Admin2580!
+      TZ: "Asia/Seoul" # optionally set your local timezone https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+    volumes:
+      - '/APP/filebrowser-quantum:/folder' # Never mount root "/" directory to docker, always choose a sub-folder with your data.
+      - '/APP/filebrowser-quantum/data:/home/filebrowser/data' # mount the data folder you created with the config file.
+      # (and if unraid) If you plan to run with a different user besides root or filebrowser, you will need to mount a tmp directory.
+      #- './tmp/:/home/filebrowser/tmp/'
+    ports:
+      - '9880:80' # the left 80 is the port **you will use** to access. The right 80 is the container port that **must match the config.yaml**
+    image: gtstef/filebrowser
+    # Optionally run as non-root filebrowser user
+    #user: filebrowser
+    restart: unless-stopped
