@@ -1,0 +1,39 @@
+services:
+  macos:
+    image: dockurr/macos
+    container_name: macos
+    restart: always
+    environment:
+      VERSION: "15" # 15, 14, 13, 12
+      RAM_SIZE: "12G"
+      CPU_CORES: "6"
+      DISK_SIZE: "32G"
+      USERNAME: "admin"
+      PASSWORD: "Admin2580!"
+      #LANGUAGE: "Korean"
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8006:8006
+      - 3389:3389/tcp
+      - 3389:3389/udp
+    stop_grace_period: 2m
+    volumes:
+      - /APP/macos/macos15:/storage
+    networks:
+      vlan:
+        ipv4_address: 192.168.0.110
+
+networks:
+  vlan:
+    driver: macvlan
+    driver_opts:
+      parent: eth0
+    ipam:
+      config:
+        - subnet: 192.168.0.0/24
+          gateway: 192.168.0.1
+          ip_range: 192.168.0.0/24
