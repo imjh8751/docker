@@ -7,10 +7,10 @@ services:
       VERSION: "11" # 11l, 2025, 2022, 2019
       RAM_SIZE: "12G"
       CPU_CORES: "6"
-      DISK_SIZE: "150G"
+      DISK_SIZE: "64G"
       USERNAME: "admin"
-      PASSWORD: "admin"
-      LANGUAGE: "Korean"
+      PASSWORD: "Admin2580!"
+      #LANGUAGE: "Korean"
     devices:
       - /dev/kvm
       - /dev/net/tun
@@ -22,10 +22,10 @@ services:
       - 3389:3389/udp
     stop_grace_period: 2m
     volumes:
-      #- /APP/windows/win11:/storage
+      - /APP/windows/win11:/storage
       #- /APP/windows/win10:/storage
       #- /APP/windows/server2025:/storage
-      - /APP/windows/server2022:/storage
+      #- /APP/windows/server2022:/storage
       #- /APP/windows/server2019:/storage
     networks:
       vlan:
