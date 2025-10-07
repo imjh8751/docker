@@ -1,7 +1,7 @@
 services:
   wgdashboard:
     image: ghcr.io/wgdashboard/wgdashboard:latest
-    restart: unless-stopped
+    restart: always
     container_name: wgdashboard
 
     ports:
@@ -9,9 +9,9 @@ services:
       - 51820:51820/udp
 
     volumes:
-      - aconf:/etc/amnezia/amneziawg
-      - conf:/etc/wireguard
-      - data:/data
+      - ./aconf:/etc/amnezia/amneziawg
+      - ./conf:/etc/wireguard
+      - ./data:/data
 
     cap_add:
       - NET_ADMIN
