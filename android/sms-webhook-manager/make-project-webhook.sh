@@ -945,34 +945,44 @@ package $APP_PACKAGE.util;
 
 import android.text.TextUtils;
 import android.util.Log;
+
 import java.util.List;
 
 public class FilterUtils {
     private static final String TAG = "FilterUtils";
 
     /**
-     * 제목에 대한 필터링을 수행합니다.
+     * 제목 필터링을 수행합니다.
      * @param title 메시지의 제목
      * @param includeKeywords 포함해야 하는 키워드 목록
      * @param excludeKeywords 제외해야 하는 키워드 목록
      * @return 필터를 통과하면 true, 아니면 false
      */
     public static boolean checkTitleFilter(String title, List<String> includeKeywords, List<String> excludeKeywords) {
+        // 2. 빈 메시지 차단: 제목이 없으면 무조건 차단
         if (TextUtils.isEmpty(title)) {
-            Log.d(TAG, "제목이 비어있어 필터링을 건너뜁니다.");
-            return true; // 제목이 없으면 필터링 통과 (제목 필터가 무의미)
+            Log.d(TAG, "제목이 비어있어 메시지를 차단합니다.");
+            return false;
+        }
+        
+        // 3. 필터 미설정 웹훅 차단: 제외/포함 필터가 모두 비어있거나 null이면 차단
+        if ((excludeKeywords == null || excludeKeywords.isEmpty()) && 
+            (includeKeywords == null || includeKeywords.isEmpty())) {
+            
+            Log.d(TAG, "제목 필터 설정이 없어 메시지를 차단합니다.");
+            return false; 
         }
 
         String titleLower = title.toLowerCase();
 
-        // 1. 제외 키워드 체크 (우선순위 높음: 하나라도 걸리면 무조건 차단)
+        // 1. 제외 키워드 체크 (우선순위 높음)
         if (excludeKeywords != null && !excludeKeywords.isEmpty()) {
             for (String keyword : excludeKeywords) {
                 if (!keyword.trim().isEmpty()) {
                     String lowerKeyword = keyword.trim().toLowerCase();
                     if (titleLower.contains(lowerKeyword)) {
                         Log.d(TAG, "제목이 제외 키워드에 걸림: [" + lowerKeyword + "]");
-                        return false; // 제외 키워드에 포함되면 차단
+                        return false; 
                     }
                 }
             }
@@ -989,33 +999,41 @@ public class FilterUtils {
                     String lowerKeyword = keyword.trim().toLowerCase();
                     if (titleLower.contains(lowerKeyword)) {
                         isMatch = true;
-                        break; // 하나라도 일치하면 즉시 통과
+                        break;
                     }
                 }
             }
 
-            // **핵심 수정 부분:** 유효한 포함 키워드가 있었는데 매치되지 않았다면 차단
+            // 유효한 포함 키워드가 있었는데 매치되지 않았다면 차단
             if (hasValidKeyword && !isMatch) {
                 Log.d(TAG, "제목이 포함 키워드에 매치되지 않아 차단됩니다.");
                 return false;
             }
-            // 유효한 포함 키워드가 설정되어 있지 않다면 (hasValidKeyword=false), 이 필터는 통과 (다음 필터로)
         }
 
-        return true; // 제외에도 안 걸렸고, 포함 조건도 충족(혹은 미설정)했으니 통과
+        return true;
     }
 
     /**
-     * 내용에 대한 필터링을 수행합니다. (제목 필터와 동일한 로직 적용)
+     * 내용 필터링을 수행합니다. (제목 필터와 동일한 로직 적용)
      * @param content 메시지의 내용
      * @param includeKeywords 포함해야 하는 키워드 목록
      * @param excludeKeywords 제외해야 하는 키워드 목록
      * @return 필터를 통과하면 true, 아니면 false
      */
     public static boolean checkContentFilter(String content, List<String> includeKeywords, List<String> excludeKeywords) {
+        // 2. 빈 메시지 차단: 내용이 없으면 무조건 차단
         if (TextUtils.isEmpty(content)) {
-            Log.d(TAG, "내용이 비어있어 필터링을 건너뜁니다.");
-            return true;
+            Log.d(TAG, "내용이 비어있어 메시지를 차단합니다.");
+            return false;
+        }
+
+        // 3. 필터 미설정 웹훅 차단: 제외/포함 필터가 모두 비어있거나 null이면 차단
+        if ((excludeKeywords == null || excludeKeywords.isEmpty()) && 
+            (includeKeywords == null || includeKeywords.isEmpty())) {
+            
+            Log.d(TAG, "내용 필터 설정이 없어 메시지를 차단합니다.");
+            return false; 
         }
 
         String contentLower = content.toLowerCase();
@@ -1049,7 +1067,6 @@ public class FilterUtils {
                 }
             }
 
-            // **핵심 수정 부분:** 유효한 포함 키워드가 있었는데 매치되지 않았다면 차단
             if (hasValidKeyword && !isMatch) {
                 Log.d(TAG, "내용이 포함 키워드에 매치되지 않아 차단됩니다.");
                 return false;
