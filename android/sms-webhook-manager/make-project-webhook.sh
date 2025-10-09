@@ -943,6 +943,8 @@ EOF
     cat > "$java_dir/util/FilterUtils.java" << EOF
 package $APP_PACKAGE.util;
 
+import android.text.TextUtils;
+import android.util.Log;
 import java.util.List;
 
 public class FilterUtils {
