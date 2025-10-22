@@ -1,4 +1,3 @@
-version: "3"
 services:
   datascience-notebook:
       image: jupyter/datascience-notebook
@@ -7,6 +6,7 @@ services:
         #- ~/docker/jupyter:/home/jovyan/work
       ports:
         - 28888:8888
+      user: root
       environment:
         - GRANT_SUDO=yes
       container_name:   jupyter-container
