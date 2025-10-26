@@ -1,0 +1,20 @@
+services:
+  open_notebook:
+    image: lfnovo/open_notebook:v1-latest-single
+    ports:
+      - "8502:8502"  # Web UI
+      - "5055:5055"  # API
+    environment:
+      - OPENAI_API_KEY=REPLACE_WITH_YOUR_KEY
+      - GEMINI_API_KEY=REPLACE_WITH_YOUR_KEY
+      - OLLAMA_API_BASE=http://192.168.0.100:11434
+      # Database connection (required)
+      - SURREAL_URL=ws://localhost:8000/rpc
+      - SURREAL_USER=root
+      - SURREAL_PASSWORD=Admin2580!
+      - SURREAL_NAMESPACE=ITAPI
+      - SURREAL_DATABASE=production
+    volumes:
+      - ./notebook_data:/app/data
+      - ./surreal_data:/mydata
+    restart: always
