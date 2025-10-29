@@ -50,5 +50,14 @@ services:
       - NODE_ENV=production
       - WEBHOOK_URL=https://${SUBDOMAIN}.${DOMAIN_NAME}/
       - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
+      #- EXECUTIONS_DATA_SAVE_ON_ERROR=all
+      #- EXECUTIONS_DATA_SAVE_ON_SUCCESS=none
+      #- EXECUTIONS_DATA_SAVE_ON_PROGRESS=true
+      #- EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS=false
+      # 기간: 실행이 몇 시간 이상 전에 완료되었습니다(기본값: 336시간 -> 14일).EXECUTIONS_DATA_MAX_AGE
+      # 개수: 총 실행 횟수가 초과합니다(기본값: 10,000). 이 경우 n8n은 가장 오래된 것부터 최신 것까지 실행을 삭제합니다.EXECUTIONS_DATA_PRUNE_MAX_COUNT
+      - EXECUTIONS_DATA_PRUNE=true
+      - EXECUTIONS_DATA_MAX_AGE=168
+	  	- EXECUTIONS_DATA_PRUNE_MAX_COUNT=50000
     volumes:
       - ${DATA_FOLDER}/.n8n:/home/node/.n8n
