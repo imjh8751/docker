@@ -1,0 +1,13 @@
+services:
+  sqlite-web:
+    container_name: sqlite-web
+    image: 'ghcr.io/coleifer/sqlite-web:latest'
+    restart: always
+    environment:
+      - SQLITE_DATABASE=db_filename.db
+    volumes:
+      - '/APP/data:/data'
+    ports:
+      - '8080:8080'
+    tty: true
+    stdin_open: true
