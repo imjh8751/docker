@@ -12,6 +12,7 @@ services:
       QDRANT__STORAGE__ON_DISK_THRESHOLD: "20000"   # vector 크기 20k 이상이면 디스크 저장
       QDRANT__SERVICE__GRPC_PORT: 6334
       QDRANT__CLUSTER__ENABLED: "false" # 단일 환경은 false
+      #QDRANT__SERVICE__API_KEY: "my-secret-api-key-1234"
     volumes:
       - ./qdrant_data:/qdrant/storage
       - ./config/production.yaml:/qdrant/config/production.yaml:ro
