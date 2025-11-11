@@ -1,0 +1,24 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    restart: always
+    ports:
+      - "6333:6333" # HTTP API
+      - "6334:6334" # gRPC API
+    environment:
+      QDRANT__LOG_LEVEL: "INFO"
+      QDRANT__STORAGE__DATA_PATH: "/qdrant/storage"
+      QDRANT__STORAGE__ON_DISK_THRESHOLD: "20000"   # vector 크기 20k 이상이면 디스크 저장
+      QDRANT__SERVICE__GRPC_PORT: 6334
+      QDRANT__CLUSTER__ENABLED: "false" # 단일 환경은 false
+    volumes:
+      - ./qdrant_data:/qdrant/storage
+      - ./config/production.yaml:/qdrant/config/production.yaml:ro
+
+  qdrant-console:
+    image: qdrant/qdrant-console:latest
+    ports:
+      - "8088:80"
+    environment:
+      QDRANT_URL: "http://qdrant:6333"
