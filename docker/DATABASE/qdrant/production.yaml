@@ -1,0 +1,41 @@
+log_level: INFO
+
+service:
+  http_port: 6333
+  grpc_port: 6334
+  enable_cors: true
+
+# 스토리지 및 메모리 설정
+storage:
+  data_path: "/qdrant/storage"
+  wal_path: "/qdrant/storage/wal"
+  snapshots_path: "/qdrant/storage/snapshots"
+
+  # 벡터 크기(byte)가 일정 이상일 경우 디스크 저장
+  on_disk_threshold: 20000
+
+  performance:
+    memmap_threshold: 100000 # 벡터 개수가 많으면 mmap 활성
+    indexing_threshold: 200000
+
+# 클러스터 모드 (단일 노드라면 false किंवा 생략)
+cluster:
+  enabled: false
+
+# 검색(ANN) 엔진 옵션
+optimizers:
+  default_segment_number: 5
+  vacuum_min_segments: 2
+
+# HNSW 인덱스 기본값
+hnsw_index:
+  m: 16           # 최소 16 recommended
+  ef_construct: 200
+  full_scan_threshold: 10000
+
+# 기본 collection 옵션
+collections:
+  default:
+    vectors:
+      size: 1536          # 예: OpenAI, text-embedding-3-small
+      distance: "Cosine"  # L2, Cosine, Dot
