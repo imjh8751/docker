@@ -4,6 +4,7 @@ service:
   http_port: 6333
   grpc_port: 6334
   enable_cors: true
+  api_key: "yD91EKzR0beUP6XpOZQwG5X83uWYPtHt0eLQ2j4S6mpxY0fE3z3LR4eKo3AOwaxe"
 
 # 스토리지 및 메모리 설정
 storage:
