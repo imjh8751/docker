@@ -16,3 +16,5 @@ services:
     volumes:
       - ./qdrant_data:/qdrant/storage
       - ./config/production.yaml:/qdrant/config/production.yaml:ro
+
+# :6333/dashboard : web ui
