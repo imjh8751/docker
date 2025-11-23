@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   mattermost-db:
     image: postgres
@@ -20,7 +19,7 @@ services:
       - POSTGRES_USER=mattermostuser
       - POSTGRES_PASSWORD=mattermostpw
       - TZ=Asia/Seoul
-    restart: on-failure:5
+    restart: always
 
   mattermost:
     image: mattermost/mattermost-team-edition:latest
@@ -45,7 +44,7 @@ services:
       - MM_SERVICESETTINGS_SITEURL=https://mattermost.itapi.org
     ports:
       - 8065:8065
-    restart: on-failure:5
+    restart: always
     depends_on:
       mattermost-db:
         condition: service_started
