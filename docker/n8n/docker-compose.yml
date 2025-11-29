@@ -1,49 +1,26 @@
-version: "3"
-
 services:
-  traefik:
-    image: "traefik"
+  db:
+    image: postgres:latest
+    container_name: postgres
     restart: always
-    command:
-      - "--api=true"
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-      - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.mytlschallenge.acme.tlschallenge=true"
-      - "--certificatesresolvers.mytlschallenge.acme.email=${SSL_EMAIL}"
-      - "--certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json"
+    #network_mode: "host"
     ports:
-      - "80:80"
-      - "443:443"
-	  - "8080:8080"
+      - "15432:5432"
+    environment:
+      POSTGRES_DB: "${DB_NAME}"
+      POSTGRES_USER: "${DB_USER_ID}"
+      POSTGRES_PASSWORD: "${DB_USER_PASSWORD}"
     volumes:
-      - ${DATA_FOLDER}/letsencrypt:/letsencrypt
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-
+      - ${POSTGRES_HOME_DIR}/data/:/var/lib/postgresql
   n8n:
     image: docker.n8n.io/n8nio/n8n
+    container_name: n8nio-n8n
     restart: always
+    #network_mode: "host"
     ports:
       - "5678:5678"
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.n8n.rule=Host(`${SUBDOMAIN}.${DOMAIN_NAME}`)
-      - traefik.http.routers.n8n.tls=true
-      - traefik.http.routers.n8n.entrypoints=web,websecure
-      - traefik.http.routers.n8n.tls.certresolver=mytlschallenge
-      - traefik.http.middlewares.n8n.headers.SSLRedirect=true
-      - traefik.http.middlewares.n8n.headers.STSSeconds=315360000
-      - traefik.http.middlewares.n8n.headers.browserXSSFilter=true
-      - traefik.http.middlewares.n8n.headers.contentTypeNosniff=true
-      - traefik.http.middlewares.n8n.headers.forceSTSHeader=true
-      - traefik.http.middlewares.n8n.headers.SSLHost=${DOMAIN_NAME}
-      - traefik.http.middlewares.n8n.headers.STSIncludeSubdomains=true
-      - traefik.http.middlewares.n8n.headers.STSPreload=true
-      - traefik.http.routers.n8n.middlewares=n8n@docker
+    depends_on:
+      - db
     environment:
       - N8N_HOST=${SUBDOMAIN}.${DOMAIN_NAME}
       - N8N_PORT=5678
@@ -51,6 +28,7 @@ services:
       - NODE_ENV=production
       - WEBHOOK_URL=https://${SUBDOMAIN}.${DOMAIN_NAME}/
       - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
       #- EXECUTIONS_DATA_SAVE_ON_ERROR=all
       #- EXECUTIONS_DATA_SAVE_ON_SUCCESS=none
       #- EXECUTIONS_DATA_SAVE_ON_PROGRESS=true
@@ -59,6 +37,16 @@ services:
       # 개수: 총 실행 횟수가 초과합니다(기본값: 10,000). 이 경우 n8n은 가장 오래된 것부터 최신 것까지 실행을 삭제합니다.EXECUTIONS_DATA_PRUNE_MAX_COUNT
       - EXECUTIONS_DATA_PRUNE=true
       - EXECUTIONS_DATA_MAX_AGE=168
-	  	- EXECUTIONS_DATA_PRUNE_MAX_COUNT=50000
+      - EXECUTIONS_DATA_PRUNE_MAX_COUNT=50000
+      - DB_SQLITE_POOL_SIZE=1
+      - DB_URL=${DB_URL}
+      - N8N_PROXY_HOPS=1  # Add this line (or use the variable from .env)
+      # 2. X-Forwarded-For 오류 해결을 위한 프록시 설정
+      - N8N_EXPRESS_SET_PROXY_ADDRESSES=${N8N_EXPRESS_SET_PROXY_ADDRESSES}
+      # 3. Task Runners 경고 및 미래 버전 대비
+      - N8N_RUNNERS_ENABLED=${N8N_RUNNERS_ENABLED}
+      # 4. 보안 및 환경 변수 접근 경고 대비
+      - N8N_BLOCK_ENV_ACCESS_IN_NODE=${N8N_BLOCK_ENV_ACCESS_IN_NODE}
+      - N8N_GIT_NODE_DISABLE_BARE_REPOS=${N8N_GIT_NODE_DISABLE_BARE_REPOS}
     volumes:
       - ${DATA_FOLDER}/.n8n:/home/node/.n8n
