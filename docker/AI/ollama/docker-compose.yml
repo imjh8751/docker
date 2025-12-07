@@ -11,6 +11,7 @@ services:
       # CUDA 관련 환경 변수 설정 (컨테이너 내부용)
       - NVIDIA_VISIBLE_DEVICES=all
       - CUDA_VISIBLE_DEVICES=0 # 컨테이너 내부에서 0번 GPU만 보이게 함
+    runtime: nvidia
     deploy:
       resources:
         reservations:
