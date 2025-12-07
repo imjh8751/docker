@@ -1,47 +1,25 @@
-# 간단한 AMD GPU Docker Compose (group_add 제거)
 services:
   ollama:
-    image: ollama/ollama:rocm
+    image: ollama/ollama:latest
     container_name: ollama
     ports:
       - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
     environment:
-      - OLLAMA_HOST=0.0.0.0
-      - HSA_OVERRIDE_GFX_VERSION=10.3.0  # AMD Barcelo용
-      - HIP_VISIBLE_DEVICES=0
-    devices:
-      - /dev/dri/card0:/dev/dri/card0
-      - /dev/dri/renderD128:/dev/dri/renderD128
-      - /dev/kfd:/dev/kfd
+      - OLLAMA_HOST=0.0.0.0      
+      # CUDA 관련 환경 변수 설정 (컨테이너 내부용)
+      - NVIDIA_VISIBLE_DEVICES=all
+      - CUDA_VISIBLE_DEVICES=0 # 컨테이너 내부에서 0번 GPU만 보이게 함
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
     restart: unless-stopped
-    # group_add 제거하고 대신 privileged 사용 (개발환경)
-    privileged: true
-    
-  # 또는 보안을 위해 최소 권한만 부여하는 방식
-  ollama-secure:
-    image: ollama/ollama:rocm
-    container_name: ollama-secure
-    ports:
-      - "11435:11434"  # 다른 포트 사용
-    volumes:
-      - ollama_data:/root/.ollama
-    environment:
-      - OLLAMA_HOST=0.0.0.0
-      - HSA_OVERRIDE_GFX_VERSION=10.3.0
-    devices:
-      - /dev/dri/card0:/dev/dri/card0
-      - /dev/dri/renderD128:/dev/dri/renderD128
-      - /dev/kfd:/dev/kfd
-    restart: unless-stopped
-    # group_add 대신 필요한 capability만 추가
-    cap_add:
-      - SYS_ADMIN
-    security_opt:
-      - seccomp:unconfined
-    # group_add 완전 제거
-
+      
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
     container_name: open-webui
