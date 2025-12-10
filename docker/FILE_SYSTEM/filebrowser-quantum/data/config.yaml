@@ -1,4 +1,8 @@
 server:
+  port: 80
+  #database: "data/database.db"
+  #cacheDir: "data/temp"
+  #baseURL: "/filebrowser"
   sources:
     - path: "/folder"
       config:
@@ -8,3 +12,12 @@ server:
 auth:
   adminUsername: admin
   adminPassword: Admin2580!
+#  methods:
+#    password:
+#      enabled: true
+#      minLength: 12
+#      signup: true
+#integrations:
+#  office:
+#    url: "http://onlyoffice-server:8000"  # OnlyOffice Document Server URL
+#    secret: "your-secret-key"             # Optional JWT secret for security
