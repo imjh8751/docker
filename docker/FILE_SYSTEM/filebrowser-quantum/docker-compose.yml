@@ -9,7 +9,7 @@ services:
     # Non-Root
     #user: filebrowser
     volumes:
-      - /DATA:/folder
+      - /:/folder
       - ./data:/home/filebrowser/data
       - ./data/config.yaml:/home/filebrowser/data/config.yaml
     ports:
