@@ -4,7 +4,7 @@ server:
   #cacheDir: "data/temp"
   #baseURL: "/filebrowser"
   sources:
-    - path: "/folder"
+    - path: "/data"
       config:
         defaultEnabled: true 
         defaultUserScope: "/"
