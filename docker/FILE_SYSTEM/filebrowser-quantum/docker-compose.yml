@@ -1,6 +1,7 @@
 services:
   filebrowser:
     image: gtstef/filebrowser
+    container_name: filebrowser-quantum
     environment:
       FILEBROWSER_CONFIG: "data/config.yaml" # overrides the default path which is ./config.yaml
     #  FILEBROWSER_ADMIN_PASSWORD: "Admin2580!"
