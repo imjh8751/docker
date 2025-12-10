@@ -1,6 +1,7 @@
 services:
   documentserver:
     image: onlyoffice/documentserver
+    container_name: onlyoffice
     environment:
       - JWT_ENABLED=true
       - JWT_SECRET=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiaXRhcGkiLCJ1c2VybmFtZSI6ImpobGltIiwicm9sZSI6ImFkbWluIn0.cLbX9SzteJW9DFTxGlzAcmrPJh5dBNc5bKHHQR7U6jA
