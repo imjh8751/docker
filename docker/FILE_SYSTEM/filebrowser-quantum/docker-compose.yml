@@ -3,14 +3,14 @@ services:
     image: gtstef/filebrowser
     environment:
       FILEBROWSER_CONFIG: "data/config.yaml" # overrides the default path which is ./config.yaml
-      FILEBROWSER_ADMIN_PASSWORD: "Admin2580!"
+    #  FILEBROWSER_ADMIN_PASSWORD: "Admin2580!"
       TZ: "Asia/Seoul"
     # Non-Root
     #user: filebrowser
     volumes:
       - /DATA:/folder
       - ./data:/home/filebrowser/data
-      - ./data/config.yml:/home/filebrowser/data/config.yml
+      - ./data/config.yaml:/home/filebrowser/data/config.yaml
     ports:
-      - 18880:80
+      - 28082:80
     restart: always
