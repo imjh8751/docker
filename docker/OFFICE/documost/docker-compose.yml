@@ -8,7 +8,7 @@ services:
     environment:
       APP_URL: 'https://docmost.itapi.org'
       APP_SECRET: '16f5f227f90646fd245149a2ce0bd605194287dbb5cdf797c8477322925402bd'
-      DATABASE_URL: 'postgresql://docmost:STRONG_DB_PASSWORD@db:5432/docmost?schema=public'
+      DATABASE_URL: 'postgresql://docmost:Admin2580!@db:5432/docmost?schema=public'
       REDIS_URL: 'redis://redis:6379'
     ports:
       - "3000:3000"
