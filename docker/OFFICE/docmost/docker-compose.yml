@@ -29,7 +29,7 @@ services:
 
   redis:
     image: redis:8.4.0-alpine
-    container_name: redis
+    container_name: docmost-redis
     restart: unless-stopped
     volumes:
       - /APP/docmost/redis_data:/data
