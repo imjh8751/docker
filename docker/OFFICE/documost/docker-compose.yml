@@ -25,7 +25,7 @@ services:
       POSTGRES_PASSWORD: Admin2580!
     restart: unless-stopped
     volumes:
-      - /APP/docmost/db_data:/var/lib/postgresql/data
+      - /APP/docmost/db_data:/var/lib/postgresql
 
   redis:
     image: redis:8.4.0-alpine
