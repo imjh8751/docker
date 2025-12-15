@@ -3,25 +3,25 @@ services:
     image: postgres:latest
     container_name: postgres
     restart: always
-    #network_mode: "host"
     ports:
-      - "15432:5432"
+      - "5432:5432"
     environment:
       POSTGRES_DB: "${DB_NAME}"
       POSTGRES_USER: "${DB_USER_ID}"
       POSTGRES_PASSWORD: "${DB_USER_PASSWORD}"
     volumes:
       - ${POSTGRES_HOME_DIR}/data/:/var/lib/postgresql
+
   n8n:
-    image: docker.n8n.io/n8nio/n8n
+    image: docker.n8n.io/n8nio/n8n:latest
     container_name: n8nio-n8n
     restart: always
-    #network_mode: "host"
     ports:
       - "5678:5678"
     depends_on:
       - db
     environment:
+      # --- N8N 기본 설정 ---
       - N8N_HOST=${SUBDOMAIN}.${DOMAIN_NAME}
       - N8N_PORT=5678
       - N8N_PROTOCOL=https
@@ -29,23 +29,32 @@ services:
       - WEBHOOK_URL=https://${SUBDOMAIN}.${DOMAIN_NAME}/
       - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
       - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
-      #- EXECUTIONS_DATA_SAVE_ON_ERROR=all
-      #- EXECUTIONS_DATA_SAVE_ON_SUCCESS=none
-      #- EXECUTIONS_DATA_SAVE_ON_PROGRESS=true
-      #- EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS=false
-      # 기간: 실행이 몇 시간 이상 전에 완료되었습니다(기본값: 336시간 -> 14일).EXECUTIONS_DATA_MAX_AGE
-      # 개수: 총 실행 횟수가 초과합니다(기본값: 10,000). 이 경우 n8n은 가장 오래된 것부터 최신 것까지 실행을 삭제합니다.EXECUTIONS_DATA_PRUNE_MAX_COUNT
+      
+      # --- DB 연결 설정 (PostgreSQL) ---
+      # PostgreSQL 사용을 명시
+      - DB_TYPE=postgresdb
+      # DB 서비스 이름(db)과 내부 포트(5432)를 사용해 연결
+      - DB_POSTGRESDB_HOST=db
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=${DB_NAME}
+      - DB_POSTGRESDB_USER=${DB_USER_ID}
+      - DB_POSTGRESDB_PASSWORD=${DB_USER_PASSWORD}
+      # DB_URL을 사용해도 되지만, 개별 변수를 명시하는 것이 n8n 환경에서 더 일반적입니다. (DB_URL은 .env에서 관리)
+      - DB_URL=${DB_URL} 
+      # 기존 SQLite 관련 설정은 삭제 또는 주석 처리 (DB_SQLITE_POOL_SIZE)
+
+      # --- 암호화 키 (필수) ---
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY} # 기존 SQLite의 데이터를 가져올 경우 필수!
+
+      # --- 실행 기록 정리 설정 ---
       - EXECUTIONS_DATA_PRUNE=true
       - EXECUTIONS_DATA_MAX_AGE=168
       - EXECUTIONS_DATA_PRUNE_MAX_COUNT=50000
-      - DB_SQLITE_POOL_SIZE=1
-      - DB_URL=${DB_URL}
-      - N8N_PROXY_HOPS=1  # Add this line (or use the variable from .env)
-      # 2. X-Forwarded-For 오류 해결을 위한 프록시 설정
+
+      # --- 프록시 및 보안 설정 ---
+      - N8N_PROXY_HOPS=1
       - N8N_EXPRESS_SET_PROXY_ADDRESSES=${N8N_EXPRESS_SET_PROXY_ADDRESSES}
-      # 3. Task Runners 경고 및 미래 버전 대비
       - N8N_RUNNERS_ENABLED=${N8N_RUNNERS_ENABLED}
-      # 4. 보안 및 환경 변수 접근 경고 대비
       - N8N_BLOCK_ENV_ACCESS_IN_NODE=${N8N_BLOCK_ENV_ACCESS_IN_NODE}
       - N8N_GIT_NODE_DISABLE_BARE_REPOS=${N8N_GIT_NODE_DISABLE_BARE_REPOS}
     volumes:
