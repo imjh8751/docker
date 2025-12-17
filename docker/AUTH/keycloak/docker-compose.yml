@@ -46,6 +46,19 @@ services:
       KC_LOG_LEVEL: INFO
       KC_HEALTH_ENABLED: true
       KC_METRICS_ENABLED: true
+
+      # Realm 자동 import
+      KC_IMPORT: /opt/keycloak/data/import
+
+    volumes:
+      # 🎨 커스텀 테마
+      - /APP/keycloak/themes:/opt/keycloak/themes
+
+      # 🔌 커스텀 Provider (SPI)
+      - /APP/keycloak/providers:/opt/keycloak/providers
+
+      # 📦 Realm import/export
+      - /APP/keycloak/import:/opt/keycloak/data/import
       
     depends_on:
       - postgres
@@ -65,5 +78,5 @@ services:
       POSTGRES_PASSWORD: keycloakpass
     volumes:
       # DB 데이터 영속화 (컨테이너 재시작 시 데이터 유지)
-      - /APP/keycloak/kc_pgdata:/var/lib/postgresql/data
+      - /APP/keycloak/kc_pgdata:/var/lib/postgresql
     restart: unless-stopped
