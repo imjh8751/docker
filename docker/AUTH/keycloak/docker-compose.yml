@@ -3,7 +3,7 @@ services:
     container_name: keycloak
 
     # Keycloak 최신 안정 버전 (2025 기준)
-    image: quay.io/keycloak/keycloak:26.0.0
+    image: quay.io/keycloak/keycloak:26.4.6
 
     # 운영 모드로 실행 (❌ start-dev 아님)
     command: start
@@ -38,7 +38,7 @@ services:
 
       # 외부에서 접근하는 도메인
       # (토큰 issuer, redirect URI 생성에 사용됨)
-      KC_HOSTNAME: auth.example.com
+      KC_HOSTNAME: auth.itapi.org
 
       # -----------------------------
       # 운영 환경 권장 옵션
@@ -58,7 +58,6 @@ services:
   # ===============================
   postgres:
     container_name: keycloak-postgres
-    # PostgreSQL 최신 LTS
     image: postgres:18-alpine
     environment:
       POSTGRES_DB: keycloak
@@ -68,9 +67,3 @@ services:
       # DB 데이터 영속화 (컨테이너 재시작 시 데이터 유지)
       - /APP/keycloak/kc_pgdata:/var/lib/postgresql/data
     restart: unless-stopped
-
-# ===============================
-# 볼륨 정의
-# ===============================
-volumes:
-  kc_pgdata:
