@@ -21,7 +21,7 @@ services:
         condition: service_healthy
 
   pgbackweb-db:
-    image: postgres:18
+    image: postgres:17
     hostname: pgbackweb-db
     container_name: PGBackWeb-DB
     restart: always
@@ -32,7 +32,7 @@ services:
       POSTGRES_DB: pgbackweb
       POSTGRES_PASSWORD: pgbackwebpass
     volumes:
-      - /APP/pgbackwebdb:/var/lib/postgresql/data:rw
+      - /APP/pgbackwebdb:/var/lib/postgresql:rw
     healthcheck:
       test: ["CMD", "pg_isready", "-q", "-d", "pgbackweb", "-U", "pgbackwebuser"]
       timeout: 45s
