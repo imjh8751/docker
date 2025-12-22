@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   pgbackweb:
     image: eduardolat/pgbackweb:latest
@@ -13,7 +12,7 @@ services:
     ports:
       - 8085:8085
     environment:
-      PBW_ENCRYPTION_KEY: ItapiItapiItapi13
+      PBW_ENCRYPTION_KEY: Itapi2580!
       PBW_POSTGRES_CONN_STRING: postgresql://pgbackwebuser:pgbackwebpass@pgbackweb-db:5432/pgbackweb?sslmode=disable
     volumes:
       - /APP/pgbackwebdb/backups:/backups:rw
@@ -22,7 +21,7 @@ services:
         condition: service_healthy
 
   pgbackweb-db:
-    image: postgres:16
+    image: postgres:18
     hostname: pgbackweb-db
     container_name: PGBackWeb-DB
     restart: always
