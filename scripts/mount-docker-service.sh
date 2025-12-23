@@ -2,7 +2,7 @@
 set -e
 
 # 💡 변수 정의
-NFS_SERVER="192.168.0.98"
+NFS_SERVER="192.168.0.99"
 NFS_SHARE="/pv4-zfs/pv4-nas/DOCKER"
 MOUNT_POINT="/APP"
 CHECK_SCRIPT="/root/docker/mount-check.sh"
