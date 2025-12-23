@@ -7,7 +7,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - /APP/outline/storage-data:/var/lib/outline/data
+      - /DATA/outline/storage-data:/var/lib/outline/data
     depends_on:
       - postgres
       - redis
@@ -22,7 +22,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - /APP/outline/redis.conf:/redis.conf
+      - /DATA/outline/redis.conf:/redis.conf
     command: ["redis-server", "/redis.conf"]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -40,7 +40,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - /APP/outline/database-data:/var/lib/postgresql/data
+      - /DATA/outline/database-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready", "-d", "outline", "-U", "user"]
       interval: 30s
