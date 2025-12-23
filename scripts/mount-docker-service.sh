@@ -5,12 +5,12 @@ set -e
 NFS_SERVER="192.168.0.99"
 NFS_SHARE="/pv4-zfs/pv4-nas/DOCKER"
 MOUNT_POINT="/APP"
-CHECK_SCRIPT="/root/docker/mount-check.sh"
-MOUNT_SCRIPT="/root/docker/mount-docker.sh"
+CHECK_SCRIPT="/root/shell/mount-check.sh"
+MOUNT_SCRIPT="/root/shell/mount-docker.sh"
 LOG_FILE="/var/log/mount-checker.log"
 
-# ✅ 1. mount 스크립트 작성 (/root/docker/mount-docker.sh)
-mkdir -p /root/docker
+# ✅ 1. mount 스크립트 작성 (/root/shell/mount-docker.sh)
+mkdir -p /root/shell
 
 cat <<EOF > "$MOUNT_SCRIPT"
 #!/bin/bash
@@ -21,7 +21,7 @@ EOF
 
 chmod +x "$MOUNT_SCRIPT"
 
-# ✅ 2. 상태 체크 스크립트 작성 (/root/docker/mount-check.sh)
+# ✅ 2. 상태 체크 스크립트 작성 (/root/shell/mount-check.sh)
 cat <<EOF > "$CHECK_SCRIPT"
 #!/bin/bash
 
