@@ -1,0 +1,35 @@
+services:
+  # 1. 마스터 노드 (Primary)
+  valkey-primary:
+    image: bitnami/valkey:latest
+    container_name: valkey-primary
+    restart: always
+    ports:
+      - 7001:6379
+    environment:
+      - VALKEY_REPLICATION_MODE=primary
+      - VALKEY_PASSWORD=bitnami
+    volumes:
+      - /DATA/valkey:/bitnami
+    networks:
+      - valkey-net
+  # 2. 슬레이브 노드 (Replica)
+  valkey-replica:
+    image: bitnami/valkey:latest
+    container_name: valkey-replica
+    restart: always
+    ports:
+      - 7002:6379
+    depends_on:
+      - valkey-primary
+    environment:
+      - VALKEY_REPLICATION_MODE=replica
+      - VALKEY_PRIMARY_HOST=valkey-primary
+      - VALKEY_PRIMARY_PORT_NUMBER=6379
+      - VALKEY_PRIMARY_PASSWORD=bitnami
+      - VALKEY_PASSWORD=bitnami
+    networks:
+      - valkey-net
+networks:
+  valkey-net:
+    driver: bridge
