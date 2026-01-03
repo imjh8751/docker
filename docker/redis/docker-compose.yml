@@ -1,82 +1,105 @@
 services:
-  redis-node-0:
-    image: docker.io/bitnami/redis-cluster:7.4
-    container_name: redis-cluster-node-0
+  # --- 1. Redis Master (쓰기/읽기 전용) ---
+  redis-master:
+    image: docker.io/bitnami/redis:latest
+    container_name: redis-master
     restart: always
+    networks:
+      - redis_net
     ports:
-      - 6371:6379
+      - 6379:6379
     volumes:
-      - /DOCKER_NAS1/redis_arm64/redis-bitnami/redis-cluster_data-0:/bitnami/redis/data
+      - /DATA/redis-bitnami/redis-data-master:/bitnami/redis/data
     environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-      #- REDIS_PASSWORD=bitnami
-      - REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5
-  redis-node-1:
-    image: docker.io/bitnami/redis-cluster:7.4
-    container_name: redis-cluster-node-1
+      - REDIS_REPLICATION_MODE=master # [핵심] Master 모드로 지정
+      - REDIS_PASSWORD=bitnami # Master 접속 비밀번호
+      - REDIS_PORT=6379
+  # --- 2. Redis Slave 1 (읽기 전용 / Master 복제) ---
+  redis-slave-1:
+    image: docker.io/bitnami/redis:latest
+    container_name: redis-slave-1
     restart: always
+    networks:
+      - redis_net
     ports:
-      - 6372:6379
+      - 6380:6379
     volumes:
-      - /DOCKER_NAS1/redis_arm64/redis-bitnami/redis-cluster_data-1:/bitnami/redis/data
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-      #- REDIS_PASSWORD=bitnami
-      - REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5
-  redis-node-2:
-    image: docker.io/bitnami/redis-cluster:7.4
-    container_name: redis-cluster-node-2
-    restart: always
-    ports:
-      - 6373:6379
-    volumes:
-      - /DOCKER_NAS1/redis_arm64/redis-bitnami/redis-cluster_data-2:/bitnami/redis/data
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-      #- REDIS_PASSWORD=bitnami
-      - REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5
-  redis-node-3:
-    image: docker.io/bitnami/redis-cluster:7.4
-    container_name: redis-cluster-node-3
-    restart: always
-    ports:
-      - 6374:6379
-    volumes:
-      - /DOCKER_NAS1/redis_arm64/redis-bitnami/redis-cluster_data-3:/bitnami/redis/data
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-      #- REDIS_PASSWORD=bitnami
-      - REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5
-  redis-node-4:
-    image: docker.io/bitnami/redis-cluster:7.4
-    container_name: redis-cluster-node-4
-    restart: always
-    ports:
-      - 6375:6379
-    volumes:
-      - /DOCKER_NAS1/redis_arm64/redis-bitnami/redis-cluster_data-4:/bitnami/redis/data
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-      #- REDIS_PASSWORD=bitnami
-      - REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5
-  redis-node-5:
-    image: docker.io/bitnami/redis-cluster:7.4
-    container_name: redis-cluster-node-5
-    restart: always
-    ports:
-      - 6376:6379
-    volumes:
-      - /DOCKER_NAS1/redis_arm64/redis-bitnami/redis-cluster_data-5:/bitnami/redis/data
+      - /DATA/redis-bitnami/redis-data-slave-1:/bitnami/redis/data
     depends_on:
-      - redis-node-0
-      - redis-node-1
-      - redis-node-2
-      - redis-node-3
-      - redis-node-4
+      - redis-master
     environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-      #- REDIS_PASSWORD=bitnami
-      - REDISCLI_AUTH=bitnami
-      - REDIS_CLUSTER_REPLICAS=1
-      - REDIS_NODES=redis-node-0 redis-node-1 redis-node-2 redis-node-3 redis-node-4 redis-node-5
-      - REDIS_CLUSTER_CREATOR=yes
+      - REDIS_REPLICATION_MODE=slave # [핵심] Slave 모드로 지정
+      - REDIS_MASTER_HOST=redis-master # Master 컨테이너의 호스트명
+      - REDIS_MASTER_PORT_NUMBER=6379 # Master 포트
+      - REDIS_MASTER_PASSWORD=bitnami # Master에 접속하기 위한 비밀번호
+      - REDIS_PASSWORD=bitnami # Slave 자체의 접속 비밀번호
+      - REDIS_PORT=6379
+  # --- 3. Redis Slave 2 (읽기 전용 / Master 복제) ---
+  redis-slave-2:
+    image: docker.io/bitnami/redis:latest
+    container_name: redis-slave-2
+    restart: always
+    networks:
+      - redis_net
+    ports:
+      - 6381:6379
+    volumes:
+      - /DATA/redis-bitnami/redis-data-slave-2:/bitnami/redis/data
+    depends_on:
+      - redis-master
+    environment:
+      - REDIS_REPLICATION_MODE=slave
+      - REDIS_MASTER_HOST=redis-master
+      - REDIS_MASTER_PORT_NUMBER=6379
+      - REDIS_MASTER_PASSWORD=bitnami
+      - REDIS_PASSWORD=bitnami
+      - REDIS_PORT=6379
+  # --- P3X Redis UI ---
+  p3x-redis-ui:
+    image: patrikx3/p3x-redis-ui:latest
+    restart: always
+    container_name: p3x-redis-ui-test
+    networks:
+      - redis_net
+    ports:
+      - 7843:7843
+    volumes:
+      - /DATA/redis-bitnami/settings:/settings
+  # --- 4. Redis Stat (모니터링 추가) ---
+  redis-stat:
+    image: insready/redis-stat:latest
+    container_name: redis-stat-test
+    restart: always
+    networks:
+      - redis_net
+    ports:
+      - 8080:63790
+    command:
+      - --verbose
+      - -a
+      - bitnami # Redis 비밀번호
+      - --server
+      - redis-master:6379
+      - redis-slave-1:6379
+      - redis-slave-2:6379
+      - "5" # 5초 간격 갱신 (선택 사항)
+    depends_on:
+      - redis-master
+      - redis-slave-1
+      - redis-slave-2
+  # --- RedisInsight ---
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight-test
+    networks:
+      - redis_net
+    ports:
+      - 5540:5540
+    volumes:
+      - /DATA/redis-bitnami/redisinsight-data:/data
+    restart: always
+    depends_on:
+      - redis-master
+networks:
+  redis_net:
+    driver: bridge
