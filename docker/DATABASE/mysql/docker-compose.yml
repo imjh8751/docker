@@ -1,0 +1,40 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      # 보안을 위해 비밀번호는 .env 파일에서 관리하는 것이 좋습니다.
+      MYSQL_ROOT_PASSWORD: Admin2580!
+      MYSQL_DATABASE: mysql
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
+      TZ: Asia/Seoul
+    volumes:
+      # 데이터 영속성을 위해 호스트 경로와 마운트
+      - /APP/mysql/mysql_data:/var/lib/mysql
+      # 커스텀 설정 파일 적용 (필요 시)
+      - /APP/mysql/config:/etc/mysql/conf.d
+      # 초기화 스크립트 (테이블 생성 등) 실행
+      - /APP/mysql/init:/docker-entrypoint-initdb.d
+    command: 
+      # 한글 깨짐 방지를 위한 utf8mb4 설정 및 인증 플러그인 호환성 설정
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      # MySQL 8.0/9.0 이상에서 구형 클라이언트 접속 문제가 생길 경우 아래 옵션 사용 고려
+      # - --default-authentication-plugin=mysql_native_password 
+    networks:
+      - backend-network
+
+    # 헬스체크: 컨테이너 상태 모니터링
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  backend-network:
+    driver: bridge
