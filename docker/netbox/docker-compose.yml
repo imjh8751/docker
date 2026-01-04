@@ -1,0 +1,90 @@
+services:
+  # ------------------------------------------------------------------
+  # NetBox Main Application (Web/API)
+  # ------------------------------------------------------------------
+  netbox:
+    image: netboxcommunity/netbox:latest
+    container_name: netbox-app
+    depends_on:
+      - postgres
+      - redis
+      - redis-cache
+    ports:
+      - "18000:8080"
+    env_file: env/netbox.env  # 환경변수 파일 분리 (아래 설명 참조)
+    volumes:
+      - netbox-media-files:/opt/netbox/netbox/media
+      - netbox-reports-files:/opt/netbox/netbox/reports
+      - netbox-scripts-files:/opt/netbox/netbox/scripts
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------
+  # NetBox Worker (백그라운드 작업 처리)
+  # ------------------------------------------------------------------
+  netbox-worker:
+    image: netboxcommunity/netbox:latest
+    container_name: netbox-worker
+    command: /opt/netbox/venv/bin/python3 /opt/netbox/netbox/manage.py rqworker
+    depends_on:
+      - netbox
+    env_file: env/netbox.env
+    volumes:
+      - netbox-media-files:/opt/netbox/netbox/media
+      - netbox-reports-files:/opt/netbox/netbox/reports
+      - netbox-scripts-files:/opt/netbox/netbox/scripts
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------
+  # NetBox Housekeeping (정기 정리 작업)
+  # ------------------------------------------------------------------
+  netbox-housekeeping:
+    image: netboxcommunity/netbox:latest
+    container_name: netbox-housekeeping
+    command: /opt/netbox/housekeeping.sh
+    depends_on:
+      - netbox
+    env_file: env/netbox.env
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------
+  # PostgreSQL (Database)
+  # ------------------------------------------------------------------
+  postgres:
+    image: postgres:18-alpine
+    container_name: netbox-postgres
+    env_file: env/postgres.env
+    volumes:
+      - netbox-postgres-data:/var/lib/postgresql
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------
+  # Redis (Main Queue)
+  # ------------------------------------------------------------------
+  redis:
+    image: redis:8-alpine
+    container_name: netbox-redis
+    command: sh -c 'redis-server --appendonly yes --requirepass $$REDIS_PASSWORD'
+    env_file: env/redis.env
+    volumes:
+      - netbox-redis-data:/data
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------
+  # Redis Cache (Caching 전용)
+  # ------------------------------------------------------------------
+  redis-cache:
+    image: redis:8-alpine
+    container_name: netbox-redis-cache
+    command: sh -c 'redis-server --requirepass $$REDIS_PASSWORD'
+    env_file: env/redis.env
+    volumes:
+      - netbox-redis-cache-data:/data
+    restart: unless-stopped
+
+volumes:
+  netbox-media-files:
+  netbox-postgres-data:
+  netbox-redis-data:
+  netbox-redis-cache-data:
+  netbox-reports-files:
+  netbox-scripts-files:
