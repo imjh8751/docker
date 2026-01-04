@@ -1,96 +1,107 @@
-version: '3'
 services:
-  kafka-ui:
-    image: provectuslabs/kafka-ui
-    container_name: kafka-web-ui
-    ports:
-      - "8480:8080"
-    restart: always
-    environment:
-      - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka-1:29092,kafka-2:29093,kafka-3:29094
-      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper-1:22181
-      
-  zookeeper-1:
-    image: confluentinc/cp-zookeeper:latest
-    environment:
-      ZOOKEEPER_SERVER_ID: 1
-      ZOOKEEPER_CLIENT_PORT: 22181
-      ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-    ports:
-      - "22181:2181"
-
-  zookeeper-2:
-    image: confluentinc/cp-zookeeper:latest
-    environment:
-      ZOOKEEPER_SERVER_ID: 2
-      ZOOKEEPER_CLIENT_PORT: 32181
-      ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-    ports:
-      - "32181:2181"
-
-  zookeeper-3:
-    image: confluentinc/cp-zookeeper:latest
-    environment:
-      ZOOKEEPER_SERVER_ID: 3
-      ZOOKEEPER_CLIENT_PORT: 42181
-      ZOOKEEPER_TICK_TIME: 2000
-      ZOOKEEPER_INIT_LIMIT: 5
-      ZOOKEEPER_SYNC_LIMIT: 2
-    ports:
-      - "42181:2181"
-  
   kafka-1:
     image: confluentinc/cp-kafka:latest
-    depends_on:
-      - zookeeper-1
+    hostname: kafka-1
+    container_name: kafka-1
+    restart: always
     ports:
-      - 9092:9092
+      - "9092:9092"   # 외부 접속용
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:22181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-1:29092,EXTERNAL://192.168.0.102:9092
-      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
-      KAFKA_NUM_PARTITIONS: 3
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      # [수정됨] 리스너 포트 충돌 방지를 위해 DOCKER 리스너 제거 (INTERNAL로 통합)
+      # 내부 포트 구성: 19092(내부), 29093(컨트롤러), 9092(외부)
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:19092,CONTROLLER://0.0.0.0:29093,EXTERNAL://0.0.0.0:9092
       
+      # Advertised: 외부에 알리는 주소
+      # EXTERNAL: 호스트IP:9092
+      # INTERNAL: kafka-1:19092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-1:19092,EXTERNAL://${DOCKER_HOST_IP:-192.168.0.44}:9092
+      
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      
+      # 투표자 설정 (내부 포트 29093 사용)
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-1:29093,2@kafka-2:29093,3@kafka-3:29093
+      KAFKA_CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
   kafka-2:
     image: confluentinc/cp-kafka:latest
-    depends_on:
-      - zookeeper-1
+    hostname: kafka-2
+    container_name: kafka-2
+    restart: always
     ports:
-      - "9093:9092"
+      - "9093:9092"   # [핵심] 호스트 9093 -> 컨테이너 9092 매핑
     environment:
-      KAFKA_BROKER_ID: 2
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:22181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_NODE_ID: 2
+      KAFKA_PROCESS_ROLES: broker,controller
+      # 모든 컨테이너 내부 설정은 kafka-1과 동일하게 가져감 (포트 충돌 방지)
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:19092,CONTROLLER://0.0.0.0:29093,EXTERNAL://0.0.0.0:9092
+      
+      # Advertised: 외부에는 호스트의 9093 포트로 알림
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-2:19092,EXTERNAL://${DOCKER_HOST_IP:-192.168.0.44}:9093
+      
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-2:29093,EXTERNAL://192.168.0.102:9093
-      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
-      KAFKA_NUM_PARTITIONS: 3
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-1:29093,2@kafka-2:29093,3@kafka-3:29093
+      KAFKA_CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   kafka-3:
     image: confluentinc/cp-kafka:latest
-    depends_on:
-      - zookeeper-1
+    hostname: kafka-3
+    container_name: kafka-3
+    restart: always
     ports:
-      - "9094:9092"
+      - "9094:9092"   # [핵심] 호스트 9094 -> 컨테이너 9092 매핑
     environment:
-      KAFKA_BROKER_ID: 3
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:22181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_NODE_ID: 3
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:19092,CONTROLLER://0.0.0.0:29093,EXTERNAL://0.0.0.0:9092
+      
+      # Advertised: 외부에는 호스트의 9094 포트로 알림
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-3:19092,EXTERNAL://${DOCKER_HOST_IP:-192.168.0.44}:9094
+      
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-3:29094,EXTERNAL://192.168.0.102:9094
-      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
-      KAFKA_NUM_PARTITIONS: 3
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-1:29093,2@kafka-2:29093,3@kafka-3:29093
+      KAFKA_CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
-  kafka-exporter:
-    image: danielqsj/kafka-exporter 
-    command: ["--kafka.server=kafka-1:9092", "--kafka.server=kafka-2:9093", "--kafka.server=kafka-3:9094"]
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
+    restart: always
+    container_name: kafdrop
     ports:
-      - 9308:9308     
+      - "9000:9000"
+    environment:
+      # INTERNAL 리스너 포트(19092) 사용
+      KAFKA_BROKER_CONNECT: kafka-1:19092,kafka-2:19092,kafka-3:19092
+    depends_on:
+      - kafka-1
+      - kafka-2
+      - kafka-3
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    restart: always
+    container_name: kafka-ui
+    ports:
+      - "8080:8080"
+    environment:
+      - DYNAMIC_CONFIG_ENABLED=true
+      - KAFKA_CLUSTERS_0_NAME=itapi_kafka_kraft
+      # INTERNAL 리스너 포트(19092) 사용
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka-1:19092,kafka-2:19092,kafka-3:19092
+      - KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL=PLAINTEXT
+    depends_on:
+      - kafka-1
+      - kafka-2
+      - kafka-3
