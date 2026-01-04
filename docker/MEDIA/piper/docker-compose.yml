@@ -10,14 +10,3 @@ services:
     volumes:
       - ./piper-config:/config
     restart: unless-stopped
-
-  # [추가됨] n8n이 접속할 수 있도록 HTTP로 변환해주는 서비스
-  wyoming-http:
-    image: rhasspy/wyoming-http-server:latest
-    container_name: piper-http
-    ports:
-      - "10201:5000" # n8n에서는 10201 포트로 접속합니다
-    command: --uri tcp://piper:10200
-    depends_on:
-      - piper
-    restart: unless-stopped
