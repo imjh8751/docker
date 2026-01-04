@@ -1,0 +1,12 @@
+services:
+  piper:
+    image: lscr.io/linuxserver/piper:latest
+    container_name: piper
+    ports:
+      - "10200:10200"
+    environment:
+      - PIPER_VOICE=ko_KR-sun-medium # 한국어 음성 모델 지정
+      - PIPER_LENGTH=1.0             # 발화 속도 조절
+    volumes:
+      -./piper-config:/config       # 설정 및 모델 캐싱
+    restart: unless-stopped
