@@ -95,7 +95,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: hoppscotch
     volumes:
-      - /APP/postgre_hoppscotch/data/:/var/lib/postgresql/data
+      - /APP/hoppscotch/data/:/var/lib/postgresql/data
     healthcheck:
       test:
         [
