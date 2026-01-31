@@ -155,14 +155,56 @@ create_scripts() {
     mkdir -p $CONF_DIR
 
     cat <<EOF > $CONF_DIR/check_service.sh
+아하, 어떤 의도인지 정확히 이해했습니다! 작성하시려는 구문이 다른 쉘 스크립트 파일 내부에 포함되는 형태라면, EOF를 따옴표로 감싸는 대신 변수 앞에 역슬래시(\)를 붙여서 상위 스크립트가 변수를 가로채지 않도록 처리해야 하죠.
+
+사용자가 요청하신 이중 체크(curl + tcp) 로직에 역슬래시 처리를 완벽하게 적용한 코드는 다음과 같습니다.
+
+역슬래시(\) 처리가 포함된 스크립트 생성 구문
+Bash
+cat <<EOF > $CONF_DIR/check_service.sh
 #!/bin/bash
+
+# 설정
 TARGET_IP="127.0.0.1"
 TARGET_PORT="$CHECK_PORT"
-TIMEOUT=2
-if timeout \$TIMEOUT bash -c "</dev/tcp/\$TARGET_IP/\$TARGET_PORT" > /dev/null 2>&1; then
+TIMEOUT="5"
+
+# 로그 파일
+LOG_FILE="/var/log/keepalived_health.log"
+
+# 로그 함수
+log_message() {
+    echo "\$(date '+%Y-%m-%d %H:%M:%S') - \$1" >> "\$LOG_FILE"
+}
+
+# curl을 사용한 HTTP 체크
+check_http() {
+    if curl -s --connect-timeout 3 --max-time \$TIMEOUT "http://\$TARGET_IP:\$TARGET_PORT/health" > /dev/null 2>&1; then
+        return 0
+    elif curl -s --connect-timeout 3 --max-time \$TIMEOUT "http://\$TARGET_IP:\$TARGET_PORT/" > /dev/null 2>&1; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# telnet을 사용한 포트 체크
+check_port() {
+    if timeout \$TIMEOUT bash -c "</dev/tcp/\$TARGET_IP/\$TARGET_PORT" > /dev/null 2>&1; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# 메인 헬스체크 로직
+if check_http && check_port; then
+    log_message "Health check PASSED - \$TARGET_IP:\$TARGET_PORT is accessible"
     exit 0
+else
+    log_message "Health check FAILED - \$TARGET_IP:\$TARGET_PORT is not responding"
+    exit 1
 fi
-exit 1
 EOF
     chmod +x $CONF_DIR/check_service.sh
 
