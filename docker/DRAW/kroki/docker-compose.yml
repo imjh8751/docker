@@ -1,17 +1,20 @@
 services:
-  # 1. 메인 게이트웨이 서버
+  # [Kroki 메인 서버] 모든 요청의 게이트웨이
   kroki:
     image: yuzutech/kroki
     container_name: kroki-main
     environment:
       - KROKI_BLOCKDIAG_HOST=kroki-blockdiag
       - KROKI_MERMAID_HOST=kroki-mermaid
+      - KROKI_BPMN_HOST=kroki-bpmn
       - KROKI_EXCALIDRAW_HOST=kroki-excalidraw
+      - KROKI_DIAGRAMSNET_HOST=kroki-diagramsnet
+      - KROKI_WIREVIZ_HOST=kroki-wireviz
     ports:
-      - "8100:8000"
+      - "8000:8000"
     restart: always
 
-  # 2. rackdiag, nwdiag 등을 처리하는 엔진
+  # [BlockDiag] rackdiag, nwdiag, seqdiag 등 처리
   kroki-blockdiag:
     image: yuzutech/kroki-blockdiag
     container_name: kroki-blockdiag
@@ -19,7 +22,7 @@ services:
       - "8001"
     restart: always
 
-  # 3. Mermaid 처리 엔진 (Wiki.js 내장 외에 Kroki 직접 호출용)
+  # [Mermaid] 플로우차트 및 시퀀스 다이어그램
   kroki-mermaid:
     image: yuzutech/kroki-mermaid
     container_name: kroki-mermaid
@@ -27,10 +30,34 @@ services:
       - "8002"
     restart: always
 
-  # 4. 손그림 스타일 다이어그램 엔진
+  # [BPMN] 비즈니스 프로세스 모델링
+  kroki-bpmn:
+    image: yuzutech/kroki-bpmn
+    container_name: kroki-bpmn
+    expose:
+      - "8003"
+    restart: always
+
+  # [Excalidraw] 손그림 느낌의 화이트보드 다이어그램
   kroki-excalidraw:
     image: yuzutech/kroki-excalidraw
     container_name: kroki-excalidraw
     expose:
       - "8004"
+    restart: always
+
+  # [Diagrams.net] draw.io 라이브러리 지원
+  kroki-diagramsnet:
+    image: yuzutech/kroki-diagramsnet
+    container_name: kroki-diagramsnet
+    expose:
+      - "8005"
+    restart: always
+
+  # [WireViz] 케이블 및 배선도 시각화
+  kroki-wireviz:
+    image: yuzutech/kroki-wireviz
+    container_name: kroki-wireviz
+    expose:
+      - "8006"
     restart: always
