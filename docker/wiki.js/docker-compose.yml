@@ -1,29 +1,35 @@
-version: "3"
 services:
-
-  db:
-    image: postgres:14.1-alpine
-    environment:
-      POSTGRES_DB: wiki
-      POSTGRES_PASSWORD: wikijsrocks
-      POSTGRES_USER: wikijs
-    logging:
-      driver: "none"
-    restart: unless-stopped
-    volumes:
-      - /data/wiki.js/data:/var/lib/postgresql/data
-
+  # 1. Wiki.js 애플리케이션
   wiki:
     image: requarks/wiki:2.5
-    depends_on:
-      - db
+    container_name: wikijs
     environment:
       DB_TYPE: postgres
       DB_HOST: db
       DB_PORT: 5432
       DB_USER: wikijs
-      DB_PASS: wikijsrocks
+      DB_PASS: wikijsrocks  # 보안을 위해 변경하세요
       DB_NAME: wiki
-    restart: unless-stopped
     ports:
-      - "8888:3000"
+      - "3000:3000"  # 웹 브라우저 접속 포트
+    depends_on:
+      - db
+    restart: unless-stopped
+    volumes:
+      - /APP/wikijs/config.yml:/conf/config.yml # (선택사항) 고급 설정을 위한 설정파일 마운트
+      # 중요: 업로드된 이미지/파일 등을 보존하기 위한 볼륨
+      - /APP/wikijs/wiki-data:/wiki/data 
+
+  # 2. PostgreSQL 데이터베이스
+  db:
+    image: postgres:17.7-alpine
+    container_name: wikijs-db
+    environment:
+      POSTGRES_DB: wiki
+      POSTGRES_PASSWORD: wikijsrocks  # 위 DB_PASS와 동일하게 설정
+      POSTGRES_USER: wikijs
+    logging:
+      driver: "none"
+    restart: unless-stopped
+    volumes:
+      - /APP/wikijs/db-data:/var/lib/postgresql/data
