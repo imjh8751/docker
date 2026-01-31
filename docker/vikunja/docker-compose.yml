@@ -1,25 +1,55 @@
-version: '3'
 
 services:
-  api:
-    image: vikunja/api
+  # ===============================================
+  # 1. Vikunja (통합 애플리케이션)
+  # ===============================================
+  vikunja:
+    image: vikunja/vikunja
+    container_name: vikunja
+    restart: unless-stopped
+    ports:
+      - "3456:3456" # 호스트 접속 포트
     environment:
-      VIKUNJA_DATABASE_HOST: 192.168.0.163:3306
-      VIKUNJA_DATABASE_PASSWORD: mysql
-      VIKUNJA_DATABASE_TYPE: mysql
-      VIKUNJA_DATABASE_USER: root
+      # [필수 1] 접속할 공인 IP 또는 도메인 주소 (http:// 포함)
+      # 예: http://127.0.0.1:3456 또는 https://todo.mydomain.com
+      VIKUNJA_SERVICE_PUBLICURL: http://127.0.0.1:3456
+      
+      # [필수 2] 보안 키 (임의의 긴 문자열로 변경 필수!)
+      VIKUNJA_SERVICE_JWTSECRET: "ReplaceWithSuperSecureRandomString!!"
+      
+      # 데이터베이스 연결 설정 (아래 db 서비스와 연결)
+      VIKUNJA_DATABASE_HOST: db
+      VIKUNJA_DATABASE_USER: vikunja
+      VIKUNJA_DATABASE_PASSWORD: vikunjapassword
+      VIKUNJA_DATABASE_TYPE: postgres
       VIKUNJA_DATABASE_DATABASE: vikunja
-      VIKUNJA_SERVICE_JWTSECRET: ce23d1aezoosah2bao3ieZohkae5aicah
-      VIKUNJA_SERVICE_FRONTENDURL: http://vikunja.itapi.org/
-    ports:
-      - 3456:3456
+      
+      # 시간대 설정
+      VIKUNJA_SERVICE_TIMEZONE: Asia/Seoul
+      
     volumes:
-      - ./files:/app/vikunja/files
+      - ./files:/app/vikunja/files # 업로드 파일 저장소
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # ===============================================
+  # 2. Database (PostgreSQL)
+  # ===============================================
+  db:
+    image: postgres:17-alpine # 안정적인 최신 버전 사용
+    container_name: vikunja-db
     restart: unless-stopped
-  frontend:
-    image: vikunja/frontend
-    ports:
-      - 18380:80
     environment:
-      VIKUNJA_API_URL: http://vikunja.itapi.org/api/v1
-    restart: unless-stopped
+      POSTGRES_USER: vikunja
+      POSTGRES_PASSWORD: vikunjapassword
+      POSTGRES_DB: vikunja
+    volumes:
+      - ./db_data:/var/lib/postgresql/data # DB 데이터 영구 저장
+    
+    # DB가 완전히 켜진 후 Vikunja가 시작되도록 헬스체크 설정
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vikunja -d vikunja"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
