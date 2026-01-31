@@ -1,29 +1,36 @@
 services:
+  # 1. 메인 게이트웨이 서버
   kroki:
     image: yuzutech/kroki
-    depends_on:
-      - mermaid
-      - bpmn
-      - excalidraw
+    container_name: kroki-main
     environment:
-      - KROKI_MERMAID_HOST=mermaid
-      - KROKI_BPMN_HOST=bpmn
-      - KROKI_EXCALIDRAW_HOST=excalidraw
+      - KROKI_BLOCKDIAG_HOST=kroki-blockdiag
+      - KROKI_MERMAID_HOST=kroki-mermaid
+      - KROKI_EXCALIDRAW_HOST=kroki-excalidraw
     ports:
-      - "8000:8000"
-    # If you do need to explicitly mount /tmp, make sure to include the exec option
-    tmpfs:
-      - /tmp:exec
-  mermaid:
+      - "8100:8000"
+    restart: always
+
+  # 2. rackdiag, nwdiag 등을 처리하는 엔진
+  kroki-blockdiag:
+    image: yuzutech/kroki-blockdiag
+    container_name: kroki-blockdiag
+    expose:
+      - "8001"
+    restart: always
+
+  # 3. Mermaid 처리 엔진 (Wiki.js 내장 외에 Kroki 직접 호출용)
+  kroki-mermaid:
     image: yuzutech/kroki-mermaid
+    container_name: kroki-mermaid
     expose:
       - "8002"
-  bpmn:
-    image: yuzutech/kroki-bpmn
-    expose:
-      - "8003"
-  excalidraw:
+    restart: always
+
+  # 4. 손그림 스타일 다이어그램 엔진
+  kroki-excalidraw:
     image: yuzutech/kroki-excalidraw
+    container_name: kroki-excalidraw
     expose:
       - "8004"
-# https://docs.kroki.io/kroki/setup/use-docker-or-podman/
+    restart: always
