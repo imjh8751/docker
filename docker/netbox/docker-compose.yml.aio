@@ -1,0 +1,83 @@
+services:
+  # ------------------------------------------------------------------
+  # NetBox (LinuxServer.io Image)
+  # ------------------------------------------------------------------
+  netbox:
+    image: lscr.io/linuxserver/netbox:latest
+    container_name: netbox
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Seoul
+
+      # --- 관리자 계정 ---
+      - SUPERUSER_EMAIL=admin@example.com
+      - SUPERUSER_PASSWORD=admin
+      
+      # --- 웹 서버 및 보안 설정 ---
+      - ALLOWED_HOSTS=*
+      # [경고 해결] API 보안을 위한 랜덤 문자열 추가
+      - API_TOKEN_PEPPERS=Your_Random_String_Must_Be_Here_For_Security_123
+
+      # --- 데이터베이스 연결 (Postgres 17) ---
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=netbox
+      - DB_USER=netbox
+      - DB_PASSWORD=netbox_password_123
+
+      # --- Redis 연결 (Redis 8) ---
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=redis_password_123
+      - REDIS_DB_TASK=0
+      - REDIS_DB_CACHE=1
+      
+    volumes:
+      - ./netbox_config:/config
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------
+  # PostgreSQL 17
+  # ------------------------------------------------------------------
+  postgres:
+    image: postgres:17-alpine
+    container_name: netbox-postgres
+    environment:
+      - POSTGRES_DB=netbox
+      - POSTGRES_USER=netbox
+      - POSTGRES_PASSWORD=netbox_password_123
+    volumes:
+      - netbox-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U netbox"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  # ------------------------------------------------------------------
+  # Redis 8
+  # ------------------------------------------------------------------
+  redis:
+    image: redis:8-alpine # 또는 redis:alpine
+    container_name: netbox-redis
+    command: sh -c 'redis-server --appendonly yes --requirepass redis_password_123'
+    volumes:
+      - netbox-redis-data:/data
+    # [경고 해결] Redis 메모리 오버커밋 경고 완화
+    sysctls:
+      - net.core.somaxconn=1024
+    restart: unless-stopped
+
+volumes:
+  netbox-postgres-data:
+  netbox-redis-data:
