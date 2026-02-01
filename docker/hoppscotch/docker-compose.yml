@@ -10,8 +10,10 @@ services:
       - "3170:3170" # 백엔드
     env_file:
       - .env
+    # DB가 완전히 준비된 후 실행되도록 설정
     depends_on:
-      - hoppscotch-db
+      hoppscotch-db:
+        condition: service_healthy 
 
   # PostgreSQL 데이터베이스
   hoppscotch-db:
@@ -23,4 +25,10 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: Admin2580
     volumes:
-      - /APP/hoppscotch/data:/var/lib/postgresql/data
+      - /DATA/hoppscotch/data:/var/lib/postgresql/data
+    # DB 상태 체크 추가 (백엔드가 꼬이는 것 방지)
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d hoppscotch"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
