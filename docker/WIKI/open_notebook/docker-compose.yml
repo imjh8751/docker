@@ -1,0 +1,38 @@
+services:
+  # ===============================================
+  # 1. Open Notebook (웹 애플리케이션)
+  # ===============================================
+  open_notebook:
+    image: lfnovo/open_notebook:v1-latest-single
+    container_name: open_notebook
+    restart: always
+    ports:
+      - 8502:8502 # 웹 UI 포트
+      - 5055:5055 # API 포트
+    environment:
+      - OPENAI_API_KEY=sk-proj-xxxxxxxx...
+      - GEMINI_API_KEY=AIzaSyxxxxxxxx...
+      # --- 로컬 LLM (Ollama) 설정 ---
+      - OLLAMA_API_BASE=http://192.168.0.100:11434
+      - SURREAL_URL=ws://surrealdb:8000/rpc
+      - SURREAL_USER=root
+      - SURREAL_PASSWORD=root
+      - SURREAL_NAMESPACE=open_notebook
+      - SURREAL_DATABASE=production
+    volumes:
+      - ./notebook_data:/app/data
+    depends_on:
+      - surrealdb
+  # ===============================================
+  # 2. SurrealDB (데이터베이스)
+  # ===============================================
+  surrealdb:
+    image: surrealdb/surrealdb:latest
+    container_name: open_notebook_db
+    restart: always
+    user: root 
+    command: start --user root --pass root rocksdb://mydata
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./surreal_data:/mydata
