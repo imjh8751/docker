@@ -1,0 +1,13 @@
+services:
+  databasus:
+    image: databasus/databasus:latest
+    container_name: databasus
+    restart: unless-stopped
+    ports:
+      - "4005:4005" # 웹 UI 접속 포트
+    volumes:
+      # [중요] Databasus 설정과 로컬 백업 파일이 저장될 경로
+      - ./databasus-data:/databasus-data
+    environment:
+      # (선택) 타임존 설정
+      - TZ=Asia/Seoul
