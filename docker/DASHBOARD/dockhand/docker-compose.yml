@@ -1,0 +1,21 @@
+services:
+  dockhand:
+    # [중요] 공식 이미지 이름은 fnsys/dockhand 입니다.
+    image: fnsys/dockhand:latest
+    container_name: dockhand
+    restart: unless-stopped
+    ports:
+      - "3000:3000" # 웹 UI 접속 포트
+    volumes:
+      # [1] 도커 소켓 (필수): 도커를 제어하기 위해 필요
+      - /var/run/docker.sock:/var/run/docker.sock
+      
+      # [2] 데이터 저장소: Dockhand 설정 및 DB 저장
+      - dockhand_data:/app/dat
+
+    environment:
+      # [선택] 초기 관리자 설정을 위한 환경변수 (없어도 웹에서 설정 가능)
+      - TZ=Asia/Seoul
+
+volumes:
+  dockhand_data:
