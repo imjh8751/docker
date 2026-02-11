@@ -1,0 +1,17 @@
+services:
+  congregate:
+    image: registry.gitlab.com/gitlab-com/customer-success/tools/congregate:latest
+    container_name: congregate
+    restart: always
+    # -it 옵션과 동일한 효과 (컨테이너가 바로 죽지 않고 살아있게 함)
+    stdin_open: true # -i
+    tty: true        # -t
+    volumes:
+      # Docker-in-Docker 기능을 위해 호스트의 도커 소켓 공유 (필수)
+      - /var/run/docker.sock:/var/run/docker.sock
+      # 데이터 영속성을 위한 로컬 마운트 (${HOME}은 사용자 홈 디렉토리로 치환됨)
+      - ./congregate-data:/opt/congregate/data
+    # 컨테이너 시작 시 실행할 명령
+    command: /bin/bash
+    # 네트워크 설정 (기본 브리지 모드 사용)
+    network_mode: bridge
