@@ -9,15 +9,15 @@ fi
 
 echo "📦 NAS 마운트 디렉토리 생성 중..."
 MOUNT_MAP=(
-  "/DATA_NAS1=192.168.0.102:/export/DOCKER"
-  "/DATA_NAS2=192.168.0.101:/pv2-zfs/pv2-files/TEMP"
-  "/DATA_NAS3=192.168.0.100:/mnt/pve/pv"
-  #"/DATA_NAS3=192.168.0.102:/export/ALBUM"
-  "/DATA_NAS4=192.168.0.102:/export/UTIL"
-  "/DATA_NAS5=192.168.0.101:/pv2-zfs-data/pv2-files"
-  "/DATA_NAS6=192.168.0.99:/pv3-zfs/pv3-files"
-  "/DATA_NAS7=192.168.0.98:/pv4-zfs/pv4-files"
-  "/DOCKER_NAS1=192.168.0.98:/pv4-zfs/pv4-nas/DOCKER"
+  "/DOCKER_NAS2=192.168.0.102:/export/DOCKER"
+  #"/DATA_NAS2=192.168.0.101:/pv2-zfs/pv2-files/TEMP"
+  #"/DATA_NAS3=192.168.0.100:/mnt/pve/pv"
+  "/DATA_NAS1=192.168.0.102:/export/ALBUM"
+  #"/DATA_NAS4=192.168.0.102:/export/UTIL"
+  #"/DATA_NAS5=192.168.0.101:/pv2-zfs-data/pv2-files"
+  #"/DATA_NAS6=192.168.0.99:/pv3-zfs/pv3-files"
+  #"/DATA_NAS7=192.168.0.98:/pv4-zfs/pv4-files"
+  "/DOCKER_NAS1=192.168.0.99:/pv4-zfs/pv4-nas/DOCKER"
   #"/DATA_NAS8=192.168.0.101:/pv2-zfs/pv2-vol"
 )
 
@@ -61,15 +61,15 @@ set -e
 LOG_FILE="/var/log/mount-checker.log"
 
 declare -A MOUNT_TARGETS=(
-  ["/DATA_NAS1"]="192.168.0.102:/export/DOCKER"
-  ["/DATA_NAS2"]="192.168.0.101:/pv2-zfs/pv2-files/TEMP"
-  ["/DATA_NAS3"]="192.168.0.100:/mnt/pve/pv1-files"
-  #["/DATA_NAS3"]="192.168.0.102:/export/ALBUM"
-  ["/DATA_NAS4"]="192.168.0.102:/export/UTIL"
-  ["/DATA_NAS5"]="192.168.0.101:/pv2-zfs-data/pv2-files"
-  ["/DATA_NAS6"]="192.168.0.99:/pv3-zfs/pv3-files"
-  ["/DATA_NAS7"]="192.168.0.98:/pv4-zfs/pv4-files"
-  ["/DOCKER_NAS1"]="192.168.0.98:/pv4-zfs/pv4-nas/DOCKER"
+  ["/DOCKER_NAS2"]="192.168.0.102:/export/DOCKER"
+  #["/DATA_NAS2"]="192.168.0.101:/pv2-zfs/pv2-files/TEMP"
+  #["/DATA_NAS3"]="192.168.0.100:/mnt/pve/pv1-files"
+  ["/DATA_NAS1"]="192.168.0.102:/export/ALBUM"
+  #["/DATA_NAS4"]="192.168.0.102:/export/UTIL"
+  #["/DATA_NAS5"]="192.168.0.101:/pv2-zfs-data/pv2-files"
+  #["/DATA_NAS6"]="192.168.0.99:/pv3-zfs/pv3-files"
+  #["/DATA_NAS7"]="192.168.0.98:/pv4-zfs/pv4-files"
+  ["/DOCKER_NAS1"]="192.168.0.99:/pv4-zfs/pv4-nas/DOCKER"
 )
 
 log() {
@@ -107,19 +107,24 @@ EOF
 
 chmod +x "$CHECK_SCRIPT"
 
-# ✅ 서비스 파일
+# ✅ 서비스 파일 (수정됨: 네트워크 연결 후, Docker 시작 전에 실행)
 cat <<EOF > /etc/systemd/system/mount-docker.service
 [Unit]
 Description=Check and remount all NFS mounts
-After=network.target
+Wants=network-online.target
+After=network-online.target
+Before=docker.service docker.socket
 
 [Service]
 Type=oneshot
 ExecStart=$CHECK_SCRIPT
-RemainAfterExit=no
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
 EOF
 
-# ✅ 타이머 파일
+# ✅ 타이머 파일 (유지)
 cat <<EOF > /etc/systemd/system/mount-docker.timer
 [Unit]
 Description=Run NFS mount check every 5 minutes
@@ -133,12 +138,17 @@ AccuracySec=1min
 WantedBy=timers.target
 EOF
 
-echo "🔄 systemd 적용 및 타이머 시작"
-systemctl daemon-reexec
+echo "🔄 systemd 적용 및 서비스/타이머 시작"
 systemctl daemon-reload
+
+# 1. 부팅 시 Docker보다 먼저 한 번 실행되도록 서비스 활성화
+systemctl enable mount-docker.service
+
+# 2. 5분 주기 점검을 위해 타이머 활성화 및 시작
 systemctl enable --now mount-docker.timer
 
 echo -e "\n✅ 모든 설정 완료!"
-echo "⏱️ 5분마다 모든 마운트 상태 점검 및 재마운트가 수행됩니다."
+echo "🚀 부팅 시 Docker보다 먼저 마운트가 수행되며, 이후 5분마다 점검합니다."
 echo "📁 로그: tail -f /var/log/mount-checker.log"
-echo "📡 상태 확인: systemctl status mount-docker.timer"
+echo "📡 서비스 상태: systemctl status mount-docker.service"
+echo "⏱️ 타이머 상태: systemctl status mount-docker.timer"
