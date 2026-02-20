@@ -1,115 +1,80 @@
 #!/bin/bash
 
-# 1. Root 권한 체크
+# 1. Root Check
 if [ "$EUID" -ne 0 ]; then
-  echo "[오류] 디스크의 물리적 수명(S.M.A.R.T 및 eMMC)을 읽으려면 root 권한이 필요합니다."
-  echo "실행 방법: sudo $0"
+  echo "Error: Root privileges required."
   exit 1
 fi
 
-echo "=================================================="
-echo "       로컬 물리 디스크 상태 및 수명 점검         "
-echo "=================================================="
+# 2. Host & IP Info
+echo "Host: $(hostname)"
+echo "IP: $(hostname -I | awk '{print $1}')"
+echo ""
 
-# 2. 필수 패키지 설치 여부 점검 (자동 설치 프롬프트 포함)
-if ! command -v smartctl &> /dev/null; then
-    echo "[알림] smartmontools가 설치되어 있지 않아 일반 HDD/SSD 수명을 확인할 수 없습니다."
-fi
-
-if lsblk -d -o NAME | grep -q "^nvme"; then
-    if ! command -v nvme &> /dev/null; then
-        echo -e "\n[알림] 시스템에 NVMe 디스크가 감지되었으나, 'nvme-cli' 툴이 없습니다."
-        read -p "OS를 자동 감지하여 nvme-cli를 설치하시겠습니까? (y/n): " choice_nvme
-        case "$choice_nvme" in
-            y|Y|yes|YES)
-                if command -v apt-get &> /dev/null; then apt-get update -qq && apt-get install -y nvme-cli
-                elif command -v dnf &> /dev/null; then dnf install -y nvme-cli
-                elif command -v yum &> /dev/null; then yum install -y nvme-cli
-                fi
-                ;;
-        esac
-    fi
-fi
-
-if lsblk -d -o NAME | grep -q "^mmcblk"; then
-    if ! command -v mmc &> /dev/null; then
-        echo -e "\n[알림] 시스템에 eMMC/SD카드(mmcblk)가 감지되었으나, 'mmc-utils' 툴이 없습니다."
-        read -p "OS를 자동 감지하여 mmc-utils를 설치하시겠습니까? (y/n): " choice_mmc
-        case "$choice_mmc" in
-            y|Y|yes|YES)
-                if command -v apt-get &> /dev/null; then apt-get update -qq && apt-get install -y mmc-utils
-                elif command -v dnf &> /dev/null; then dnf install -y mmc-utils
-                elif command -v yum &> /dev/null; then yum install -y mmc-utils
-                fi
-                ;;
-        esac
-    fi
-fi
-
-echo -e "\n[1] 장착된 로컬 디스크 목록 및 종류"
-echo "--------------------------------------------------"
+# 3. Disk List
+echo "[Disk_List]"
 lsblk -d -e 1,7,11 -o NAME,SIZE,TYPE,ROTA,MODEL | awk 'NR>1 {print}' | while read -r name size type rota model; do
-    disk_type="알 수 없음"
-    if [[ "$name" == nvme* ]]; then disk_type="NVMe SSD"
-    elif [[ "$name" == mmcblk* ]]; then disk_type="eMMC / SD카드"
-    elif [ "$rota" == "0" ]; then disk_type="SATA/SAS SSD"
+    disk_type="Unknown"
+    if [[ "$name" == nvme* ]]; then disk_type="NVMe"
+    elif [[ "$name" == mmcblk* ]]; then disk_type="eMMC/SD"
+    elif [ "$rota" == "0" ]; then disk_type="SSD"
     elif [ "$rota" == "1" ]; then disk_type="HDD"
     fi
-    echo "✅ 디스크: /dev/$name | 종류: $disk_type | 용량: $size | 모델: $model"
+    echo "Device: /dev/$name, Type: $disk_type, Size: $size, Model: $model"
 done
+echo ""
 
-echo -e "\n[2] 디스크별 건강 상태 및 수명"
-echo "--------------------------------------------------"
+# 4. Health & SMART Status
+echo "[Health_Status]"
 lsblk -d -e 1,7,11 -o NAME | awk 'NR>1 {print}' | while read -r name; do
     dev_path="/dev/$name"
-    echo -e "\n▶ 대상: $dev_path"
+    echo "Device: $dev_path"
     
     if [[ "$name" == nvme* ]]; then
         if command -v nvme &> /dev/null; then
-            echo "  [NVMe 상태]"
-            nvme smart-log "$dev_path" | awk -F ':' '/critical_warning|temperature|percentage_used|power_on_hours|media_errors/ { printf "  - %-20s : %s\n", $1, $2 }'
+            nvme smart-log "$dev_path" | awk -F ':' '/critical_warning|temperature|percentage_used|power_on_hours|media_errors/ { gsub(/^[ \t]+|[ \t]+$/, "", $1); gsub(/^[ \t]+|[ \t]+$/, "", $2); print $1 ": " $2 }'
         else
-            echo "  - nvme-cli 미설치로 정보 생략"
+            echo "Error: nvme-cli missing"
         fi
     elif [[ "$name" == mmcblk* ]]; then
         if command -v mmc &> /dev/null; then
-            echo "  [eMMC / SD카드 상태]"
             mmc_info=$(mmc extcsd read "$dev_path" 2>/dev/null)
-            life_a=$(echo "$mmc_info" | grep -i "Life Time Estimation A" | awk -F: '{print $2}' | xargs)
-            life_b=$(echo "$mmc_info" | grep -i "Life Time Estimation B" | awk -F: '{print $2}' | xargs)
-            eol_info=$(echo "$mmc_info" | grep -i "Pre EOL information" | awk -F: '{print $2}' | xargs)
+            life_a=$(echo "$mmc_info" | grep -i "Life Time Estimation A" | awk -F: '{gsub(/^[ \t]+|[ \t]+$/, "", $2); print $2}')
+            life_b=$(echo "$mmc_info" | grep -i "Life Time Estimation B" | awk -F: '{gsub(/^[ \t]+|[ \t]+$/, "", $2); print $2}')
+            eol_info=$(echo "$mmc_info" | grep -i "Pre EOL information" | awk -F: '{gsub(/^[ \t]+|[ \t]+$/, "", $2); print $2}')
             
-            if [ -n "$life_a" ]; then echo "  - 수명 예측 A (SLC) : $life_a (0x01에 가까울수록 새것)"; fi
-            if [ -n "$life_b" ]; then echo "  - 수명 예측 B (MLC) : $life_b (0x01에 가까울수록 새것)"; fi
-            if [ -n "$eol_info" ]; then echo "  - EOL(수명 종료) 징후 : $eol_info (0x01=정상)"; fi
-            if [ -z "$life_a" ] && [ -z "$eol_info" ]; then echo "  - 상세 수명 정보를 제공하지 않는 일반 SD카드입니다."; fi
+            if [ -n "$life_a" ]; then echo "Wear_Estimation_A: $life_a"; fi
+            if [ -n "$life_b" ]; then echo "Wear_Estimation_B: $life_b"; fi
+            if [ -n "$eol_info" ]; then echo "Pre_EOL_Warning: $eol_info"; fi
+            if [ -z "$life_a" ] && [ -z "$eol_info" ]; then echo "Status: No detailed life info"; fi
         else
-            echo "  - mmc-utils 미설치로 정보 생략"
+            echo "Error: mmc-utils missing"
         fi
     else
+        # 일반 SATA/HDD (규격화된 Key 추출)
         if command -v smartctl &> /dev/null; then
-            echo "  [SATA/HDD 상태]"
             smart_out=$(smartctl -A "$dev_path" 2>/dev/null)
             
-            # 개선된 추출 방식: Crucial, Samsung 등 다양한 이름 대응 및 제일 마지막 값($NF) 무조건 추출
-            wear_info=$(echo "$smart_out" | awk 'tolower($0) ~ /media_wearout_indicator|percentage_used|percent_lifetime_remain/ {print "  - 수명 지표 (" $2 ") : " $NF; exit}')
-            bad_info=$(echo "$smart_out" | awk 'tolower($0) ~ /reallocated_sector_ct/ {print "  - 배드섹터 (" $2 ") : " $NF; exit}')
-            power_info=$(echo "$smart_out" | awk 'tolower($0) ~ /power_on_hours/ {print "  - 총 사용 시간 (" $2 ") : " $NF " 시간"; exit}')
+            # 각각의 항목을 정확히 grep으로 낚아채어 맨 마지막 열($NF)의 숫자만 추출
+            wear_raw=$(echo "$smart_out" | grep -i -E "media_wearout_indicator|percentage_used|percent_lifetime_remain" | head -n 1 | awk '{print $NF}')
+            bad_raw=$(echo "$smart_out" | grep -i "reallocated_sector_ct" | head -n 1 | awk '{print $NF}')
+            power_raw=$(echo "$smart_out" | grep -i "power_on_hours" | head -n 1 | awk '{print $NF}')
             
-            if [ -n "$wear_info" ]; then echo "$wear_info"; fi
-            if [ -n "$bad_info" ]; then echo "$bad_info"; fi
-            if [ -n "$power_info" ]; then echo "$power_info"; fi
+            # AI가 읽기 쉽도록 통일된 이름(Key)으로 출력
+            if [ -n "$wear_raw" ]; then echo "Wear_Indicator: $wear_raw"; fi
+            if [ -n "$bad_raw" ]; then echo "Bad_Sectors: $bad_raw"; fi
+            if [ -n "$power_raw" ]; then echo "Power_On_Hours: $power_raw"; fi
             
-            if [ -z "$wear_info" ] && [ -z "$bad_info" ] && [ -z "$power_info" ]; then
-               echo "  - S.M.A.R.T 정보를 불러올 수 없는 디스크입니다."
+            if [ -z "$wear_raw" ] && [ -z "$bad_raw" ] && [ -z "$power_raw" ]; then
+               echo "Status: SMART not supported"
             fi
         else
-            echo "  - smartmontools 미설치로 정보 생략"
+            echo "Error: smartmontools missing"
         fi
     fi
 done
+echo ""
 
-echo -e "\n[3] 로컬 파티션 마운트 상태 및 여유 용량"
-echo "--------------------------------------------------"
-df -h -T -x tmpfs -x devtmpfs -x squashfs -x nfs -x nfs4 -x cifs -x smb3 -x overlay -x efivarfs
-echo "=================================================="
+# 5. Mount Status
+echo "[Mount_Status]"
+df -h -T -x tmpfs -x devtmpfs -x squashfs -x nfs -x nfs4 -x cifs -x smb3 -x overlay -x efivarfs | awk 'NR>1 {print "Filesystem: "$1", Type: "$2", Size: "$3", Used: "$4", Avail: "$5", Use%: "$6", Mountpoint: "$7}'
