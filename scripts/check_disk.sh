@@ -11,7 +11,7 @@ echo "Host: $(hostname)"
 echo "IP: $(hostname -I | awk '{print $1}')"
 echo ""
 
-# 3. Disk List
+# 3. Disk List (총 용량 포함)
 echo "[Disk_List]"
 lsblk -d -e 1,7,11 -o NAME,SIZE,TYPE,ROTA,MODEL | awk 'NR>1 {print}' | while read -r name size type rota model; do
     disk_type="Unknown"
@@ -20,11 +20,11 @@ lsblk -d -e 1,7,11 -o NAME,SIZE,TYPE,ROTA,MODEL | awk 'NR>1 {print}' | while rea
     elif [ "$rota" == "0" ]; then disk_type="SSD"
     elif [ "$rota" == "1" ]; then disk_type="HDD"
     fi
-    echo "Device: /dev/$name, Type: $disk_type, Size: $size, Model: $model"
+    echo "Device: /dev/$name, Type: $disk_type, Total_Capacity: $size, Model: $model"
 done
 echo ""
 
-# 4. Health & SMART Status
+# 4. Health & SMART Status (ID 번호 기반 추출 로직으로 완전 교체)
 echo "[Health_Status]"
 lsblk -d -e 1,7,11 -o NAME | awk 'NR>1 {print}' | while read -r name; do
     dev_path="/dev/$name"
@@ -41,31 +41,35 @@ lsblk -d -e 1,7,11 -o NAME | awk 'NR>1 {print}' | while read -r name; do
             mmc_info=$(mmc extcsd read "$dev_path" 2>/dev/null)
             life_a=$(echo "$mmc_info" | grep -i "Life Time Estimation A" | awk -F: '{gsub(/^[ \t]+|[ \t]+$/, "", $2); print $2}')
             life_b=$(echo "$mmc_info" | grep -i "Life Time Estimation B" | awk -F: '{gsub(/^[ \t]+|[ \t]+$/, "", $2); print $2}')
-            eol_info=$(echo "$mmc_info" | grep -i "Pre EOL information" | awk -F: '{gsub(/^[ \t]+|[ \t]+$/, "", $2); print $2}')
-            
             if [ -n "$life_a" ]; then echo "Wear_Estimation_A: $life_a"; fi
             if [ -n "$life_b" ]; then echo "Wear_Estimation_B: $life_b"; fi
-            if [ -n "$eol_info" ]; then echo "Pre_EOL_Warning: $eol_info"; fi
-            if [ -z "$life_a" ] && [ -z "$eol_info" ]; then echo "Status: No detailed life info"; fi
+            if [ -z "$life_a" ]; then echo "Status: No detailed life info"; fi
         else
             echo "Error: mmc-utils missing"
         fi
     else
-        # 일반 SATA/HDD (규격화된 Key 추출)
+        # 일반 SATA/HDD (SMART ID 번호로 정확하게 타겟팅)
         if command -v smartctl &> /dev/null; then
             smart_out=$(smartctl -A "$dev_path" 2>/dev/null)
             
-            # 각각의 항목을 정확히 grep으로 낚아채어 맨 마지막 열($NF)의 숫자만 추출
-            wear_raw=$(echo "$smart_out" | grep -i -E "media_wearout_indicator|percentage_used|percent_lifetime_remain" | head -n 1 | awk '{print $NF}')
-            bad_raw=$(echo "$smart_out" | grep -i "reallocated_sector_ct" | head -n 1 | awk '{print $NF}')
-            power_raw=$(echo "$smart_out" | grep -i "power_on_hours" | head -n 1 | awk '{print $NF}')
+            # 남은 수명: ID 169, 177, 202, 231, 233의 'VALUE' 열($4). (+0으로 098을 98로 숫자 변환)
+            life_val=$(echo "$smart_out" | awk '$1=="202" || $1=="231" || $1=="233" || $1=="177" || $1=="169" {print $4+0; exit}')
             
-            # AI가 읽기 쉽도록 통일된 이름(Key)으로 출력
-            if [ -n "$wear_raw" ]; then echo "Wear_Indicator: $wear_raw"; fi
-            if [ -n "$bad_raw" ]; then echo "Bad_Sectors: $bad_raw"; fi
-            if [ -n "$power_raw" ]; then echo "Power_On_Hours: $power_raw"; fi
+            # 불량 섹터: ID 5 의 'RAW_VALUE' 열($NF)
+            bad_val=$(echo "$smart_out" | awk '$1=="5" {print $NF; exit}')
             
-            if [ -z "$wear_raw" ] && [ -z "$bad_raw" ] && [ -z "$power_raw" ]; then
+            # SATA 통신 에러: ID 199 의 'RAW_VALUE' 열($NF) - 사진에서 발견된 증상
+            crc_val=$(echo "$smart_out" | awk '$1=="199" {print $NF; exit}')
+            
+            # 사용 시간: ID 9 의 'RAW_VALUE' 열($NF)
+            power_val=$(echo "$smart_out" | awk '$1=="9" {print $NF; exit}')
+            
+            if [ -n "$life_val" ]; then echo "Life_Remaining_Percent: $life_val"; fi
+            if [ -n "$bad_val" ]; then echo "Bad_Sectors: $bad_val"; fi
+            if [ -n "$crc_val" ]; then echo "CRC_Errors: $crc_val"; fi
+            if [ -n "$power_val" ]; then echo "Power_On_Hours: $power_val"; fi
+            
+            if [ -z "$life_val" ] && [ -z "$bad_val" ] && [ -z "$power_val" ]; then
                echo "Status: SMART not supported"
             fi
         else
@@ -75,6 +79,6 @@ lsblk -d -e 1,7,11 -o NAME | awk 'NR>1 {print}' | while read -r name; do
 done
 echo ""
 
-# 5. Mount Status
+# 5. Mount Status (총 용량, 사용량, 남은 용량 등 상세 지표 명시)
 echo "[Mount_Status]"
-df -h -T -x tmpfs -x devtmpfs -x squashfs -x nfs -x nfs4 -x cifs -x smb3 -x overlay -x efivarfs | awk 'NR>1 {print "Filesystem: "$1", Type: "$2", Size: "$3", Used: "$4", Avail: "$5", Use%: "$6", Mountpoint: "$7}'
+df -h -T -x tmpfs -x devtmpfs -x squashfs -x nfs -x nfs4 -x cifs -x smb3 -x overlay -x efivarfs | awk 'NR>1 {print "Partition: "$1", Type: "$2", Total_Capacity: "$3", Used_Capacity: "$4", Use%: "$6", Mountpoint: "$7}'
