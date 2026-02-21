@@ -1,0 +1,40 @@
+services:
+  db:
+    # Bitnami 환경변수를 사용하기 위해 호환되는 Bitnami 이미지로 지정합니다.
+    image: mongodb/mongodb-community-server:7.0-ubi8
+    container_name: rocketchat-db
+    hostname: rocketchat-db
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      MONGODB_REPLICA_SET_MODE: primary
+      MONGODB_REPLICA_SET_NAME: rs0
+      ALLOW_EMPTY_PASSWORD: 1
+      MONGODB_SYSTEM_LOG_VERBOSITY: 3
+    volumes:
+      - ./rocketchat/db:/bitnami/mongodb:rw
+    restart: always
+
+  rocketchat:
+    image: rocketchat/rocket.chat:latest
+    container_name: rocketchat
+    hostname: rocketchat
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      # SSL Handshake 오류 방지를 위한 tls=false 및 directConnection 옵션 적용
+      MONGO_URL: mongodb://db:27017/rocketchat?replicaSet=rs0&tls=false&directConnection=true
+      MONGO_OPLOG_URL: mongodb://db:27017/local?replicaSet=rs0&tls=false&directConnection=true
+      NODE_TLS_REJECT_UNAUTHORIZED: "0" # 전역 TLS 검증 해제
+      ROOT_URL: https://rocketchat.itapi.org # 실제 운영할 도메인으로 변경
+      URL: https://rocketchat.itapi.org
+      PORT: 3000
+      DEPLOY_METHOD: docker
+    volumes:
+      - ./rocketchat/data:/app/uploads:rw
+    ports:
+      - 3000:3000
+    restart: always
+    depends_on:
+      db:
+        condition: service_started
