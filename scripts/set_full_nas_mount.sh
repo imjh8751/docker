@@ -54,11 +54,15 @@ done
 CHECK_SCRIPT="/home/orangepi/shell/mount-check.sh"
 mkdir -p /home/orangepi/shell
 
+# =========================================================================
+# 🚨 수정된 부분: 아래 생성되는 스크립트에 Docker 자동 복구 로직이 포함되었습니다.
+# =========================================================================
 cat <<'EOF' > "$CHECK_SCRIPT"
 #!/bin/bash
 set -e
 
 LOG_FILE="/var/log/mount-checker.log"
+RESTART_DOCKER=0
 
 declare -A MOUNT_TARGETS=(
   ["/DOCKER_NAS2"]="192.168.0.102:/export/DOCKER"
@@ -95,15 +99,39 @@ check_and_remount() {
   fi
 
   log "🔄 [$mount_point] 마운트 시도: $nfs_path"
-  mount -t nfs -o soft,timeo=3,retrans=2,bg,tcp,nolock "$nfs_path" "$mount_point" \
-    && log "✅ [$mount_point] 마운트 성공" \
-    || log "❌ [$mount_point] 마운트 실패"
+  if mount -t nfs -o soft,timeo=3,retrans=2,bg,tcp,nolock "$nfs_path" "$mount_point"; then
+    log "✅ [$mount_point] 마운트 성공"
+    RESTART_DOCKER=1
+  else
+    log "❌ [$mount_point] 마운트 실패"
+  fi
 }
 
 for mp in "${!MOUNT_TARGETS[@]}"; do
   check_and_remount "$mp" "${MOUNT_TARGETS[$mp]}"
 done
+
+# ==========================================
+# 🚨 Docker 자동 복구 (부팅 데드락 방지)
+# ==========================================
+if [[ $RESTART_DOCKER -eq 1 ]]; then
+  # 부팅 시점에는 Docker가 아직 켜지기 전이므로 재시작할 필요가 없습니다.
+  if systemctl is-active --quiet docker; then
+    log "🔄 마운트가 갱신되었습니다. 컨테이너 볼륨 정상화를 위해 Docker를 백그라운드에서 재시작합니다."
+    systemctl restart --no-block docker && log "✅ Docker 재시작 명령 전송 완료"
+  else
+    log "✅ 부팅 마운트 완료 (Docker는 시스템 시퀀스에 따라 곧 자동 시작됩니다.)"
+  fi
+
+elif ! systemctl is-active --quiet docker; then
+  # 서버 부팅(starting)이 완전히 끝난, 정상 운영 상태에서만 Watchdog이 개입하도록 방어
+  if [[ "$(systemctl is-system-running 2>/dev/null)" != "starting" ]]; then
+    log "⚠️ Docker 데몬 중지 감지. 자동 복구를 시도합니다."
+    systemctl start --no-block docker && log "✅ Docker 자동 복구 명령 전송 완료"
+  fi
+fi
 EOF
+# =========================================================================
 
 chmod +x "$CHECK_SCRIPT"
 
@@ -148,7 +176,7 @@ systemctl enable mount-docker.service
 systemctl enable --now mount-docker.timer
 
 echo -e "\n✅ 모든 설정 완료!"
-echo "🚀 부팅 시 Docker보다 먼저 마운트가 수행되며, 이후 5분마다 점검합니다."
+echo "🚀 부팅 시 Docker보다 먼저 마운트가 수행되며, 이후 5분마다 점검 및 Docker 상태를 감시합니다."
 echo "📁 로그: tail -f /var/log/mount-checker.log"
 echo "📡 서비스 상태: systemctl status mount-docker.service"
 echo "⏱️ 타이머 상태: systemctl status mount-docker.timer"
