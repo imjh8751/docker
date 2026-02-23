@@ -55,7 +55,7 @@ CHECK_SCRIPT="/home/orangepi/shell/mount-check.sh"
 mkdir -p /home/orangepi/shell
 
 # =========================================================================
-# 🚨 수정된 부분: 아래 생성되는 스크립트에 Docker 자동 복구 로직이 포함되었습니다.
+# 🚨 수정된 부분: ping 실패 시 set -e로 인한 강제 종료 방지 (구조는 원본 유지)
 # =========================================================================
 cat <<'EOF' > "$CHECK_SCRIPT"
 #!/bin/bash
@@ -92,8 +92,8 @@ check_and_remount() {
     return
   fi
 
-  ping -c 1 -W 2 "$server_ip" > /dev/null 2>&1
-  if [[ $? -ne 0 ]]; then
+  # 🔥 변경점: ping이 실패해도 스크립트가 죽지 않고 계속 진행되도록 if문 조건식 안으로 이동
+  if ! ping -c 1 -W 2 "$server_ip" > /dev/null 2>&1; then
     log "❌ [$mount_point] 서버($server_ip) 응답 없음"
     return
   fi
