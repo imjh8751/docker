@@ -11,7 +11,7 @@ BRIDGE="vmbr0" # 기본 브릿지 네트워크
 # (이미지의 IP 순서에 맞춰 2070번대 ID를 예시로 부여했습니다.)
 NODES=(
     "2070:bootstrap.ocp4.okd.io:8:16384:100"
-    "2071:master01.ocp4.okd.io:8:16384:100"
+    "2071:master01.ocp4.okd.io:8:24576:100"
     "2072:worker01.ocp4.okd.io:8:16384:100"
     "2073:worker02.ocp4.okd.io:8:16384:100"
 )
@@ -30,7 +30,7 @@ for node in "${NODES[@]}"; do
     qm set $VMID --scsihw virtio-scsi-single
 
     # 3. ZFS 스토리지에 100GB 디스크 할당
-    qm set $VMID --scsi0 $STORAGE:$DISK,discard=on,iothread=1
+    qm set $VMID --scsi0 $STORAGE:$DISK,discard=on,iothread=1,cache=writeback
 
     # 4. CoreOS 4.20 ISO CD-ROM 마운트
     qm set $VMID --ide2 $ISO_IMAGE,media=cdrom
