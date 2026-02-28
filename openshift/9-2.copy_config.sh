@@ -1,5 +1,7 @@
 #!/bin/bash
 
+yum install -y jq
+
 # ignition config 파일 복사 및 권한 부여
 cd /root/installation_directory
 cp -arp *.ign /usr/share/nginx/html/files/
@@ -7,9 +9,11 @@ chmod 644 /usr/share/nginx/html/files/*
 
 # coreos 파일 다운로드
 cd /usr/share/nginx/html/files
-openshift-install coreos print-stream-json | grep '.iso[^.]' | grep x86_64
-COREOS=`openshift-install coreos print-stream-json | grep '.iso[^.]' | grep x86_64 | awk -F '"' '/location/ {print $4}'`
-echo $COREOS
+
+# jq를 사용하여 정확히 x86_64 아키텍처의 ISO 다운로드 URL을 추출합니다.
+COREOS=$(openshift-install coreos print-stream-json | jq -r '.architectures.x86_64.artifacts.metal.formats.iso.disk.location')
+
+echo "Downloading CoreOS ISO from: $COREOS"
 wget $COREOS
 
 # SNO 설치 시 주석 해제
