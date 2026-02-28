@@ -1,42 +1,51 @@
 #!/bin/bash
 
-# HTPasswd 파일 생성
+# 1. HTPasswd 파일 및 Secret 생성 (기존과 동일)
 htpasswd_file="ocp_users.htpasswd"
-
-# 유저 신규 생성
 htpasswd -c -B -b $htpasswd_file itapi itapi
+oc create secret generic htpass-secret --from-file=htpasswd=$htpasswd_file -n openshift-config --dry-run=client -o yaml | oc apply -f -
 
-# 유저 추가
-#htpasswd -B -b $htpasswd_file user2 password2
+# 2. LDAP Bind Secret 생성 (기존과 동일)
+oc create secret generic ad-ldap-secret --from-literal=bindPassword='Admin2580!' -n openshift-config --dry-run=client -o yaml | oc apply -f -
 
-# OpenShift 클러스터에 Secret 생성
-oc create secret generic htpass-secret --from-file=htpasswd=$htpasswd_file -n openshift-config
-
-# HTPasswd IDP(Resource) 생성
-cat <<EOF > htpasswd-idp.yaml
+# 3. [핵심] 통합 OAuth 설정 적용 (HTPasswd + LDAP를 하나의 리스트로 구성)
+cat <<EOF | oc apply -f -
 apiVersion: config.openshift.io/v1
 kind: OAuth
 metadata:
   name: cluster
 spec:
   identityProviders:
-  - name: htpasswd_provider
+  - name: Local_HTPasswd_Provider
     mappingMethod: claim
     type: HTPasswd
     htpasswd:
       fileData:
         name: htpass-secret
+  - name: AD_LDAP_Provider
+    mappingMethod: claim
+    type: LDAP
+    ldap:
+      attributes:
+        id: ["sAMAccountName"] # dn 대신 sAMAccountName으로 변경하여 고유 ID 생성
+        email: ["mail"]
+        name: ["displayName"]
+        preferredUsername: ["sAMAccountName"]
+      bindDN: "CN=ldapadm,OU=adm,DC=itapi,DC=org"
+      bindPassword:
+        name: ad-ldap-secret
+      insecure: true
+      url: "ldap://192.168.0.200:389/DC=itapi,DC=org?sAMAccountName?sub?"
 EOF
 
-# HTPasswd IDP(Resource) 적용
-oc apply -f htpasswd-idp.yaml
+echo "HTPasswd와 LDAP 통합 OAuth 설정이 적용되었습니다."
 
-echo "HTPasswd를 이용한 OAuth가 적용되었습니다!"
+# 권한 부여 (사용자가 한 번이라도 로그인한 후에 수행하거나, 미리 생성)
+# 4. OpenShift 내부에 그룹 생성
+oc adm groups new ocp-admins
 
-# 사용자 이름
-USER="itapi"
+# 5. 그룹에 cluster-admin 권한 부여
+oc adm policy add-cluster-role-to-group cluster-admin ocp-admins
 
-# 사용자에게 cluster-admin 권한 부여
-oc adm policy add-cluster-role-to-user cluster-admin $USER
-
-echo "Cluster-admin 권한이 $USER 사용자에게 부여되었습니다."
+# 6. 해당 그룹에 AD 유저 ID 추가 (로그인 전 미리 가능)
+oc adm groups add-users ocp-admins itapi
