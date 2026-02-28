@@ -4,7 +4,7 @@
 # Proxmox 설정 변수 (환경에 맞게 수정)
 # ==========================================
 STORAGE="pv2-vol"
-ISO_IMAGE="${STORAGE}:iso/rhcos-420-9.6.20260112-0-live-iso.x86_64.iso"
+ISO_IMAGE="${STORAGE}:iso/rhcos-420-9.6.20260112-0-live-iso.x86_64.sno.iso"
 BRIDGE="vmbr0" # 기본 브릿지 네트워크
 
 # 노드 정보: "VMID:호스트명:CPU:RAM(MB):디스크(GB)"

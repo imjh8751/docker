@@ -25,8 +25,12 @@ PREFIX=$(echo "$STREAM_VER" | sed 's/\.//')
 # 원본 파일명 (예: rhcos-9.6.20260112-0-live-iso.x86_64.iso)
 ORIGINAL_FILENAME=$(basename "$COREOS_URL")
 
-# 'rhcos-420' + '-' + '9.6.2026...' 형태로 결합합니다.
-NEW_FILENAME="${PREFIX}-${ORIGINAL_FILENAME#rhcos-}"
+# 3. 확장자(.iso)를 제거한 기본 이름 추출
+BASE_NAME="${ORIGINAL_FILENAME%.iso}"
+
+# 4. [핵심] 새로운 프리픽스 + 원본 내용(rhcos- 제외) + .sno.iso 결합
+# 결과 예시: rhcos-420-416.94.202410211619-0-live.x86_64.sno.iso
+NEW_FILENAME="${PREFIX}-${BASE_NAME#rhcos-}.sno.iso"
 
 echo "▶️ 다운로드 URL: $COREOS_URL"
 echo "▶️ 저장될 파일명: $NEW_FILENAME"
@@ -35,8 +39,8 @@ echo "▶️ 저장될 파일명: $NEW_FILENAME"
 wget -O "$NEW_FILENAME" "$COREOS_URL"
 
 # SNO 설치 시 주석 해제
-alias coreos-installer='podman run --privileged --pull always --rm -v /dev:/dev -v /run/udev:/run/udev -v $PWD:/data -w /data quay.io/coreos/coreos-installer:release' 
-coreos-installer iso ignition embed -fi /root/installation_directory/bootstrap-in-place-for-live-iso.ign rhcos*.iso
+COREOS_INSTALLER="podman run --privileged --pull always --rm -v /dev:/dev -v /run/udev:/run/udev -v $PWD:/data -w /data quay.io/coreos/coreos-installer:release"
+$COREOS_INSTALLER iso ignition embed -fi /root/installation_directory/bootstrap-in-place-for-live-iso.ign "$NEW_FILENAME"
 
 #wget https://rhcos.mirror.openshift.com/art/storage/prod/streams/4.17-9.4/builds/417.94.202409120353-0/x86_64/rhcos-417.94.202409120353-0-live.x86_64.iso
 rsync -avhP rhcos*.iso 192.168.0.101:/pv2-zfs/pv2-vol/template/iso 
