@@ -19,34 +19,44 @@ create_script() {
     local role=$3
 
     # Nginx 경로에 쉘 스크립트 파일 생성
-    cat <<EOF > $NGINX_DIR/${node_name}.sh
+    # 'EOF'에 따옴표를 붙이면 내부의 $ 변수들이 치환되지 않고 그대로 파일에 기록됩니다.
+    cat <<'EOF' > $NGINX_DIR/${node_name}.sh
 #!/bin/bash
+# 설치 시점에 전달받은 변수들을 하드코딩 형태로 주입하기 위해 sed 등으로 처리하거나 
+# 아래처럼 직접 변수를 다시 정의해주는 것이 깔끔합니다.
+EOF
+
+    # VM 내부에서 사용할 변수들을 스크립트 상단에 주입
+    sed -i "2i NODE_NAME=\"$node_name\"\nNODE_IP=\"$node_ip\"\nROLE=\"$role\"\nBASTION_IP=\"$BASTION_IP\"\nPORT=\"$PORT\"\nGATEWAY=\"$GATEWAY\"\nDNS=\"$DNS\"" $NGINX_DIR/${node_name}.sh
+
+    # 실제 실행될 로직 추가
+    cat <<'EOF' >> $NGINX_DIR/${node_name}.sh
 echo "================================================="
-echo " 🚀 $node_name ($node_ip) 설치 자동화를 시작합니다."
+echo " 🚀 [$NODE_NAME] CoreOS 설치 자동화를 시작합니다."
 echo "================================================="
 
-# 1. NetworkManager 영구 프로필 생성 (Proxmox 기본 인터페이스인 ens18 기준)
-# 이 설정이 OS 설치 후 --copy-network 옵션을 통해 그대로 이관됩니다.
-echo "▶️ 정적 IP 설정 중 ($node_ip)..."
-sudo nmcli con add type ethernet con-name okd-net ifname ens18 ipv4.addresses $node_ip/24 ipv4.gateway $GATEWAY ipv4.dns $DNS ipv4.method manual 2>/dev/null
+# 랜카드 이름 자동 감지 (ens18, enp6s18 등 환경에 맞게 자동 선택)
+IFNAME=$(nmcli -t -f DEVICE,TYPE device | grep ethernet | cut -d: -f1 | head -n 1)
+echo "▶️ 감지된 네트워크 인터페이스: ${IFNAME}"
+
+echo "▶️ 1. 네트워크 IP 설정 적용 중 ($NODE_IP)..."
+# 기존 연결 삭제 후 정적 IP 프로필 생성
+sudo nmcli con delete "Wired connection 1" 2>/dev/null
+sudo nmcli con add type ethernet con-name okd-net ifname ${IFNAME} ipv4.addresses $NODE_IP/24 ipv4.gateway $GATEWAY ipv4.dns $DNS ipv4.method manual
 sudo nmcli con up okd-net
 sleep 3
 
-# 2. Ignition Hash 값 가져오기
-echo "▶️ Ignition Hash 확인 중..."
-HASH=\$(curl -s http://$BASTION_IP:$PORT/${role}.hash)
+echo "▶️ 2. Ignition Hash 값 가져오는 중..."
+hash=$(curl -s http://$BASTION_IP:$PORT/${ROLE}.hash)
 
-# 3. CoreOS 설치 (네트워크 설정 포함)
-echo "▶️ CoreOS 설치 진행 중 (수 분 정도 소요됩니다)..."
-sudo coreos-installer install --copy-network --ignition-url http://$BASTION_IP:$PORT/${role}.ign /dev/sda --ignition-hash sha512-\${HASH}
+echo "▶️ 3. CoreOS 설치 진행 중 (수 분 소요)..."
+sudo coreos-installer install --copy-network --ignition-url http://$BASTION_IP:$PORT/${ROLE}.ign /dev/sda --ignition-hash sha512-${hash}
 
-# 4. 재부팅
-echo "✅ 설치가 완료되었습니다! 5초 후 자동 재부팅됩니다."
+echo "✅ 4. 설치 완료! 5초 후 재부팅합니다."
 sleep 5
 sudo reboot
 EOF
 
-    # 생성된 스크립트에 실행 권한 부여
     chmod +x $NGINX_DIR/${node_name}.sh
     echo "✅ 생성 완료: http://$BASTION_IP:$PORT/${node_name}.sh"
 }
