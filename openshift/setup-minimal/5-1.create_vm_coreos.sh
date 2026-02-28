@@ -10,10 +10,10 @@ BRIDGE="vmbr0" # 기본 브릿지 네트워크
 # 노드 정보: "VMID:호스트명:CPU:RAM(MB):디스크(GB)"
 # (이미지의 IP 순서에 맞춰 2070번대 ID를 예시로 부여했습니다.)
 NODES=(
-    "2070:bootstrap.ocp4.okd.io:4:16384:100"
-    "2071:master01.ocp4.okd.io:4:16384:100"
-    "2072:worker01.ocp4.okd.io:4:16384:100"
-    "2073:worker02.ocp4.okd.io:4:16384:100"
+    "2070:bootstrap.ocp4.okd.io:8:16384:100"
+    "2071:master01.ocp4.okd.io:8:16384:100"
+    "2072:worker01.ocp4.okd.io:8:16384:100"
+    "2073:worker02.ocp4.okd.io:8:16384:100"
 )
 
 echo "▶️ Proxmox OCP4 VM 자동 생성을 시작합니다..."
