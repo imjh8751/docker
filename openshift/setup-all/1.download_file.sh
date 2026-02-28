@@ -8,8 +8,8 @@ yum install bind bind-utils -y
 mkdir -p /root/setup_files
 cd /root/setup_files
 
-# 2025.01 기준 최신버전은 4.17
-STABLE_VER=4.12
+# 2026.02 기준 최신버전은 4.21
+STABLE_VER=4.20
 
 # 웹 페이지에서 HTML 내용을 가져옵니다
 content=$(curl -s https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable-$STABLE_VER/)
