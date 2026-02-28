@@ -22,7 +22,8 @@ if [ -f /etc/debian_version ]; then
   update-locale LANG=ko_KR.UTF-8
 elif [ -f /etc/redhat-release ]; then
   echo "🟡 RHEL/CentOS 계열 감지됨"
-  yum install -y glibc-common vim-enhanced
+  # glibc-langpack-ko 패키지를 추가로 설치합니다.
+  yum install -y glibc-common glibc-langpack-ko vim-enhanced
   localedef -c -f UTF-8 -i ko_KR ko_KR.UTF-8
 else
   echo "🔴 지원되지 않는 OS입니다. 수동 설정 필요"
