@@ -11,10 +11,10 @@ cd /root/setup_files
 # 2025.01 기준 최신버전은 4.17
 STABLE_VER=4.12
 
-# 웹 페이지에서 HTML 내용을 가져옵니다
+# 웹 페이지에서 HTML 내용을 가져옵니다
 content=$(curl -s https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable-$STABLE_VER/)
 
-# 필요한 버전 정보를 추출합니다
+# 필요한 버전 정보를 추출합니다
 OCP_VER=`echo "$content" | grep -oP '(?<=openshift-client-linux-)[^"]*(?=.tar.gz)' | awk -F '-' '{print $1}' | head -n 1`
 
 # 파일 다운로드 : https://mirror.openshift.com/pub/openshift-v4/clients/ocp/
