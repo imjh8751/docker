@@ -53,7 +53,7 @@ echo "▶️ 3. CoreOS 설치 진행 중 (수 분 소요)..."
 sudo coreos-installer install --copy-network --ignition-url http://$BASTION_IP:$PORT/${ROLE}.ign /dev/sda --ignition-hash sha512-${hash}
 
 echo "✅ 4. 설치 완료! 5초 후 재부팅합니다."
-sleep 5
+sleep 60
 sudo reboot
 EOF
 
