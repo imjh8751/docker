@@ -34,8 +34,9 @@ echo "▶️ 저장될 파일명: $NEW_FILENAME"
 wget -O "$NEW_FILENAME" "$COREOS_URL"
 
 # SNO 설치 시 주석 해제
-#alias coreos-installer='podman run --privileged --pull always --rm -v /dev:/dev -v /run/udev:/run/udev -v $PWD:/data -w /data quay.io/coreos/coreos-installer:release' 
-#coreos-installer iso ignition embed -fi /root/installation_directory/bootstrap-in-place-for-live-iso.ign rhcos*.iso
+#yum install -y coreos-installer
+#coreos-installer --version
+#coreos-installer iso ignition embed -fi ./sno.ign "$NEW_FILENAME"
 
 #wget https://rhcos.mirror.openshift.com/art/storage/prod/streams/4.17-9.4/builds/417.94.202409120353-0/x86_64/rhcos-417.94.202409120353-0-live.x86_64.iso
 rsync -avhP rhcos*.iso 192.168.0.101:/pv2-zfs/pv2-vol/template/iso 
