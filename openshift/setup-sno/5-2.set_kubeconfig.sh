@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "export KUBECONFIG=/root/installation_directory/auth/kubeconfig" >> ~/.bash_profile
-export KUBECONFIG=/root/installation_directory/auth/kubeconfig
+echo "export KUBECONFIG=/root/installation_directory_sno/auth/kubeconfig" >> ~/.bash_profile
+export KUBECONFIG=/root/installation_directory_sno/auth/kubeconfig
 . /root/.bash_profile
 
 # bash completion code file 생성

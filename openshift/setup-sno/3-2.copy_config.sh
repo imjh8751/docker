@@ -14,7 +14,7 @@ DNS="192.168.0.200"           # DNS 서버 주소
 yum install -y jq coreos-installer
 
 # ignition config 파일 복사 및 권한 부여
-cd /root/installation_directory
+cd /root/installation_directory_sno
 cp -arp bootstrap-in-place-for-live-iso.ign /usr/share/nginx/html/files/sno.ign
 chmod 644 /usr/share/nginx/html/files/*
 
