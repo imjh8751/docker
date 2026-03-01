@@ -33,7 +33,7 @@ for node in "${NODES[@]}"; do
     qm set $VMID --ide2 $ISO_IMAGE,media=cdrom
 
     # 5. 부팅 순서 설정 (설치 전이므로 CD-ROM 우선 부팅)
-    qm set $VMID --boot order=ide2\;scsi0
+    qm set $VMID --boot order=scsi0\;ide2
 
     echo "✅ $NAME 생성 완료!"
 done
