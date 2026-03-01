@@ -16,7 +16,7 @@ cat /dev/null > /root/installation_directory/install-config.yaml
 
 cat <<EOF >> $CONFIG_FILE
 apiversion: v1
-baseDomain: okd.io
+baseDomain: sno.io
 compute:
 - hyperthreading: Enabled
   name: worker

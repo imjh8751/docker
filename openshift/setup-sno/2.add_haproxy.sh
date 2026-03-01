@@ -49,24 +49,24 @@ frontend stats
 listen api-server-6443 
   bind *:6443
   mode tcp
-  server master01 master01.ocp4.okd.io:6443 check inter 1s
+  server master01 master01.ocp4.sno.io:6443 check inter 1s
 
 listen machine-config-server-22623 
   bind *:22623
   mode tcp
-  server master01 master01.ocp4.okd.io:22623 check inter 1s
+  server master01 master01.ocp4.sno.io:22623 check inter 1s
 
 listen ingress-router-443 
   bind *:443
   mode tcp
   balance source
-  server master01 master01.ocp4.okd.io:443 check inter 1s
+  server master01 master01.ocp4.sno.io:443 check inter 1s
 
 listen ingress-router-80 
   bind *:80
   mode tcp
   balance source
-  server master01 master01.ocp4.okd.io:80 check inter 1s
+  server master01 master01.ocp4.sno.io:80 check inter 1s
 EOF
 
 echo "✅ HAProxy 설정 파일 작성이 완료되었습니다."
