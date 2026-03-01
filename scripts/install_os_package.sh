@@ -580,20 +580,74 @@ main() {
         log_error "지원되지 않는 OS입니다."
         exit 1
     fi
-    
-    # 단계별 실행
-    system_update
-    install_basic_packages
-    install_monitoring_packages
-    install_advanced_monitoring
-    generate_ssh_key
-    enable_services
-    
-    log_info "모든 설치가 완료되었습니다!"
-    echo ""
-    show_installed_tools
-    
-    log_info "시스템을 재부팅하는 것을 권장합니다."
+
+    # 무한 루프를 통해 대화형 메뉴 제공
+    while true; do
+        echo -e "\n${BLUE}=======================================${NC}"
+        echo -e "${GREEN}      Proxmox LXC 템플릿 설치 메뉴      ${NC}"
+        echo -e "${BLUE}=======================================${NC}"
+        echo "1. 시스템 업데이트 및 업그레이드"
+        echo "2. 기본 패키지 설치 (curl, vim, git 등)"
+        echo "3. 시스템 모니터링 패키지 설치 (htop, iotop 등)"
+        echo "4. 고급 모니터링 도구 설치 (btop++, gotop 등)"
+        echo "5. SSH 키 생성"
+        echo "6. 시스템 서비스 활성화"
+        echo "7. 설치된 도구 목록 확인"
+        echo -e "${YELLOW}8. 모든 항목 순차적으로 전체 설치${NC}"
+        echo "0. 종료"
+        echo -e "${BLUE}=======================================${NC}"
+        
+        read -p "원하는 작업의 번호를 입력하세요 [0-8]: " choice
+        echo ""
+
+        case $choice in
+            1)
+                system_update
+                ;;
+            2)
+                install_basic_packages
+                ;;
+            3)
+                install_monitoring_packages
+                ;;
+            4)
+                install_advanced_monitoring
+                ;;
+            5)
+                generate_ssh_key
+                ;;
+            6)
+                enable_services
+                ;;
+            7)
+                show_installed_tools
+                ;;
+            8)
+                log_info "모든 항목을 순차적으로 설치합니다."
+                system_update
+                install_basic_packages
+                install_monitoring_packages
+                install_advanced_monitoring
+                generate_ssh_key
+                enable_services
+                log_info "전체 설치가 완료되었습니다!"
+                ;;
+            0)
+                log_info "설치 스크립트를 종료합니다."
+                log_info "설정 적용을 위해 시스템을 재부팅하는 것을 권장합니다."
+                break # 루프 종료
+                ;;
+            *)
+                log_error "잘못된 입력입니다. 0에서 8 사이의 숫자를 입력해 주세요."
+                ;;
+        esac
+        
+        # 메뉴가 바로 넘어가버리면 결과를 확인하기 어려우므로 일시 정지
+        if [[ "$choice" != "0" ]]; then
+            echo -e "\n엔터 키를 누르면 메인 메뉴로 돌아갑니다..."
+            read -r
+        fi
+    done
 }
 
 # 스크립트 실행
