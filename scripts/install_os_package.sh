@@ -82,27 +82,42 @@ system_update() {
 
 # 기본 패키지 설치
 install_basic_packages() {
-    log_header "기본 패키지 설치"
+    log_header "기본 및 시스템 관리 패키지 설치"
     
     case $OS in
         ubuntu|debian)
-            sudo apt install -y net-tools curl vim git samba openssh-server python3-pip nfs-common wget build-essential
+            sudo apt install -y \
+                net-tools curl vim git samba openssh-server python3-pip nfs-common wget build-essential \
+                tar rsync psmisc dnsutils netcat-openbsd
+            
+            # Podman과 Cloud-init은 선택적 설치 (필요시 아래 주석 해제)
+            # sudo apt install -y podman cloud-init
             ;;
         fedora)
-            sudo dnf install -y net-tools curl vim git samba openssh-server python3-pip nfs-utils wget gcc gcc-c++ make
+            sudo dnf install -y \
+                net-tools curl vim git samba openssh-server python3-pip nfs-utils wget gcc gcc-c++ make \
+                tar rsync psmisc bind-utils nc
+            
+            # sudo dnf install -y podman cloud-init
             ;;
         centos|rhel|rocky|almalinux)
-            sudo yum install -y net-tools curl vim git samba openssh-server python3-pip nfs-utils wget gcc gcc-c++ make
+            sudo yum install -y \
+                net-tools curl vim git samba openssh-server python3-pip nfs-utils wget gcc gcc-c++ make \
+                tar rsync psmisc bind-utils nc
+            
+            # sudo yum install -y podman cloud-init
             ;;
         arch|manjaro)
-            sudo pacman -S --noconfirm net-tools curl vim git samba openssh python-pip nfs-utils wget base-devel
+            sudo pacman -S --noconfirm \
+                net-tools curl vim git samba openssh python-pip nfs-utils wget base-devel \
+                tar rsync psmisc bind dnsutils gnu-netcat
             ;;
         macos)
             if ! command -v brew &> /dev/null; then
                 log_info "Homebrew 설치 중..."
                 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
             fi
-            brew install curl vim git wget python3
+            brew install curl vim git wget python3 rsync bind netcat
             ;;
     esac
     log_info "기본 패키지 설치 완료"
