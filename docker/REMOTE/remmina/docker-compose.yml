@@ -1,0 +1,27 @@
+services:
+  remmina:
+    image: lscr.io/linuxserver/remmina:latest
+    container_name: remmina
+    # [필수] KasmVNC 및 리눅스 앱 구동을 위한 보안 옵션
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Seoul
+      - SUBFOLDER=/ # 접속 경로 (기본 루트)
+      - TITLE=Remmina # 브라우저 탭 이름
+
+      # [계정 보안 설정 - 선택사항]
+      # 설정하지 않으면 자동 로그인됩니다.
+      - CUSTOM_USER=admin      # 웹 접속 ID
+      - PASSWORD=Admin2580!  # 웹 접속 PW
+    volumes:
+      # [데이터 보존] 접속 프로필 저장
+      - ./config:/config
+    ports:
+      - 3000:3000 # HTTP 접속 포트
+      - 3001:3001 # HTTPS 접속 포트
+    # [성능] GUI 앱 안정성을 위해 공유 메모리 1GB 할당
+    shm_size: "1gb"
+    restart: unless-stopped
