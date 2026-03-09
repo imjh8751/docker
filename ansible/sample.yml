@@ -1,7 +1,7 @@
 ---
 - name: Check OS Version to Target Server
   hosts: all
-  tasks:
+  tasks: 
   - name: Check OS Version
     register: result
     shell: pwd && uname -a
