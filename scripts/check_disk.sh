@@ -22,7 +22,7 @@ lsblk -d -e 1,7,11 -o NAME,SIZE,TYPE,ROTA,MODEL | awk 'NR>1 {print}' | while rea
     fi
     echo "Device: /dev/$name, Type: $disk_type, Total_Capacity: $size, Model: $model"
 done
-echo ""
+echo " "
 
 # 4. Health & SMART Status (ID 번호 기반 추출 로직으로 완전 교체)
 echo "[Health_Status]"
