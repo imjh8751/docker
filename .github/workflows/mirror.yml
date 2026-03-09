@@ -14,5 +14,5 @@ jobs:
 
       - name: Push to Home Server GitLab
         run: |
-          git remote add gitlab https://${{ secrets.GITLAB_USERNAME }}:${{ secrets.GITLAB_PASSWORD }}@gitlab.itapi.org/home-server/github-mirror.git
+          git remote add gitlab https://oauth2:${{ secrets.GITLAB_PASSWORD }}@gitlab.itapi.org/home-server/github-mirror.git
           git push gitlab --mirror
