@@ -14,5 +14,8 @@ jobs:
 
       - name: Push to Home Server GitLab
         run: |
+          # 1. 원격 저장소 추가 (토큰 방식 유지)
           git remote add gitlab https://oauth2:${{ secrets.GITLAB_PASSWORD }}@gitlab.itapi.org/home-server/github-mirror.git
-          git push gitlab --mirror
+          
+          # 2. Cloudflare를 통과하기 위한 비밀 헤더(x-cf-bypass)를 추가하여 강제 푸시
+          git -c http.extraHeader="x-cf-bypass: U2FsdGVkX19XDkGLmO89GG3T9c6lsF6vfGy0U7Q/8zYf6XQmMIcp24edEDdfjNcz" push gitlab --mirror
