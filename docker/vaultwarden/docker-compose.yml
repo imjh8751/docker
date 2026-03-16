@@ -9,4 +9,5 @@ services:
       - /APP/vaultwarden/data:/data
     environment:
       - TZ=Asia/Seoul
+      - WEBSOCKET_ENABLED=true  # 비밀번호 즉시 동기화를 위한 설정
       - ADMIN_TOKEN=Admin2580! #PW까먹었을때https://[domain]/admin
