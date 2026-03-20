@@ -1,0 +1,11 @@
+services:
+  quickchart:
+    image: ianw/quickchart:latest
+    container_name: quickchart
+    ports:
+      - 3400:3400
+    restart: always
+    environment:
+      # 차트의 기본 가로/세로 크기를 지정합니다. (요청 시 오버라이드 가능)
+      - CHART_WIDTH=600
+      - CHART_HEIGHT=400
