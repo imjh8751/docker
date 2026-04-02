@@ -6,7 +6,7 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-# 기본 버전 설정
+# 기본 버전 설정 (현재 4.20은 RC 베타 버전입니다)
 MS_VERSION="latest-4.20"
 
 function show_menu() {
@@ -18,7 +18,7 @@ function show_menu() {
     echo "=========================================================="
     echo " 1. 설치할 MicroShift 버전 변경 (기본: latest-4.20)"
     echo " 2. 시스템 업데이트 및 필수 패키지 설치"
-    echo " 3. MicroShift Repository 추가"
+    echo " 3. MicroShift 및 의존성 Repository 추가 (수정됨)"
     echo " 4. MicroShift 패키지 설치"
     echo " 5. 방화벽(Firewalld) 포트 개방 설정"
     echo " 6. OpenShift CLI (oc) 설치 (버전 동기화)"
@@ -34,7 +34,7 @@ while true; do
     case $choice in
         1)
             echo ""
-            read -p "설치할 버전을 입력하세요 (예: latest-4.20, latest-4.18 등): " input_version
+            read -p "설치할 버전을 입력하세요 (예: latest-4.18, latest-4.20 등): " input_version
             if [ -n "$input_version" ]; then
                 MS_VERSION=$input_version
                 echo "-> 버전이 [$MS_VERSION] (으)로 변경되었습니다."
@@ -51,13 +51,31 @@ while true; do
             ;;
         3)
             echo ""
-            echo "[작업 3] MicroShift Repository 추가 중..."
+            echo "[작업 3] MicroShift 및 의존성 Repository 추가 중..."
+            
+            # 입력된 버전에서 숫자만 추출 (예: latest-4.20 -> 4.20)
+            VER_NUM=$(echo "$MS_VERSION" | grep -oE '[0-9]+\.[0-9]+')
+            
+            # MicroShift OS 패키지 주소
             BASE_URL="https://mirror.openshift.com/pub/openshift-v4/x86_64/microshift/ocp/${MS_VERSION}/el9/os/"
-            echo "-> Repository 주소: $BASE_URL"
+            
+            # OpenShift 의존성(cri-o 등) 패키지 주소 (베타/RC 버전인 경우 beta 경로 사용)
+            DEP_URL="https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rpms/${VER_NUM}-el9-beta/"
+            
+            echo "-> MicroShift 주소: $BASE_URL"
+            echo "-> Dependencies 주소: $DEP_URL"
+
             cat <<EOF > /etc/yum.repos.d/microshift.repo
 [microshift]
 name=MicroShift
 baseurl=${BASE_URL}
+enabled=1
+gpgcheck=0
+skip_if_unavailable=0
+
+[openshift-dependencies]
+name=OpenShift Dependencies
+baseurl=${DEP_URL}
 enabled=1
 gpgcheck=0
 skip_if_unavailable=0
@@ -84,7 +102,6 @@ EOF
         6)
             echo ""
             echo "[작업 6] OpenShift CLI (oc) 다운로드 및 설치 중..."
-            # 버전에 맞는 클라이언트 URL 동적 생성 (캡처 이미지 기반 EL9용 파일)
             CLIENT_URL="https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/${MS_VERSION}/openshift-client-linux-amd64-rhel9.tar.gz"
             echo "-> 다운로드 경로: $CLIENT_URL"
             
@@ -109,14 +126,12 @@ EOF
             echo "-> MicroShift 데몬 시작됨. Kubeconfig 파일이 생성될 때까지 대기합니다..."
             KUBECONFIG_PATH="/var/lib/microshift/resources/kubeadmin/kubeconfig"
             
-            # 파일이 생성될 때까지 루프 대기
             while [ ! -f "$KUBECONFIG_PATH" ]; do
                 sleep 5
                 echo -n "."
             done
             echo " 생성 완료!"
 
-            # 권한 설정을 위한 사용자 확인
             if [ -n "$SUDO_USER" ]; then
                 USER_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
                 TARGET_USER="$SUDO_USER"
