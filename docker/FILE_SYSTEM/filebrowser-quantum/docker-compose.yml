@@ -15,3 +15,6 @@ services:
     ports:
       - 28082:80
     restart: always
+    security_opt:
+      - apparmor:unconfined
+      - seccomp:unconfined
